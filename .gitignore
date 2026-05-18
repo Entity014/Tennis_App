@@ -1,0 +1,89 @@
+# ==========================================
+# Root .gitignore for Lock App Project
+# Includes Android app, Node.js server, and IDEs
+# ==========================================
+
+# ------------------------------------------
+# Node.js Server & Backend
+# ------------------------------------------
+**/node_modules/
+**/npm-debug.log*
+**/yarn-debug.log*
+**/yarn-error.log*
+**/pnpm-debug.log*
+**/.env
+**/.env.*.local
+**/.env.local
+
+# SQLite Database & Local Data
+**/server/data/database.sqlite
+**/server/data/*.sqlite
+**/server/data/*.sqlite-journal
+**/server/data/*.db
+*.sqlite
+*.db
+
+# ------------------------------------------
+# Android Application (TennisLockApp)
+# ------------------------------------------
+# Gradle files and cache
+**/.gradle/
+**/build/
+**/local.properties
+
+# Android Studio / IntelliJ IDEA
+**/.idea/
+**/*.iml
+**/.idea/caches/
+**/.idea/libraries/
+**/.idea/modules.xml
+**/.idea/workspace.xml
+**/.idea/navEditor.xml
+**/.idea/assetWizardSettings.xml
+**/.idea/compiler.xml
+**/.idea/gradle.xml
+**/.idea/misc.xml
+**/.idea/runConfigurations.xml
+
+# Captures and Native Build files
+**/captures/
+**/.externalNativeBuild/
+**/.cxx/
+
+# Android Keystores & Signing Keys (CRITICAL for security)
+**/*.keystore
+**/*.jks
+**/*.pepk
+**/*.pk8
+**/*.pem
+**/google-services.json
+
+# Build outputs (APKs, AABs, etc.)
+**/*.apk
+**/*.ap_
+**/*.aab
+
+# ------------------------------------------
+# IDEs and Text Editors
+# ------------------------------------------
+# VS Code
+**/.vscode/
+**/.history/
+
+# Vim/Emacs temp files
+**/*~
+**/*.swp
+**/*.swo
+
+# ------------------------------------------
+# Operating System Files
+# ------------------------------------------
+# macOS
+**/.DS_Store
+**/.AppleDouble
+**/.LSOverride
+
+# Windows
+**/Thumbs.db
+**/ehthumbs.db
+**/Desktop.ini

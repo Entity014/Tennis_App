@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Tennis Lock App</string>
+    <string name="accessibility_service_description">ช่วยรักษาความปลอดภัยและป้องกันการปิดแอปพลิเคชันระหว่างล็อกเครื่องเช่าสนาม</string>
+</resources>
