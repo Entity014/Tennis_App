@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Book premium tennis courts online. Instant booking, secure payments, and smart digital access PIN codes.">
+  <title>AcePoint - Premium Tennis Court Booking</title>
+  <!-- Google Fonts: Outfit for heading, Inter for body -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+  <!-- Flatpickr CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-theme">
+  <!-- Flatpickr JS -->
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <!-- Official Google Identity Services SDK -->
+  <script src="https://accounts.google.com/gsi/client?onload=onGoogleGisLoad" async defer></script>
+</head>
+<body class="dark-theme">
+  <!-- Facebook SDK root container -->
+  <div id="fb-root"></div>
+
+  <!-- Header & Navigation -->
+  <header class="app-header">
+    <div class="container navbar">
+      <a href="/" class="logo" id="nav-logo">
+        <i class="fa-solid fa-tennis-ball logo-icon text-neon"></i>
+        <span class="logo-text">Ace<span class="text-neon">Point</span></span>
+      </a>
+      <nav class="nav-links">
+        <a href="#home" class="nav-link active" data-target="home-view">Home</a>
+        <a href="#search" class="nav-link" data-target="search-view">Book Court</a>
+        <a href="#dashboard" class="nav-link auth-required" data-target="dashboard-view" style="display: none;">My Bookings</a>
+        <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;">Admin Panel</a>
+      </nav>
+      <div class="auth-buttons">
+        <button id="theme-toggle-btn" class="btn btn-outline btn-sm theme-btn" aria-label="Toggle Theme">
+          <i class="fa-solid fa-sun"></i>
+        </button>
+        <span id="user-display" class="user-profile-display" style="display: none;">
+          <i class="fa-solid fa-user-circle"></i>
+          <span id="username-span">Player</span>
+          <button id="logout-btn" class="btn btn-outline btn-sm ml-1">Logout</button>
+        </span>
+        <button id="login-nav-btn" class="btn btn-outline" onclick="navigateTo('auth-view')">Sign In</button>
+      </div>
+      <button class="mobile-menu-btn" id="mobile-menu-toggle">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- Notification Bar -->
+  <div id="notification-container" class="notification-container"></div>
+
+  <!-- Main Views Container -->
+  <main class="main-content">
+
+    <!-- 1. Home View -->
+    <section id="home-view" class="view active-view">
+      <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+          <h1 class="hero-title animate-fade-in">Serve, Volley & <span class="text-neon">Book Instantly</span></h1>
+          <p class="hero-subtitle animate-fade-in">Experience championship-grade tennis courts equipped with automated smart-lock access systems. Select your timeslot and get on the court in seconds.</p>
+          <div class="hero-cta animate-fade-in">
+            <button class="btn btn-primary btn-lg" onclick="navigateTo('search-view')">
+              <i class="fa-solid fa-calendar-days mr-2"></i> Book A Court Now
+            </button>
+            <a href="#features" class="btn btn-outline btn-lg ml-3">Explore Courts</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Court Features Section -->
+      <div id="features" class="features-section container">
+        <h2 class="section-title text-center">Our Premium Courts</h2>
+        <p class="section-subtitle text-center">Professional surfaces designed to match your play style.</p>
+        
+        <div class="courts-grid" id="featured-courts-grid">
+          <!-- Dynamically generated court cards -->
+          <div class="court-card card-loading"></div>
+          <div class="court-card card-loading"></div>
+          <div class="court-card card-loading"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Search & Filter View -->
+    <section id="search-view" class="view">
+      <div class="container container-sm">
+        <div class="search-box glassmorphism">
+          <h2 class="form-title text-center"><i class="fa-solid fa-magnifying-glass text-neon mr-2"></i> Find Available Timeslots</h2>
+          <form id="search-form" class="search-form">
+            <div class="form-group">
+              <label for="booking-date"><i class="fa-regular fa-calendar mr-1"></i> Date</label>
+              <input type="date" id="booking-date" class="form-control" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="search-submit-btn">
+              <i class="fa-solid fa-search mr-2"></i> Search Availability
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Court & Timeslot Selection View -->
+    <section id="timeslot-view" class="view">
+      <div class="container">
+        <div class="view-header">
+          <button class="btn btn-link text-neon mb-3" onclick="navigateTo('search-view')">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Back to Search
+          </button>
+          <div class="timeslot-header-flex">
+            <h2 class="view-title">Select Court & Timeslots</h2>
+            <div class="timeslot-date-header-wrapper">
+              <button class="btn-date-arrow" onclick="changeDateByOffset(-1)" title="Previous Day">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
+              <div class="timeslot-date-header-row">
+                <label for="timeslot-date-picker"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date:</label>
+                <input type="date" id="timeslot-date-picker" class="form-control timeslot-date-input-inline">
+              </div>
+              <button class="btn-date-arrow" onclick="changeDateByOffset(1)" title="Next Day">
+                <i class="fa-solid fa-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="timeslot-container">
+          <!-- Sidebar: Court Details -->
+          <div class="timeslot-sidebar">
+            <div class="sticky-sidebar">
+              <div class="court-detail-card glassmorphism" id="active-court-detail">
+                <div class="court-detail-img-placeholder" id="detail-court-img"></div>
+                <div class="court-detail-body">
+                  <h3 id="detail-court-name">Court Name</h3>
+                  <p class="court-desc mt-2" id="detail-court-desc">Description of the court goes here...</p>
+                  <div class="court-price-box">
+                    <span class="price-label">Price per Hour</span>
+                    <span class="price-amount" id="detail-court-price">฿0</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Area: Courts and Timeslot Grids -->
+          <div class="timeslot-main">
+            <div class="court-selector-tabs" id="court-selector-tabs">
+              <!-- Tabs for different courts generated dynamically -->
+            </div>
+
+            <div class="timeslot-grid-card glassmorphism">
+              <div class="grid-header">
+                <h3>Select Time Slots</h3>
+                <span class="info-text"><i class="fa-solid fa-info-circle text-neon mr-1"></i> Bookings must be hourly. Select consecutive blocks.</span>
+              </div>
+
+              <!-- Time grid -->
+              <div class="time-grid" id="time-grid-slots">
+                <!-- Hours dynamically generated (06:00 to 22:00) -->
+              </div>
+
+              <!-- Selection Summary Panel -->
+              <div class="selection-summary-panel" id="selection-summary" style="display: none;">
+                <div class="summary-details">
+                  <div class="summary-item">
+                    <span class="label">Date:</span>
+                    <span class="val" id="sum-date">2026-05-20</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="label">Time:</span>
+                    <span class="val" id="sum-time">--:-- to --:--</span>
+                  </div>
+                  <div class="summary-item">
+                    <span class="label">Duration:</span>
+                    <span class="val" id="sum-duration">0 hours</span>
+                  </div>
+                </div>
+                <div class="summary-pricing">
+                  <div class="price-row">
+                    <span class="total-label">Total Price:</span>
+                    <span class="total-amount" id="sum-total-price">฿0</span>
+                  </div>
+                  <div class="summary-actions">
+                    <button class="btn btn-outline" id="clear-selection-btn">
+                      Clear Selection
+                    </button>
+                    <button class="btn btn-primary" id="confirm-selection-btn">
+                      Confirm & Book <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Auth (Login & Register) View -->
+    <section id="auth-view" class="view">
+      <div class="container container-xs">
+        <div class="auth-card-container glassmorphism">
+          <!-- Auth Toggle Tabs -->
+          <div class="auth-tabs">
+            <button class="auth-tab active" id="tab-login" onclick="toggleAuthTab('login')">Sign In</button>
+            <button class="auth-tab" id="tab-register" onclick="toggleAuthTab('register')">Register</button>
+          </div>
+
+          <!-- Login Form -->
+          <form id="login-form" class="auth-form active-form" novalidate>
+            <h3 class="auth-form-title text-center">Welcome Back</h3>
+            <div class="form-group">
+              <label for="login-username">Username</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="login-username" class="form-control" placeholder="Enter username" required autocomplete="username">
+              </div>
+              <div id="login-username-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="login-password" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+              </div>
+              <div id="login-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+              <div class="text-right mt-2">
+                <a href="#" onclick="toggleAuthTab('forgot'); return false;" class="forgot-password-link" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">Forgot Password?</a>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="login-submit-btn">
+              Sign In <i class="fa-solid fa-sign-in ml-1"></i>
+            </button>
+            
+            <div class="auth-divider google-auth-divider" style="display: none;"><span>OR</span></div>
+            
+            <div class="social-login-group">
+              <!-- Live Google Native Container -->
+              <div id="google-live-auth" style="display: none;" class="mb-3">
+                <div id="google-signin-btn-login"></div>
+              </div>
+            </div>
+            
+            <p class="auth-switch-text text-center mt-3">
+              Don't have an account? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('register')">Register here</span>
+            </p>
+          </form>
+
+          <!-- Register Form -->
+          <form id="register-form" class="auth-form" novalidate>
+            <h3 class="auth-form-title text-center">Create Account</h3>
+            <div class="form-group">
+              <label for="register-username">Username</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-user input-icon"></i>
+                <input type="text" id="register-username" class="form-control" placeholder="Choose a username" required autocomplete="username">
+              </div>
+              <div id="register-username-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <div class="form-group">
+              <label for="register-email">Email Address</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="register-email" class="form-control" placeholder="Enter email" required autocomplete="email">
+              </div>
+              <div id="register-email-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="register-password" class="form-control" placeholder="Choose a strong password" required autocomplete="new-password">
+              </div>
+              <div id="register-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="register-submit-btn">
+              Register <i class="fa-solid fa-user-plus ml-1"></i>
+            </button>
+            
+            <div class="auth-divider google-auth-divider" style="display: none;"><span>OR</span></div>
+            
+            <div class="social-login-group">
+              <!-- Live Google Native Container -->
+              <div id="google-live-auth-reg" style="display: none;" class="mb-3">
+                <div id="google-signin-btn-reg"></div>
+              </div>
+            </div>
+            
+            <p class="auth-switch-text text-center mt-3">
+              Already have an account? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Sign in here</span>
+            </p>
+          </form>
+
+          <!-- Forgot Password Form -->
+          <form id="forgot-password-form" class="auth-form" novalidate style="display: none;">
+            <h3 class="auth-form-title text-center">Reset Password</h3>
+            <p class="text-center text-light mb-4" style="font-size: 0.9rem;">Enter your email to receive a reset PIN.</p>
+            <div class="form-group">
+              <label for="forgot-email">Email Address</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-envelope input-icon"></i>
+                <input type="email" id="forgot-email" class="form-control" placeholder="Enter your email" required autocomplete="email">
+              </div>
+              <div id="forgot-email-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="forgot-submit-btn">
+              Send PIN <i class="fa-solid fa-paper-plane ml-1"></i>
+            </button>
+            <p class="auth-switch-text text-center mt-3">
+              Remembered your password? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Sign in</span>
+            </p>
+          </form>
+
+          <!-- Reset Password Form -->
+          <form id="reset-password-form" class="auth-form" novalidate style="display: none;">
+            <h3 class="auth-form-title text-center">New Password</h3>
+            <p class="text-center text-light mb-4" style="font-size: 0.9rem;">Enter the PIN and your new password.</p>
+            <div class="form-group">
+              <label for="reset-token">Reset PIN</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-key input-icon"></i>
+                <input type="text" id="reset-token" class="form-control" placeholder="Enter 6-digit PIN" required>
+              </div>
+              <div id="reset-token-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <div class="form-group">
+              <label for="reset-password">New Password</label>
+              <div class="input-icon-group">
+                <i class="fa-solid fa-lock input-icon"></i>
+                <input type="password" id="reset-password" class="form-control" placeholder="Choose a strong password" required autocomplete="new-password">
+              </div>
+              <div id="reset-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="reset-submit-btn">
+              Update Password <i class="fa-solid fa-check ml-1"></i>
+            </button>
+            <p class="auth-switch-text text-center mt-3">
+              <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Back to login</span>
+            </p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Review Booking View -->
+    <section id="review-view" class="view">
+      <div class="container container-sm">
+        <div class="review-card glassmorphism">
+          <div class="view-header text-center">
+            <h2 class="view-title"><i class="fa-solid fa-clipboard-check text-neon mr-2"></i> Review Your Booking</h2>
+            <p class="view-subtitle text-muted">Please double-check details before proceeding to payment.</p>
+          </div>
+
+          <div class="review-table mt-4">
+            <div class="review-row">
+              <div class="review-cell label">Selected Court</div>
+              <div class="review-cell val text-neon font-weight-bold" id="rev-court-name">Court Name</div>
+            </div>
+            <div class="review-row">
+              <div class="review-cell label">Booking Date</div>
+              <div class="review-cell val" id="rev-date">2026-05-20</div>
+            </div>
+            <div class="review-row">
+              <div class="review-cell label">Selected Time</div>
+              <div class="review-cell val text-white" id="rev-time">10:00 - 12:00 (2 hrs)</div>
+            </div>
+            <div class="review-row">
+              <div class="review-cell label">Rate per Hour</div>
+              <div class="review-cell val" id="rev-rate">฿600.00</div>
+            </div>
+            <div class="review-row total-row">
+              <div class="review-cell label">Total Amount</div>
+              <div class="review-cell val text-neon price-highlight" id="rev-total">฿1,200.00</div>
+            </div>
+          </div>
+
+          <!-- Promo Code Box -->
+          <div class="promo-box mt-4">
+            <input type="text" id="promo-input" class="form-control" placeholder="Promo / Discount Code">
+            <button class="btn btn-outline" id="promo-apply-btn">Apply</button>
+          </div>
+
+          <div class="action-buttons mt-5">
+            <button class="btn btn-outline" onclick="navigateTo('timeslot-view')">Cancel & Back</button>
+            <button class="btn btn-primary" id="proceed-to-payment-btn">
+              Proceed to Payment <i class="fa-solid fa-credit-card ml-1"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Payment Gateway View -->
+    <section id="payment-view" class="view">
+      <div class="container container-sm">
+        <div class="payment-card glassmorphism">
+          <div class="view-header text-center">
+            <h2 class="view-title"><i class="fa-solid fa-shield-halved text-neon mr-2"></i> Secure Checkout</h2>
+            <p class="qr-info-text text-muted mt-2">Scan this PromptPay QR Code with any banking app to pay</p>
+          </div>
+
+          <div class="payment-methods mt-4" style="display: none !important;">
+            <button class="payment-tab" id="pay-tab-card" onclick="togglePaymentMethod('card')">
+              <i class="fa-solid fa-credit-card"></i> Credit Card
+            </button>
+            <button class="payment-tab active" id="pay-tab-qr" onclick="togglePaymentMethod('qr')">
+              <i class="fa-solid fa-qrcode"></i> PromptPay / QR
+            </button>
+          </div>
+
+          <!-- Credit Card Form -->
+          <div id="payment-card-form" class="payment-form mt-4" style="display: none !important;">
+            <div class="credit-card-preview mb-4">
+              <div class="card-chip"></div>
+              <div class="card-number-display" id="card-num-preview">•••• •••• •••• ••••</div>
+              <div class="card-details">
+                <div>
+                  <div class="card-lbl">Card Holder</div>
+                  <div class="card-val-display" id="card-name-preview">YOUR NAME</div>
+                </div>
+                <div>
+                  <div class="card-lbl">Expires</div>
+                  <div class="card-val-display" id="card-expiry-preview">MM/YY</div>
+                </div>
+              </div>
+            </div>
+
+            <form id="card-submit-form">
+              <div class="form-group">
+                <label for="card-number">Card Number</label>
+                <input type="text" id="card-number" class="form-control" placeholder="1234 5678 1234 5678" maxlength="19" required>
+              </div>
+              <div class="form-row">
+                <div class="form-group col">
+                  <label for="card-expiry">Expiry Date</label>
+                  <input type="text" id="card-expiry" class="form-control" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div class="form-group col">
+                  <label for="card-cvc">CVV/CVC</label>
+                  <input type="password" id="card-cvc" class="form-control" placeholder="123" maxlength="3" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="card-name">Cardholder Name</label>
+                <input type="text" id="card-name" class="form-control" placeholder="John Doe" required autocomplete="name">
+              </div>
+            </form>
+          </div>
+
+          <!-- QR Code PromptPay Form -->
+          <div id="payment-qr-form" class="payment-form active-form mt-4 text-center">
+            <div class="qr-code-wrapper mx-auto">
+              <div class="qr-code-box" style="height: auto; min-height: 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; padding: 15px; border-radius: 12px;">
+                <div class="promptpay-logo">
+                  <span>Prompt Pay</span>
+                </div>
+                <img id="qr-code-img" src="" alt="PromptPay QR Code" style="display: none; width: 150px; height: 150px; margin: 0 auto;">
+                <i id="qr-code-placeholder-icon" class="fa-solid fa-qrcode qr-placeholder" style="color: #000;"></i>
+                
+                <!-- Display PromptPay Receiver ID inside the white box -->
+                <div class="mt-2 text-center" style="color: #000;">
+                  <span style="font-size: 0.75rem; font-weight: 500; color: #555; display: block;">PromptPay Account</span>
+                  <strong id="prompay-receiver-display" style="font-size: 1rem; font-weight: 700; color: #003666; letter-spacing: 0.5px;">-</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="qr-timer mt-3 text-neon">
+              <i class="fa-solid fa-clock-rotate-left mr-1"></i> QR Code expires in <span id="qr-countdown">04:59</span>
+            </div>
+
+            <!-- Slip Upload Box -->
+            <div class="slip-upload-container mt-4">
+              <label for="slip-file-input" id="slip-upload-label" class="slip-upload-box glassmorphism">
+                <i class="fa-solid fa-cloud-arrow-up text-neon upload-icon"></i>
+                <span class="upload-text">Upload Payment Slip (Image)</span>
+                <span class="file-info text-muted">Tap to select or drag & drop slip image</span>
+                <input type="file" id="slip-file-input" accept="image/*" style="display: none;">
+              </label>
+              
+              <div id="slip-preview-container" class="slip-preview-card mt-3" style="display: none;">
+                <img id="slip-preview-img" src="" alt="Payment Slip Preview">
+                <button type="button" id="remove-slip-btn" class="btn btn-outline btn-sm mt-3">
+                  <i class="fa-solid fa-trash mr-1"></i> Remove Slip
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Test Mode Toggle -->
+          <div class="test-mode-container mt-3 p-3 glassmorphism" style="border: 1px dashed var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+            <style>
+              .switch input:checked + .slider {
+                background-color: var(--neon-green) !important;
+              }
+              .switch .slider:before {
+                position: absolute;
+                content: "";
+                height: 18px;
+                width: 18px;
+                left: 3px;
+                bottom: 3px;
+                background-color: white;
+                transition: .3s;
+                border-radius: 50%;
+              }
+              .switch input:checked + .slider:before {
+                transform: translateX(24px);
+              }
+            </style>
+            <div style="text-align: left;">
+              <span style="display: block; font-weight: bold; color: var(--neon-green); font-size: 0.9rem; font-family: inherit;">Test Mode (฿0.1)</span>
+              <span class="text-muted" style="display: block; font-size: 0.75rem; font-family: inherit;">Change price to ฿0.1 to scan and transfer real money for testing</span>
+            </div>
+            <label class="switch" style="position: relative; display: inline-block; width: 50px; height: 26px; flex-shrink: 0; margin: 0;">
+              <input type="checkbox" id="test-mode-toggle" style="opacity: 0; width: 0; height: 0;">
+              <span class="slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(255, 255, 255, 0.15); transition: .3s; border-radius: 26px; border: 1px solid var(--border-color);"></span>
+            </label>
+          </div>
+
+          <div class="payment-summary-box mt-4">
+            <span>Amount Due:</span>
+            <span class="amount text-neon" id="payment-amount-display">฿1,200.00</span>
+          </div>
+
+          <button class="btn btn-primary btn-block mt-4 btn-lg" id="pay-submit-btn">
+            Pay Now
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Confirmation & E-Ticket View -->
+    <section id="confirmation-view" class="view">
+      <div class="container container-sm">
+        <div class="confirmation-wrapper text-center">
+          <div class="success-animation">
+            <i class="fa-solid fa-circle-check text-neon animate-bounce"></i>
+          </div>
+          <h2 class="view-title text-neon mt-3">Booking Confirmed!</h2>
+          <p class="view-subtitle text-muted">Your payment was processed successfully. Here is your E-Ticket.</p>
+
+          <!-- Ticket Design -->
+          <div class="ticket glassmorphism mt-4">
+            <div class="ticket-header">
+              <div class="ticket-logo">
+                <i class="fa-solid fa-tennis-ball logo-icon text-neon"></i>
+                <span class="logo-text text-white">Ace<span class="text-neon">Point</span></span>
+              </div>
+              <span class="ticket-badge">E-TICKET</span>
+            </div>
+
+            <div class="ticket-body">
+              <div class="ticket-row">
+                <div class="ticket-col">
+                  <span class="lbl">Court</span>
+                  <span class="val text-neon" id="ticket-court">Grand Slam Court A</span>
+                </div>
+              </div>
+
+              <div class="ticket-row">
+                <div class="ticket-col">
+                  <span class="lbl">Date</span>
+                  <span class="val" id="ticket-date">2026-05-20</span>
+                </div>
+                <div class="ticket-col text-right">
+                  <span class="lbl">Timeslot</span>
+                  <span class="val" id="ticket-time">10:00 - 12:00</span>
+                </div>
+              </div>
+
+              <div class="ticket-divider">
+                <div class="notch left"></div>
+                <div class="notch right"></div>
+              </div>
+
+              <!-- Kiosk PIN code -->
+              <div class="ticket-pin-section">
+                <span class="pin-lbl">COURT ACCESS PIN CODE</span>
+                <span class="pin-code text-neon" id="ticket-pin">829 104</span>
+                <p class="pin-instruction"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.</p>
+              </div>
+            </div>
+
+            <div class="ticket-footer">
+              <div class="ticket-barcode">
+                <div class="barcode-line w-10"></div>
+                <div class="barcode-line w-2"></div>
+                <div class="barcode-line w-15"></div>
+                <div class="barcode-line w-5"></div>
+                <div class="barcode-line w-8"></div>
+                <div class="barcode-line w-12"></div>
+                <div class="barcode-line w-3"></div>
+                <div class="barcode-line w-6"></div>
+                <div class="barcode-line w-14"></div>
+                <div class="barcode-line w-5"></div>
+              </div>
+              <div class="ticket-ref" id="ticket-ref-id">REF: AP-20260520-001</div>
+            </div>
+          </div>
+
+          <div class="action-buttons mt-4">
+            <button class="btn btn-outline" onclick="navigateTo('dashboard-view')">
+              <i class="fa-solid fa-list mr-1"></i> Go to My Bookings
+            </button>
+            <button class="btn btn-primary" onclick="navigateTo('home-view')">
+              <i class="fa-solid fa-house mr-1"></i> Return Home
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. User Dashboard View -->
+    <section id="dashboard-view" class="view">
+      <div class="container">
+        <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="view-title">Player Dashboard</h2>
+            <p class="view-subtitle text-muted">Manage your bookings, access codes, and profile.</p>
+          </div>
+          <button class="btn btn-primary" onclick="navigateTo('search-view')">
+            <i class="fa-solid fa-plus mr-1"></i> New Booking
+          </button>
+        </div>
+
+        <div class="dashboard-stats mb-4">
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-neon-alpha"><i class="fa-solid fa-calendar-check text-neon"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="stat-upcoming-count">0</span>
+              <span class="stat-label">Upcoming Bookings</span>
+            </div>
+          </div>
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-blue-alpha"><i class="fa-solid fa-history text-blue"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="stat-total-count">0</span>
+              <span class="stat-label">Total Bookings</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-content-box glassmorphism">
+          <h3 class="mb-4">Your Bookings</h3>
+          <div class="booking-list" id="dashboard-bookings-list">
+            <div class="empty-state text-center py-5">
+              <i class="fa-solid fa-calendar-minus text-muted mb-3 size-xl"></i>
+              <p>You don't have any bookings yet.</p>
+              <button class="btn btn-outline mt-3" onclick="navigateTo('search-view')">Book Your First Court</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. Admin Dashboard View -->
+    <section id="admin-view" class="view">
+      <div class="container">
+        <div class="dashboard-header mb-4">
+          <h2 class="view-title">Admin Control Panel</h2>
+          <p class="view-subtitle text-muted">Manage tennis courts, track bookings, view user statistics, and check revenue.</p>
+        </div>
+
+        <!-- Stats row -->
+        <div class="dashboard-stats mb-4">
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-neon-alpha"><i class="fa-solid fa-calendar-check text-neon"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="admin-stat-bookings">0</span>
+              <span class="stat-label">Total Bookings</span>
+            </div>
+          </div>
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-green-alpha"><i class="fa-solid fa-hand-holding-dollar text-green"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="admin-stat-revenue">฿0</span>
+              <span class="stat-label">Total Revenue</span>
+            </div>
+          </div>
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-blue-alpha"><i class="fa-solid fa-users text-blue"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="admin-stat-users">0</span>
+              <span class="stat-label">Registered Users</span>
+            </div>
+          </div>
+          <div class="stat-card glassmorphism">
+            <div class="stat-icon bg-yellow-alpha"><i class="fa-solid fa-tennis-ball text-yellow"></i></div>
+            <div class="stat-details">
+              <span class="stat-val" id="admin-stat-courts">0</span>
+              <span class="stat-label">Active Courts</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Admin tabs navigation -->
+        <div class="admin-tabs mb-4">
+          <button class="btn btn-outline active" id="btn-admin-tab-bookings" onclick="switchAdminTab('bookings')">
+            <i class="fa-solid fa-calendar-days mr-1"></i> Bookings
+          </button>
+          <button class="btn btn-outline" id="btn-admin-tab-courts" onclick="switchAdminTab('courts')">
+            <i class="fa-solid fa-tennis-ball mr-1"></i> Courts
+          </button>
+          <button class="btn btn-outline" id="btn-admin-tab-users" onclick="switchAdminTab('users')">
+            <i class="fa-solid fa-users mr-1"></i> Users
+          </button>
+        </div>
+
+        <!-- Tab 1: Bookings Management -->
+        <div class="admin-tab-content glassmorphism p-4" id="admin-tab-bookings-content">
+          <h3 class="mb-4">All Bookings</h3>
+          <div class="table-responsive">
+            <table class="table admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>User</th>
+                  <th>Court</th>
+                  <th>Date</th>
+                  <th>Time</th>
+                  <th>Price</th>
+                  <th>PIN</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-bookings-table-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 2: Courts Management -->
+        <div class="admin-tab-content glassmorphism p-4" id="admin-tab-courts-content" style="display: none;">
+          <div class="admin-courts-grid">
+            <!-- Courts list table -->
+            <div class="courts-list-section">
+              <h3 class="mb-4">Active Courts</h3>
+              <div class="table-responsive">
+                <table class="table admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Price/Hour</th>
+                      <th>Description</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-courts-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <!-- Add Court form -->
+            <div class="add-court-section p-4 glassmorphism border-neon">
+              <h3 class="mb-4 text-neon">Add New Court</h3>
+              <form id="admin-add-court-form" onsubmit="handleAdminAddCourt(event)">
+                <div class="form-group mb-3">
+                  <label for="court-name-input">Court Name</label>
+                  <input type="text" id="court-name-input" class="form-control" placeholder="e.g. Center Court E" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="court-price-input">Price Per Hour (฿)</label>
+                  <input type="number" id="court-price-input" class="form-control" placeholder="e.g. 500" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="court-desc-input">Description</label>
+                  <textarea id="court-desc-input" class="form-control" placeholder="Court features..." rows="3"></textarea>
+                </div>
+                <div class="form-group mb-4">
+                  <label for="court-image-input">Select Theme Image</label>
+                  <select id="court-image-input" class="form-control">
+                    <option value="court_indoor_a">Indoor Premium (A)</option>
+                    <option value="court_outdoor_b">Outdoor Floodlight (B)</option>
+                    <option value="court_indoor_c">Indoor Turf Arena (C)</option>
+                    <option value="court_outdoor_d">Outdoor Safety Rebound (D)</option>
+                  </select>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fa-solid fa-plus mr-1"></i> Save Court
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: Users Management -->
+        <div class="admin-tab-content glassmorphism p-4" id="admin-tab-users-content" style="display: none;">
+          <h3 class="mb-4">Registered Users</h3>
+          <div class="table-responsive">
+            <table class="table admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Registered At</th>
+                </tr>
+              </thead>
+              <tbody id="admin-users-table-body">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Social Login Simulation Modal -->
+  <div id="social-modal" class="social-modal-overlay" style="display: none;">
+    <div class="social-modal glassmorphism">
+      <div class="social-modal-header">
+        <span id="social-modal-title">Sign In with Google</span>
+        <button onclick="closeSocialModal()" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="social-modal-body">
+        <p class="text-muted mb-4">Choose an account to continue to <strong>AcePoint</strong></p>
+        
+        <div id="social-accounts-list" class="social-accounts-list">
+          <!-- Dynamically populated simulated accounts -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="container footer-content text-center text-muted">
+      <p>&copy; 2026 AcePoint Tennis Court Booking. All rights reserved.</p>
+      <div class="footer-links mt-2">
+        <a href="#privacy">Privacy Policy</a> &bull; <a href="#terms">Terms of Service</a> &bull; <a href="#help">Help Support</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JS Scripts -->
+  <script src="app.js"></script>
+</body>
+</html>

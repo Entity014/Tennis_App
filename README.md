@@ -1,226 +1,465 @@
-# 🎾 Tennis Lock Kiosk System (ระบบล็อคเครื่องและควบคุมสิทธิ์สำหรับสนามเทนนิส)
+# 🎾 AcePoint — Tennis Court Booking & Kiosk Lock System
 
-ระบบ Kiosk และความปลอดภัยเต็มรูปแบบสำหรับอุปกรณ์พกพา (แท็บเล็ต/มือถือ) ที่ต้องการเปิดให้เช่าใช้งานในสนามเทนนิส โดยหน้าจอจะถูกล็อคและจะสามารถปลดล็อคใช้งานเครื่องได้ด้วยรหัสผ่านแบบชั่วคราว (6-digit PIN) ที่ผู้ดูแลระบบสร้างขึ้นจากเว็บควบคุมกลางผ่านระบบคลาวด์/เซิร์ฟเวอร์ท้องถิ่น
+ระบบจองสนามเทนนิสออนไลน์และระบบล็อก Kiosk สำหรับอุปกรณ์ Android แบบครบวงจร ประกอบด้วย 2 ระบบหลักที่ทำงานประสานกัน:
+
+| ระบบ | คำอธิบาย |
+|---|---|
+| **🌐 AcePoint Booking Web App** | เว็บแอปจองคอร์ตสำหรับผู้ใช้งานทั่วไปและแผงควบคุม Admin |
+| **📱 TennisLock Kiosk Android App** | แอป Android ล็อก Kiosk สำหรับหน้าจอติดตั้งที่สนามเทนนิส |
 
 ---
 
-## 🏗️ สถาปัตยกรรมระบบ (System Architecture)
-
-ระบบประกอบด้วย 3 ส่วนหลักที่ทำงานประสานกันผ่านเครือข่ายอินเทอร์เน็ต/แลน:
+## 🏗️ สถาปัตยกรรมรวมของระบบ (System Architecture)
 
 ```mermaid
 graph TD
-    %% Nodes
-    Dashboard["💻 Admin Web Dashboard<br>(Tailwind UI / Real-time Status)"]
-    Server["⚙️ Express API Server<br>(Node.js + SQLite3 DB)"]
-    AndroidApp["📱 Tennis Kiosk App<br>(Android Device Owner / Java)"]
-    AccessServ["🛡️ Accessibility Guard<br>(Block Settings/System UI)"]
-    ForegServ["⏳ Foreground Service<br>(15s Heartbeat / Countdown)"]
+    subgraph "🌐 System 1: AcePoint Booking Platform"
+        User["👤 ผู้ใช้/ลูกค้า\n(Web Browser)"]
+        BookingWeb["💻 AcePoint Web App\n(HTML + Vanilla JS + CSS)"]
+        BookingServer["⚙️ Booking API Server\n(Node.js + Express)"]
+        PrimaryDB[("🗄️ Primary DB\n(SQLite - Writes)")]
+        SubDB[("🗄️ Sub DB\n(SQLite - Reads)")]
+        SlipAPI["💳 SLIP Verify API\n(thunder.in.th)"]
+        SMTP["📧 SMTP Server\n(Nodemailer / Gmail)"]
+    end
 
-    %% Connections
-    Dashboard <-->|"Control Devices & Generate PINs<br>(REST API)"| Server
-    Server <-->|"Device State Sync & Verification<br>(HTTP POST)"| AndroidApp
-    AndroidApp -->|Controls| AccessServ
-    AndroidApp -->|Manages| ForegServ
+    subgraph "📱 System 2: TennisLock Kiosk"
+        KioskDevice["📱 Android Tablet/Phone\n(Kiosk Device at Court)"]
+        LockServer["⚙️ Kiosk API Server\n(Node.js + Express)"]
+        KioskDB[("🗄️ Kiosk DB\n(SQLite)")]
+        AdminDash["💻 Kiosk Admin Dashboard\n(Tailwind CSS UI)"]
+    end
 
-    %% Styles
-    classDef main fill:#03DAC5,stroke:#018786,stroke-width:2px,color:#000;
-    classDef server fill:#3700B3,stroke:#1A0066,stroke-width:2px,color:#fff;
-    classDef client fill:#FF0266,stroke:#C51162,stroke-width:2px,color:#fff;
+    User --> BookingWeb
+    BookingWeb <--> BookingServer
+    BookingServer --> PrimaryDB
+    PrimaryDB -->|"Replication (50ms lag)"| SubDB
+    BookingServer --> SlipAPI
+    BookingServer --> SMTP
 
-    class Dashboard,AndroidApp client;
-    class Server server;
-    class AccessServ,ForegServ main;
+    AdminDash <--> LockServer
+    LockServer <--> KioskDB
+    KioskDevice <-->|"Heartbeat every 15s"| LockServer
 ```
 
 ---
 
-## ✨ คุณสมบัติเด่นของระบบ (Key Features)
-
-### 1. Android Kiosk Client (แอปพลิเคชันสำหรับอุปกรณ์)
-
-- **Relentless Launcher Lock (ระบบ Kiosk ป้องกันการออก):** ตั้งค่าตัวเองเป็น Default Launcher (หน้าแรกหลัก) และล็อกหน้าจอ Kiosk ไว้ เมื่อเครื่องเริ่มทำงานจะเปิดแอปขึ้นมาทันที หากผู้ใช้ปัดแอปทิ้งหรือพยายามออกจากแอป ระบบจะทำการเปิดตัวเองขึ้นมาบังหน้าจอใหม่ภายใน **200 มิลลิวินาที (200ms Watcher)**
-- **Accessibility Service Guard:** บล็อกการเข้าถึงเมนูการตั้งค่าตัวเครื่อง (`com.android.settings`), หน้าจอลงโปรแกรมภายนอก (`com.android.packageinstaller`), และบล็อกการเลื่อนแถบแจ้งเตือนด้านบน (Notification Shade & Quick Settings) เพื่อป้องกันผู้เช่าแอบปิด Wi-Fi หรือ Bluetooth
-- **Persistent Foreground Service:** รันนับเวลาถอยหลังการใช้งานในเบื้องหลังอย่างต่อเนื่อง (Countdown Timer) และจะคอยส่งสัญญาณสถานะเครื่อง (Heartbeat) ไปยังเซิร์ฟเวอร์ทุกๆ **15 วินาที**
-- **Device Owner Integration:** รองรับการลงทะเบียนเป็นสิทธิ์สูงสุดของระบบ (Device Owner) เพื่อการล็อกหน้าจอระดับฮาร์ดแวร์อย่างสมบูรณ์แบบ
-- **Remote Sync Command:** รองรับการรับคำสั่งด่วนจากเซิร์ฟเวอร์แบบ Real-time เช่น สั่งล็อกเครื่องทันที (Force Lock) หรือสั่งปลดล็อกเครื่องจากระยะไกล (Force Unlock)
-
-### 2. Backend Server & API (ฝั่งระบบหลังบ้าน)
-
-- **Express.js & Node.js Engine:** ประสิทธิภาพสูง เบา สบาย และจัดลำดับการทำงานได้รวดเร็ว
-- **SQLite Database Integration:** เก็บข้อมูลอุปกรณ์และรหัสผ่าน PIN ได้โดยไม่ต้องกังวลเรื่องการตั้งค่าฐานข้อมูลให้ยุ่งยาก
-- **Auto-Expiration Logic:** ระบบตรวจสอบความถูกต้องและล้างคีย์อัตโนมัติ:
-  - รหัส PIN ที่ไม่ได้ใช้งานภายใน **10 นาที** จะถูกปรับเป็นหมดอายุ (`EXPIRED`) อัตโนมัติ เพื่อความปลอดภัย
-  - เซสชันที่กำลังใช้งานอยู่ (Active Sessions) จะถูกเช็คและตัดสิทธิ์หมดเวลาโดยอ้างอิงจากเวลาหมดตามจริง
-
-### 3. Web Admin Dashboard (หน้าจอควบคุมสำหรับผู้ดูแล)
-
-- **Modern Interface:** หน้าจอแผงควบคุมสวยงามพรีเมียมด้วยสไตล์ Tailwind CSS ดีไซน์สีเข้ม (Dark Mode) ที่ใช้งานง่ายและสบายตา
-- **Real-time Status Tracking:** ตรวจดูสถานะการเชื่อมต่อเครื่องเช่า (ONILNE/OFFLINE/IN_USE/LOCKED) และระดับแบตเตอรี่ในเครื่องของลูกค้าแต่ละเครื่องได้แบบเรียลไทม์
-- **PIN Code Generator:** ตั้งเวลาและสร้างรหัสผ่าน 6 หลักเพื่อมอบให้ผู้ใช้บริการนำไปกรอกที่หน้าจอปลดล็อคเครื่อง
-- **Remote Force Kill / Exit Kiosk:** ผู้ดูแลระบบสามารถกดปุ่มสั่งล็อกเครื่องของลูกค้าลงทันที หรือเปิดปลดล็อกเครื่องค้างไว้ผ่านหน้าจอหลังบ้านได้ในคลิกเดียว
-
----
-
-## 📂 โครงสร้างของโปรเจกต์ (Project Directory Structure)
+## 📂 โครงสร้างโปรเจกต์ (Project Structure)
 
 ```
 Tennis_App/
-├── README.md               # เอกสารแนะนำการติดตั้งและสถาปัตยกรรมระบบ
-├── .gitignore              # ไฟล์ยกเว้นการอัปโหลด Git ของโครงการ
-├── server/                 # เซิร์ฟเวอร์ Backend และ Web Dashboard
-│   ├── data/               # โฟลเดอร์จัดเก็บ SQLite Database (SQLite3)
-│   ├── public/             # หน้าเว็บ HTML Dashboard (Tailwind CSS)
-│   ├── routes/             # เส้นทาง API (admin.js, device.js)
-│   ├── index.js            # ไฟล์หลักสำหรับเริ่มต้นรันเซิร์ฟเวอร์ Express
-│   ├── database.js         # ส่วนติดตั้งและสร้างตารางฐานข้อมูล SQLite
-│   ├── package.json        # ไฟล์ระบุ Module Dependencies
-│   ├── Dockerfile          # บิวด์อิมเมจ Docker สำหรับเซิร์ฟเวอร์
-│   └── docker-compose.yml  # การตั้งค่า Docker Compose สะดวกรวดเร็ว
-└── TennisLockApp/          # ตัวแอปพลิเคชันระบบล็อกบน Android (Java)
-    ├── app/src/main/
-    │   ├── AndroidManifest.xml  # การประกาศสิทธิ์การทำงาน, บริการ และ Receiver ของระบบ
-    │   └── java/com/example/tennislockapp/
-    │       ├── MainActivity.java            # หน้าล็อกสกรีนหลักรับรหัส PIN
-    │       ├── LockForegroundService.java   # ระบบนับเวลาถอยหลังและส่ง Heartbeat
-    │       ├── LockAccessibilityService.java# บริการควบคุมสิทธิ์การบล็อก Settings และ System UI
-    │       ├── LockDeviceAdminReceiver.java # รองรับการควบคุมสิทธิ์ Device Admin / Reboot Relaunch
-    │       └── MyHttpClient.java            # ตัวจัดการส่งข้อมูล HTTP POST/GET ไปหา API
-    └── ...
+├── README.md                   # เอกสารหลักของโปรเจกต์
+├── .env                        # ตัวแปรสภาพแวดล้อมหลัก (root-level)
+├── .gitignore
+│
+├── booking-server/             # ⭐ ระบบที่ 1: AcePoint Booking Web App
+│   ├── index.js                # Entry point หลักของ Express API Server
+│   ├── database.js             # Primary/Sub dual-DB replication logic
+│   ├── package.json            # Node.js dependencies
+│   ├── .env                    # ตัวแปรสภาพแวดล้อมของ Booking Server
+│   ├── primary.db              # SQLite ฐานข้อมูลหลัก (Writes)
+│   ├── sub.db                  # SQLite ฐานข้อมูลสำรอง (Reads)
+│   └── public/                 # Static frontend files
+│       ├── index.html          # หน้าเว็บหลัก (Single Page App)
+│       ├── app.js              # JavaScript logic ทั้งหมดของ Web App
+│       └── style.css           # Stylesheet (Dark mode / Glassmorphism)
+│
+├── server/                     # ⭐ ระบบที่ 2: TennisLock Kiosk Backend
+│   ├── index.js                # Entry point ของ Kiosk API Server
+│   ├── database.js             # SQLite schema และ helper functions
+│   ├── package.json
+│   ├── Dockerfile              # Docker image สำหรับ deploy
+│   ├── docker-compose.yml      # Docker Compose config
+│   ├── public/                 # Kiosk Admin Web Dashboard (Tailwind CSS)
+│   └── routes/
+│       ├── admin.js            # Admin endpoints (generate PIN, force lock)
+│       └── device.js           # Device endpoints (register, heartbeat, verify-pin)
+│
+└── TennisLockApp/              # ⭐ ระบบที่ 2: TennisLock Kiosk Android App
+    └── app/src/main/
+        ├── AndroidManifest.xml
+        └── java/com/example/tennislockapp/
+            ├── MainActivity.java             # หน้าจอ PIN lock หลัก
+            ├── LockForegroundService.java    # Countdown timer + Heartbeat (15s)
+            ├── LockAccessibilityService.java # บล็อก Settings, Notification Shade
+            ├── LockDeviceAdminReceiver.java  # Device Owner / Reboot handler
+            └── MyHttpClient.java             # HTTP client สำหรับ API calls
 ```
 
 ---
 
-## 🚀 วิธีการติดตั้งและรันใช้งาน (Installation & Setup)
+---
 
-### ส่วนที่ 1: การติดตั้งเซิร์ฟเวอร์ Backend (`server`)
+# 🌐 ระบบที่ 1: AcePoint Booking Web App
 
-คุณสามารถเลือกติดตั้งได้ 2 รูปแบบตามความสะดวกดังนี้:
+เว็บแอปจองสนามเทนนิสออนไลน์แบบ Single Page Application รองรับการจองคอร์ต, ชำระเงินผ่าน PromptPay QR, ยืนยันสลิปอัตโนมัติ และแผงควบคุม Admin
 
-#### วิธีการที่ A: ติดตั้งและรันผ่าน Docker (แนะนำสำหรับการใช้งานจริง)
+## ✨ Features หลัก
 
-เข้าไปที่โฟลเดอร์ `server` แล้วสั่งรันด้วย Docker Compose:
+### สำหรับผู้ใช้ทั่วไป
+- **ค้นหาคอร์ตว่าง** — เลือกวันที่และดูช่องเวลาว่างแบบ Real-time
+- **จองคอร์ตได้สูงสุด 3 เดือนล่วงหน้า** — ป้องกันการจองย้อนหลัง
+- **ชำระเงินผ่าน PromptPay QR** — สร้าง QR Code ตามราคาจริงอัตโนมัติ
+- **ยืนยันสลิปอัตโนมัติ** — ตรวจสอบ QR code ในสลิปด้วย `jsQR` แบบ local และ Thunder Slip API
+- **โปรโมชั่นโค้ด** — รองรับ promo code (เช่น `ACE10` = ลด 10%)
+- **E-Ticket พร้อม PIN Code** — รับ PIN 6 หลักหลังการชำระเงิน สำหรับปลดล็อก Kiosk ที่สนาม
+- **Dashboard ประวัติการจอง** — ดูและ reprint E-Ticket ได้
+- **Social Login** — รองรับ Google OAuth
+- **ลืมรหัสผ่าน** — รีเซ็ตผ่านอีเมล PIN 6 หลัก
+
+### สำหรับ Admin
+- **แผงควบคุม Admin** — ดู stats, จัดการการจอง, จัดการคอร์ต, ดูผู้ใช้
+- **CRUD Courts** — เพิ่ม / แก้ไข / ลบคอร์ตแบบ Real-time
+- **ดูรายการจองทั้งหมด** — พร้อม PIN code และสถานะการชำระเงิน
+- **ลบ/ยกเลิกการจอง** — จัดการ bookings ได้โดยตรง
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend** | HTML5, Vanilla JavaScript (ES6+), CSS3 (Dark mode / Glassmorphism) |
+| **Backend** | Node.js, Express.js |
+| **Database** | SQLite3 (Dual DB: Primary write + Sub read replica) |
+| **Auth** | JWT (jsonwebtoken), bcryptjs |
+| **Payment** | PromptPay QR (EMV payload), Thunder Slip Verify API |
+| **Email** | Nodemailer (SMTP / Gmail) |
+| **Image processing** | Jimp + jsQR (local QR decode จากสลิป) |
+
+## 🚀 การติดตั้งและรัน
+
+### ข้อกำหนดเบื้องต้น
+- Node.js v18 ขึ้นไป
+- npm
+
+### ขั้นตอน
+
+```bash
+# 1. เข้าโฟลเดอร์ booking-server
+cd booking-server
+
+# 2. ติดตั้ง dependencies
+npm install
+
+# 3. คัดลอกและแก้ไขไฟล์ config
+cp .env.example .env
+# แก้ไขค่าใน .env ตามที่ต้องการ
+
+# 4. รัน server
+npm start
+```
+
+เว็บแอปจะเปิดที่: **http://localhost:3001**
+
+### ตัวแปรสภาพแวดล้อม (`.env`)
+
+```env
+PORT=3001
+JWT_SECRET=your_jwt_secret_here
+
+# Google OAuth (ถ้าต้องการใช้ Social Login)
+GOOGLE_CLIENT_ID=your_google_client_id
+
+# Thunder Slip Verify API (ถ้าไม่ใส่จะเป็น Simulation Mode อัตโนมัติ)
+SLIP_API_KEY=your_slip_api_key
+
+# PromptPay รับเงิน (เบอร์โทรหรือเลขบัตรประชาชน)
+PROMPAY_RECEIVER_ID=0912345678
+
+# SMTP สำหรับส่งอีเมลรีเซ็ตรหัสผ่าน
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+```
+
+### บัญชีเริ่มต้น (Seed Accounts)
+
+ระบบจะสร้างบัญชีเริ่มต้นอัตโนมัติเมื่อ database ว่างเปล่า:
+
+| Username | Password | Role |
+|---|---|---|
+| `player1` | `player123` | user |
+| `admin` | `admin123` | admin |
+
+> [!WARNING]
+> เปลี่ยนรหัสผ่านเหล่านี้ทันทีก่อนใช้งานใน Production
+
+## 📡 Booking API Reference
+
+### Public Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/config` | ดึงค่า config (Google Client ID, PromptPay ID) |
+| `GET` | `/api/courts?date=YYYY-MM-DD` | ดึงรายการคอร์ตพร้อม booked slots |
+| `POST` | `/api/auth/register` | ลงทะเบียนผู้ใช้ใหม่ |
+| `POST` | `/api/auth/login` | เข้าสู่ระบบ |
+| `POST` | `/api/auth/google-login` | เข้าสู่ระบบด้วย Google |
+| `POST` | `/api/auth/forgot-password` | ขอรีเซ็ตรหัสผ่าน (ส่ง PIN ทางอีเมล) |
+| `POST` | `/api/auth/reset-password` | รีเซ็ตรหัสผ่านด้วย PIN |
+
+### Protected Endpoints (ต้องใช้ JWT Token)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/auth/me` | ดึงข้อมูลผู้ใช้ปัจจุบัน |
+| `POST` | `/api/bookings` | สร้างการจองใหม่ |
+| `GET` | `/api/bookings/my-bookings` | ดูประวัติการจองของตัวเอง |
+| `GET` | `/api/bookings/:id` | ดูรายละเอียดการจอง |
+| `POST` | `/api/payment/:bookingId` | ชำระเงิน (พร้อม slip verification) |
+
+### Admin Endpoints (ต้องมี role = `admin`)
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/admin/stats` | ดู stats ภาพรวม |
+| `GET` | `/api/admin/bookings` | ดูการจองทั้งหมด |
+| `DELETE` | `/api/admin/bookings/:id` | ลบการจอง |
+| `GET` | `/api/admin/courts` | ดูรายการคอร์ตทั้งหมด |
+| `POST` | `/api/admin/courts` | เพิ่มคอร์ตใหม่ |
+| `PUT` | `/api/admin/courts/:id` | แก้ไขคอร์ต |
+| `DELETE` | `/api/admin/courts/:id` | ลบคอร์ต |
+| `GET` | `/api/admin/users` | ดูรายชื่อผู้ใช้ทั้งหมด |
+
+## 🔄 Dual Database Architecture
+
+ระบบใช้ SQLite 2 ฐานข้อมูลเพื่อแยก Read/Write load:
+
+```
+Write Operation (runQuery)
+    └─► Primary DB (primary.db) ──[50ms lag]──► Sub DB (sub.db)
+
+Read Operation
+    ├─► allQuery / getQuery      → Sub DB    (eventual consistency)
+    └─► allPrimaryQuery / getPrimaryQuery → Primary DB (strong consistency)
+```
+
+> [!NOTE]
+> Courts, bookings ที่เพิ่งสร้าง/แก้ไข จะใช้ `allPrimaryQuery` เพื่อให้ได้ข้อมูลล่าสุดทันที
+
+## 🔐 Payment Flow
+
+```mermaid
+sequenceDiagram
+    actor User
+    participant Web as Web App
+    participant Server as Booking Server
+    participant SlipAPI as Thunder Slip API
+
+    User->>Web: เลือกคอร์ต + เวลา + กด Book
+    Web->>Server: POST /api/bookings
+    Server-->>Web: booking ID + ราคา
+    Web->>User: แสดง PromptPay QR Code
+    User->>User: โอนเงินและถ่ายรูปสลิป
+    User->>Web: อัปโหลดสลิป
+    Web->>Server: POST /api/payment/:id + slip image (base64)
+    Server->>Server: Decode QR code จากสลิปด้วย jsQR
+    Server->>SlipAPI: ยืนยันสลิปกับ Thunder API
+    SlipAPI-->>Server: ผลการตรวจสอบ (amount, receiver, duplicate check)
+    Server->>Server: ตรวจสอบ receiver, amount, timestamp
+    Server-->>Web: Payment Success + E-Ticket PIN
+    Web->>User: แสดง E-Ticket พร้อม PIN 6 หลัก
+```
+
+---
+
+---
+
+# 📱 ระบบที่ 2: TennisLock Kiosk System
+
+ระบบ Kiosk ล็อกหน้าจออุปกรณ์ Android สำหรับติดตั้งที่สนามเทนนิส ผู้เช่าสนามจะปลดล็อกหน้าจอด้วย PIN 6 หลักที่ได้จากระบบจองในระบบที่ 1
+
+## ✨ Features หลัก
+
+### Android Kiosk App (`TennisLockApp`)
+- **Relentless Launcher Lock** — ตั้งตัวเองเป็น Default Launcher, หน้าจอล็อก Kiosk เปิดขึ้นทันทีเมื่อเครื่อง boot หากผู้ใช้ปัดแอปออก ระบบจะดึงกลับมาภายใน **200ms**
+- **Accessibility Service Guard** — บล็อกการเข้า Settings, Package Installer และการลากแถบ Notification Shade / Quick Settings
+- **Persistent Foreground Service** — นับถอยหลังเวลาใช้งาน (Countdown Timer) และส่ง Heartbeat ไปยังเซิร์ฟเวอร์ทุก **15 วินาที**
+- **Device Owner Integration** — รองรับสิทธิ์สูงสุด (Device Owner) สำหรับ Lock Task Mode ระดับฮาร์ดแวร์
+- **Remote Command** — รับคำสั่ง Force Lock / Force Unlock จากเซิร์ฟเวอร์ผ่าน Heartbeat response
+
+### Kiosk Backend Server (`server/`)
+- **PIN Generator** — สร้าง PIN 6 หลักพร้อมกำหนดเวลาหมดอายุ
+- **Auto-Expiration** — PIN ที่ไม่ได้ใช้ใน **10 นาที** จะ expire อัตโนมัติ
+- **Real-time Status** — ติดตามสถานะอุปกรณ์ (ONLINE/OFFLINE/IN_USE/LOCKED) และแบตเตอรี่
+- **Admin Dashboard** — หน้าจอควบคุม Tailwind CSS สำหรับ Admin
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Android App** | Java, Android SDK (minSdk 24 / targetSdk 36) |
+| **Android Services** | AccessibilityService, DeviceAdminReceiver, ForegroundService |
+| **Kiosk Backend** | Node.js, Express.js, SQLite3 |
+| **Admin Dashboard** | HTML + Tailwind CSS |
+| **Deployment** | Docker + Docker Compose |
+
+## 🚀 การติดตั้ง Kiosk Backend Server
+
+### วิธี A: ผ่าน Docker (แนะนำสำหรับ Production)
 
 ```bash
 cd server
 docker-compose up -d --build
 ```
 
-ระบบจะรันขึ้นมาทันทีที่พอร์ต `3000` โดยฐานข้อมูลจะถูกเก็บรักษาไว้ที่โฟลเดอร์ `./data/database.sqlite` ในเครื่องหลักอย่างปลอดภัย
+ระบบจะรันที่พอร์ต `3000` และ database จะถูกบันทึกไว้ที่ `./data/database.sqlite`
 
-#### วิธีการที่ B: ติดตั้งและรันด้วย Node.js บนเครื่องตรงๆ
-
-1. ตรวจสอบให้แน่ใจว่าเครื่องของคุณมี Node.js ติดตั้งอยู่ (เวอร์ชัน 18 ขึ้นไป)
-2. เข้าโฟลเดอร์และลงไลบรารีที่จำเป็น:
+### วิธี B: รันตรงด้วย Node.js
 
 ```bash
 cd server
 npm install
-```
-
-3. เริ่มต้นรันเซิร์ฟเวอร์:
-
-```bash
 node index.js
 ```
 
-เซิร์ฟเวอร์จะเปิดทำงานที่: [http://localhost:3000](http://localhost:3000)
+Admin Dashboard จะเปิดที่: **http://localhost:3000**
 
----
+## 📲 การติดตั้ง Android Kiosk App
 
-### ส่วนที่ 2: การตั้งค่าแอปพลิเคชัน Android (`TennisLockApp`)
+### ขั้นตอนที่ 1: Build และติดตั้งแอป
 
-1. **เปิดโครงการใน Android Studio:**
-   นำเข้าโฟลเดอร์ `TennisLockApp` เข้าสู่ Android Studio และรอการสร้าง Gradle จนเสร็จสิ้น
-2. **การตั้งค่าสิทธิ์สูงสุด (Device Owner - สำคัญมาก):**
-   เพื่อให้ฟีเจอร์ Lock Task Mode บล็อกหน้าจอได้อย่างสมบูรณ์ ต้องเปิดสิทธิ์สูงสุดระดับเจ้าของเครื่องให้กับตัวแอป โดยเชื่อมต่อมือถือ/แท็บเล็ตเข้ากับคอมพิวเตอร์ผ่านสาย USB (ต้องเปิด USB Debugging) แล้วรันคำสั่ง ADB นี้ใน Terminal:
-   ```bash
-   adb shell dpm set-device-owner com.example.tennislockapp/.LockDeviceAdminReceiver
-   ```
-   > [!IMPORTANT]
-   > ก่อนที่จะลงทะเบียนสิทธิ์ Device Owner จะต้องตรวจดูให้แน่ใจว่าอุปกรณ์ Android เครื่องนั้นไม่มีการลงชื่อเข้าใช้บัญชี Google (เช่น Gmail) หรือรหัสผ่านล็อกหน้าจอยังว่างอยู่ มิฉะนั้นคำสั่งอาจจะขึ้นแจ้งเตือนผิดพลาดได้ (สามารถลงชื่อเข้าใช้กลับคืนได้หลังเซ็ตอัพเรียบร้อย)
-3. **เปิดใช้งาน Accessibility Service:**
-   ไปที่เมนู **Settings (การตั้งค่า) > Accessibility (การช่วยเหลือการเข้าถึง)** บนเครื่องพกพา แล้วกดเปิดใช้งานให้กับ **"Tennis Lock Accessibility Guard"** เพื่อให้แอปพลิเคชันบล็อกหน้าต่าง Settings และการลากแถบแจ้งเตือนด้านบนได้สำเร็จ
-4. **ระบุที่อยู่ของเซิร์ฟเวอร์กลาง (Server IP Configuration):**
-   - ในการติดตั้งครั้งแรก เปิดแอปพลิเคชัน `TennisLockApp` บนเครื่อง
-   - เข้าสู่หน้าแอดมินโดยคลิกที่ปุ่มแอดมินหรือคลิกตามวิธีเข้าที่ระบุในแอป
-   - กรอกไอพีแอดเดรสของเซิร์ฟเวอร์ฝั่งผู้ดูแลระบบ เช่น `http://192.168.1.100:3000` เพื่อให้ระบบซิงค์ข้อมูลกับหลังบ้านได้ถูกต้อง
+1. เปิดโฟลเดอร์ `TennisLockApp` ใน **Android Studio**
+2. รอ Gradle sync เสร็จสิ้น
+3. เชื่อมต่ออุปกรณ์ Android ผ่าน USB (เปิด USB Debugging)
+4. กด **Run** หรือ `Shift+F10` เพื่อ build และติดตั้ง
 
----
+### ขั้นตอนที่ 2: ลงทะเบียนสิทธิ์ Device Owner
 
-## 📡 ข้อมูลทางเทคนิคและ REST API (API Specifications)
+> [!IMPORTANT]
+> ก่อนรันคำสั่ง Device Owner ให้ตรวจสอบว่า:
+> - **ไม่มีบัญชี Google** ล็อกอินอยู่ในเครื่อง (ลบออกชั่วคราวได้ใน Settings > Accounts)
+> - ไม่มี PIN/Pattern ล็อกหน้าจอตั้งไว้
 
-### หมวดหมู่อุปกรณ์ (Device Endpoints)
+```bash
+adb shell dpm set-device-owner com.example.tennislockapp/.LockDeviceAdminReceiver
+```
 
-| Method   | Endpoint                 | Description                      | Payload (JSON)                                                        | Response Success                                |
-| :------- | :----------------------- | :------------------------------- | :-------------------------------------------------------------------- | :---------------------------------------------- |
-| **POST** | `/api/device/register`   | ลงทะเบียนตัวเครื่องเข้าระบบ      | `{"device_id": "unique-id"}`                                          | `{"message": "Device registered successfully"}` |
-| **POST** | `/api/device/verify-pin` | ตรวจสอบรหัสปลดล็อกของลูกค้า      | `{"device_id": "unique-id", "pin": "123456"}`                         | `{"message": "...", "duration_minutes": 60}`    |
-| **POST** | `/api/device/heartbeat`  | รายงานสถานะเครื่องทุกๆ 15 วินาที | `{"device_id": "unique-id", "battery_level": 85, "status": "IN_USE"}` | `{"message": "...", "pending_command": "LOCK"}` |
+### ขั้นตอนที่ 3: เปิดใช้งาน Accessibility Service
 
-### หมวดหมู่แอดมิน (Admin Endpoints)
+บนอุปกรณ์ Android:
+```
+Settings > Accessibility > Tennis Lock Accessibility Guard > เปิดใช้งาน
+```
 
-| Method     | Endpoint                      | Description                          | Payload (JSON)                      | Response Success                               |
-| :--------- | :---------------------------- | :----------------------------------- | :---------------------------------- | :--------------------------------------------- |
-| **GET**    | `/api/admin/devices`          | เรียกดูประวัติอุปกรณ์และสถานะทั้งหมด | _None_                              | รายการอุปกรณ์ในคลัง `[{"id": 1, ...}]`         |
-| **POST**   | `/api/admin/generate-pin`     | สร้างรหัส PIN ใหม่ตามระยะเวลาเช่า    | `{"duration_minutes": 60}`          | `{"message": "...", "pin": "987654"}`          |
-| **GET**    | `/api/admin/sessions`         | ตรวจดูประวัติเซสชันและการเช่า        | `?limit=10&offset=0`                | รายชื่อเซสชัน และจำนวนทั้งหมด                  |
-| **POST**   | `/api/admin/device/:id/force` | สั่งการอุปกรณ์ด่วนจากระยะไกล         | `{"command": "LOCK"}` หรือ `UNLOCK` | `{"message": "Command queued..."}`             |
-| **DELETE** | `/api/admin/devices`          | ล้างรายชื่ออุปกรณ์ที่ลงทะเบียนไว้    | _None_                              | `{"message": "All connected devices cleared"}` |
-| **DELETE** | `/api/admin/sessions`         | ล้างประวัติ PIN/เซสชันทั้งหมด        | _None_                              | `{"message": "All sessions cleared"}`          |
+### ขั้นตอนที่ 4: ตั้งค่า Server IP
 
----
+เปิดแอป `TennisLockApp` บนเครื่อง → เข้าหน้า Admin Settings → กรอก IP ของ Kiosk Server เช่น:
+```
+http://192.168.1.100:3000
+```
 
-## 🔄 ลำดับขั้นตอนการทำงาน (Workflow Scenarios)
+> [!NOTE]
+> อุปกรณ์ Android และ Kiosk Server ต้องอยู่ใน Wi-Fi วงเดียวกัน
 
-### Scenario A: เริ่มต้นเช่าและเปิดเครื่องใช้งาน
+## 📡 Kiosk API Reference
+
+### Device Endpoints (เรียกจากแอป Android)
+
+| Method | Endpoint | Description | Payload |
+|---|---|---|---|
+| `POST` | `/api/device/register` | ลงทะเบียนอุปกรณ์ครั้งแรก | `{"device_id": "unique-id"}` |
+| `POST` | `/api/device/verify-pin` | ตรวจสอบ PIN ปลดล็อก | `{"device_id": "...", "pin": "123456"}` |
+| `POST` | `/api/device/heartbeat` | รายงานสถานะทุก 15 วินาที | `{"device_id": "...", "battery_level": 85, "status": "IN_USE"}` |
+
+### Admin Endpoints (เรียกจาก Web Dashboard)
+
+| Method | Endpoint | Description | Payload / Params |
+|---|---|---|---|
+| `GET` | `/api/admin/devices` | ดูรายการอุปกรณ์ทั้งหมด | — |
+| `POST` | `/api/admin/generate-pin` | สร้าง PIN ใหม่ | `{"duration_minutes": 60}` |
+| `GET` | `/api/admin/sessions` | ดูประวัติ PIN/เซสชัน | `?limit=10&offset=0` |
+| `POST` | `/api/admin/device/:id/force` | สั่งการอุปกรณ์ด่วน | `{"command": "LOCK"}` หรือ `"UNLOCK"` |
+| `DELETE` | `/api/admin/devices` | ล้างรายชื่ออุปกรณ์ทั้งหมด | — |
+| `DELETE` | `/api/admin/sessions` | ล้างประวัติ PIN ทั้งหมด | — |
+
+## 🔄 Workflow Scenarios
+
+### Scenario A: ผู้เช่าสนามปลดล็อก Kiosk
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as 👨‍💼 Admin Web Dashboard
-    actor User as 🏸 User Client Device
-    participant Server as ⚙️ Node.js API Server
+    actor Admin as 👨‍💼 Admin (Web Dashboard)
+    actor User as 🏸 ผู้เช่าสนาม
+    participant Server as ⚙️ Kiosk Server
+    participant Device as 📱 Android Kiosk
 
-    Admin->>Server: สั่งสร้าง PIN ปลดล็อก (ระบุเวลาเช่า เช่น 60 นาที)
-    Server-->>Admin: ส่ง PIN กลับให้ (เช่น "582910")
-    Admin->>User: นำ PIN มอบให้ผู้ใช้ป้อนที่หน้าจอหลักของแอป
-    User->>Server: ส่ง API ตรวจสอบ PIN (Verify PIN)
-    Note over Server: ตรวจสอบความถูกต้องและเวลาหมดอายุของ PIN
-    Server-->>User: ยืนยันผ่าน! ส่งกลับค่าเวลาใช้งาน (60 mins)
-    Note over User: เปลี่ยนสถานะเป็น IN_USE ปลดบล็อกระบบ และเริ่มนับถอยหลัง
+    Admin->>Server: สร้าง PIN (ระบุเวลาเช่า เช่น 60 นาที)
+    Server-->>Admin: ส่ง PIN กลับ (เช่น "582910")
+    Admin->>User: มอบ PIN ให้ผู้เช่า
+    User->>Device: กรอก PIN ที่หน้าจอ Kiosk
+    Device->>Server: POST /api/device/verify-pin
+    Server-->>Device: ยืนยันผ่าน! ส่งค่าเวลาใช้งาน (60 mins)
+    Device->>Device: สถานะ IN_USE, ปลดบล็อก, เริ่มนับถอยหลัง
 ```
 
-### Scenario B: เมื่อหมดเวลาเช่า หรือ สั่งล็อกเครื่องจากเซิร์ฟเวอร์
+### Scenario B: หมดเวลา หรือ Admin สั่ง Force Lock
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor Admin as 👨‍💼 Admin Web Dashboard
-    participant Server as ⚙️ Node.js API Server
-    actor User as 📱 User Client Device
+    actor Admin as 👨‍💼 Admin (Web Dashboard)
+    participant Server as ⚙️ Kiosk Server
+    participant Device as 📱 Android Kiosk
 
-    Note over User: กรณีนับถอยหลังครบ 60 นาที (เวลาเป็นศูนย์)
-    User->>User: สั่งหยุดการทำงาน (stopSession) เปลี่ยนสถานะเป็น LOCKED บังคับบล็อกหน้าจอทันที!
+    Note over Device: Countdown ครบ 60 นาที
+    Device->>Device: stopSession() → ล็อกหน้าจอทันที
 
-    %% Alternative Case
-    Note over Admin, User: หรือแอดมินกดสั่ง Force Lock จากหน้า Dashboard กลาง
-    Admin->>Server: สั่งล็อคอุปกรณ์ (POST /device/:id/force {"command": "LOCK"})
-    Server-->>Admin: บันทึกเข้า Database เป็น pending_command = 'LOCK'
-    User->>Server: ส่งสัญญาณสัญญาณตรวจสถานะ (Heartbeat) ประจำวินาทีที่ 15
-    Server-->>User: ตรวจพบ pending_command = 'LOCK' ส่งแจ้งเตือนกลับไป
-    User->>User: ปิดเซสชัน คืนสิทธิ์ล็อกทันที! รันหน้าจอ Kiosk และ watcher เริ่มทำงานดัก
+    Note over Admin,Device: หรือแอดมินสั่ง Force Lock
+    Admin->>Server: POST /api/admin/device/:id/force {"command":"LOCK"}
+    Server->>Server: บันทึก pending_command = 'LOCK'
+    Device->>Server: Heartbeat (วินาทีที่ 15)
+    Server-->>Device: ตรวจพบ pending_command LOCK
+    Device->>Device: ปิดเซสชัน → กลับสู่หน้าจอล็อก Kiosk
 ```
 
 ---
 
-## 🛠️ การแก้ไขปัญหาที่อาจพบเจอ (Troubleshooting Guide)
+---
 
-1. **คำสั่งลงทะเบียน Device Owner ขึ้นแจ้งเตือนข้อผิดพลาด:**
-   - ให้แน่ใจว่าคุณพิมพ์ชื่อ package และ Receiver ถูกต้องตามตัวอักษร: `com.example.tennislockapp/.LockDeviceAdminReceiver`
-   - ให้แน่ใจว่าอุปกรณ์ของคุณไม่พ่วงต่อบัญชีใดๆ อยู่ (Settings > Accounts > ลบบัญชีอีเมลออกทั้งหมดชั่วคราว)
-2. **เครื่อง Android แจ้งเตือนส่งสัญญาณไม่ผ่าน (Network Error / Heartbeat Failed):**
-   - ตรวจดูการอนุญาตสิทธิ์การเชื่อมต่ออินเทอร์เน็ตในตัวเครื่อง
-   - ตรวจเช็คว่าอุปกรณ์ Android และคอมพิวเตอร์เซิร์ฟเวอร์อยู่ในวงแลน (Wi-Fi) เครือข่ายเดียวกันหรือไม่ และเซิร์ฟเวอร์ไม่ได้เปิดไฟร์วอลล์บล็อกพอร์ต `3000` ไว้
-3. **ผู้ใช้ปัดแอปออกจากหน้าจอเปิดได้เป็นวินาที:**
-   - ตรวจดูว่าได้ตั้งค่าให้ `TennisLockApp` เป็น **Default Launcher (แอปหน้าแรกเริ่มต้น)** ของ Android เครื่องนั้นแล้วหรือยัง หากไม่ได้ตั้งค่าไว้ ระบบการทำงานดักปัดทิ้ง (Relaunch watcher) จะไม่สามารถดึงหน้าจอกลับมาล็อคได้มีประสิทธิภาพสูงสุด
+## 🔗 ความสัมพันธ์ระหว่าง 2 ระบบ
+
+ทั้ง 2 ระบบทำงานแยกกันแต่เชื่อมกันผ่าน **PIN Code**:
+
+```
+[AcePoint Booking Web App]          [TennisLock Kiosk App]
+         |                                    |
+  ผู้ใช้จองคอร์ต                      หน้าจอติดที่สนาม
+  ชำระเงินสลิป ✅                     รอรับ PIN
+         |                                    |
+  ได้รับ E-Ticket                           |
+  + PIN 6 หลัก  ────────────────────► กรอก PIN ปลดล็อก
+                                       ใช้สนามได้ตามเวลา
+```
+
+> [!NOTE]
+> PIN ที่แสดงใน E-Ticket ของระบบจองสามารถนำไปใช้กับหน้าจอ Kiosk ได้โดยตรง โดย Admin เป็นผู้เชื่อมข้อมูลระหว่าง 2 ระบบ
+
+---
+
+## 🛠️ Troubleshooting
+
+### Booking Web App
+
+| ปัญหา | แนวทางแก้ไข |
+|---|---|
+| แก้ไข court แล้วไม่อัพเดท | ทำ Hard Refresh (`Ctrl+Shift+R`) ครั้งแรกหลัง restart server ล่าสุด |
+| ยืนยันสลิปไม่ผ่าน | ตรวจสอบว่า `SLIP_API_KEY` ใน `.env` ถูกต้อง หรือลบออกเพื่อใช้ Simulation Mode |
+| ไม่ได้รับอีเมล reset PIN | ตรวจสอบค่า SMTP ใน `.env` และ Gmail App Password |
+| Error: "Timeslot is already booked" | มีการจองซ้อนในช่วงเวลานั้นแล้ว ลองเลือกช่วงอื่น |
+
+### TennisLock Kiosk
+
+| ปัญหา | แนวทางแก้ไข |
+|---|---|
+| คำสั่ง Device Owner ขึ้น error | ลบบัญชี Google และ PIN ล็อกหน้าจอออกก่อน แล้วรันใหม่ |
+| แอปไม่บล็อก Notification Shade | ตรวจสอบว่า Accessibility Service เปิดใช้งานอยู่ |
+| Heartbeat ส่งไม่ผ่าน | ตรวจสอบ Server IP ในแอป และ Wi-Fi ให้อยู่วงเดียวกับ Server |
+| ผู้ใช้ปัดแอปออกได้ชั่วคราว | ตรวจสอบว่าตั้ง `TennisLockApp` เป็น Default Launcher แล้ว |
+
+---
+
+## 📄 License
+
+MIT License — © 2026 AcePoint Tennis Platform
