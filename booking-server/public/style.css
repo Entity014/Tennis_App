@@ -170,7 +170,9 @@ body.light-theme .app-header {
   align-items: center;
   justify-content: space-between;
   height: 100%;
+  position: relative;
 }
+
 
 .logo {
   display: flex;
@@ -195,7 +197,11 @@ body.light-theme .logo {
 .nav-links {
   display: flex;
   gap: 25px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
+
 
 .nav-link {
   color: var(--text-muted);
@@ -613,6 +619,12 @@ body.light-theme .badge {
   background: var(--neon-green-alpha);
   border-color: var(--neon-green-alpha-solid);
   color: var(--neon-green);
+}
+
+.badge-blue {
+  background: var(--blue-alpha);
+  border-color: rgba(59, 130, 246, 0.3);
+  color: var(--blue-primary);
 }
 
 .court-card-desc {
@@ -1829,6 +1841,7 @@ body.light-theme .ticket-footer {
   justify-content: space-between;
   align-items: center;
   transition: all var(--transition-speed);
+  cursor: pointer;
 }
 
 body.light-theme .booking-item {
@@ -1836,13 +1849,17 @@ body.light-theme .booking-item {
 }
 
 .booking-item:hover {
-  border-color: rgba(207, 254, 28, 0.2);
+  border-color: var(--neon-green);
   background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-neon);
 }
 
 body.light-theme .booking-item:hover {
-  border-color: rgba(104, 159, 0, 0.2);
+  border-color: var(--neon-green);
   background: rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-neon);
 }
 
 .booking-info-main {
@@ -1906,6 +1923,28 @@ body.light-theme .booking-court-avatar {
   background: rgba(245, 158, 11, 0.15);
   color: #f59e0b;
   border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.btn-danger-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  transition: all var(--transition-speed);
+}
+
+.btn-danger-sm:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
 }
 
 /* Empty State */
@@ -2190,6 +2229,31 @@ body.light-theme .slip-upload-box {
   padding: 12px 8px;
   color: var(--text-main);
   font-size: 0.9rem;
+}
+
+.role-select-dropdown {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--text-main);
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  min-width: 90px;
+  transition: border-color var(--transition-speed);
+  appearance: auto;
+}
+
+.role-select-dropdown:hover,
+.role-select-dropdown:focus {
+  border-color: var(--neon-green);
+  outline: none;
+}
+
+body.light-theme .role-select-dropdown {
+  background: #fff;
+  color: #1e293b;
 }
 
 .admin-courts-grid {

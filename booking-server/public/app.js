@@ -15,6 +15,22 @@ const STATE = {
   editingCourtId: null
 };
 
+// Date Utility Functions
+function getLocalDateString(dateObj = new Date()) {
+  const year = dateObj.getFullYear();
+  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getDefaultDate() {
+  const today = new Date();
+  if (today.getHours() >= 21) {
+    today.setDate(today.getDate() + 1);
+  }
+  return getLocalDateString(today);
+}
+
 // Simulated Social Accounts for Fallback Login Mode
 const SIMULATED_ACCOUNTS = {
   google: [
@@ -31,19 +47,15 @@ const SIMULATED_ACCOUNTS = {
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   
-  // Set default search date to today
-  const today = new Date();
-  const formattedToday = today.toISOString().split('T')[0];
-  STATE.selectedDate = formattedToday;
+  // Set default search date
+  STATE.selectedDate = getDefaultDate();
 
   // Initialize Flatpickr inputs
   initFlatpickr();
 
   fetchConfig().then(() => {
+    STATE.configLoaded = true;
     initSocialSDKs();
-    if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-      initGoogleGis();
-    }
   });
   
   initNavigation();
@@ -57,7 +69,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchUserInfo();
   }
   loadFeaturedCourts();
+  initRealtimeSync();
 });
+
 
 // --- Theme Management (Auto OS & Manual Toggle) ---
 function initTheme() {
@@ -134,13 +148,15 @@ function initFlatpickr() {
   const maxDate = new Date();
   maxDate.setMonth(maxDate.getMonth() + 3);
 
+  const minDate = getDefaultDate();
+
   bookingDatePicker = flatpickr("#booking-date", {
     altInput: true,
     altFormat: "d/m/Y",
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
-    minDate: "today",
+    minDate: minDate,
     maxDate: maxDate,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
@@ -158,7 +174,7 @@ function initFlatpickr() {
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
-    minDate: "today",
+    minDate: minDate,
     maxDate: maxDate,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
@@ -184,12 +200,24 @@ async function fetchConfig() {
   }
 }
 
-// Google GIS Onload callback defined globally
+// Google GIS SDK onload callback — fires when accounts.google.com/gsi/client finishes loading
 window.onGoogleGisLoad = function() {
   STATE.googleGisLoaded = true;
-  if (STATE.config.googleClientId) {
+  if (STATE.configLoaded && STATE.config.googleClientId) {
     initGoogleGis();
+    return;
   }
+  // Config not ready yet — poll until it is (max 3s)
+  let waited = 0;
+  const poll = setInterval(() => {
+    waited += 200;
+    if (STATE.configLoaded) {
+      clearInterval(poll);
+      if (STATE.config.googleClientId) initGoogleGis();
+    } else if (waited >= 3000) {
+      clearInterval(poll);
+    }
+  }, 200);
 };
 
 function initGoogleGis() {
@@ -222,10 +250,12 @@ function initGoogleGis() {
 
 // Initialize official SDKs for Google Sign In & Facebook
 function initSocialSDKs() {
-  // If Google script has already loaded and loaded callback fired
-  if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+  // Google: if SDK already loaded (either via callback or already globally present in window)
+  const isGoogleLoaded = STATE.googleGisLoaded || (typeof google !== 'undefined' && google.accounts && google.accounts.id);
+  if (isGoogleLoaded && STATE.config.googleClientId) {
     initGoogleGis();
   }
+  // Otherwise onGoogleGisLoad() will trigger init when SDK finishes loading
 
   // 2. Live Facebook Sign In
   if (STATE.config.facebookAppId) {
@@ -416,6 +446,7 @@ function navigateTo(viewId) {
         STATE.selectedSlots = [];
         STATE.slipImage = null;
       }
+      toggleAuthTab('login');
     } else {
       if (baseId !== 'review') {
         STATE.inBookingFlow = false;
@@ -618,6 +649,8 @@ function initAuthForms() {
   const forgotForm = document.getElementById('forgot-password-form');
   const forgotEmailInput = document.getElementById('forgot-email');
   const forgotEmailError = document.getElementById('forgot-email-error');
+  const forgotSubmitBtn = document.getElementById('forgot-submit-btn');
+  let originalBtnHtml = forgotSubmitBtn ? forgotSubmitBtn.innerHTML : 'Send PIN';
 
   forgotEmailInput?.addEventListener('input', () => forgotEmailError.style.display = 'none');
 
@@ -630,6 +663,11 @@ function initAuthForms() {
       return;
     }
 
+    if (forgotSubmitBtn) {
+      forgotSubmitBtn.disabled = true;
+      forgotSubmitBtn.innerHTML = 'Sending... <i class="fa-solid fa-spinner fa-spin ml-1"></i>';
+    }
+
     fetch('/api/auth/forgot-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -640,13 +678,39 @@ function initAuthForms() {
       if (!ok) {
         forgotEmailError.textContent = data.message || 'Error sending PIN';
         forgotEmailError.style.display = 'block';
+        if (forgotSubmitBtn) {
+          forgotSubmitBtn.disabled = false;
+          forgotSubmitBtn.innerHTML = originalBtnHtml;
+        }
         return;
       }
       showNotification('A password reset PIN has been sent to your email. Please check your inbox.', 'success');
       document.getElementById('reset-token').value = '';
+      
+      if (forgotSubmitBtn) {
+        let cooldown = 30;
+        forgotSubmitBtn.innerHTML = `Wait ${cooldown}s <i class="fa-solid fa-clock ml-1"></i>`;
+        const interval = setInterval(() => {
+          cooldown--;
+          if (cooldown <= 0) {
+            clearInterval(interval);
+            forgotSubmitBtn.disabled = false;
+            forgotSubmitBtn.innerHTML = originalBtnHtml;
+          } else {
+            forgotSubmitBtn.innerHTML = `Wait ${cooldown}s <i class="fa-solid fa-clock ml-1"></i>`;
+          }
+        }, 1000);
+      }
+
       toggleAuthTab('reset');
     })
-    .catch(() => showNotification('Connection error', 'error'));
+    .catch(() => {
+      showNotification('Connection error', 'error');
+      if (forgotSubmitBtn) {
+        forgotSubmitBtn.disabled = false;
+        forgotSubmitBtn.innerHTML = originalBtnHtml;
+      }
+    });
   });
 
   // Reset Password Submit
@@ -720,9 +784,8 @@ function handleAuthSuccess(data) {
   checkLoggedInState();
 
   // Redirect based on previous workflow target
-  if (STATE.activeBooking) {
-    // If logging in during court booking flow, proceed to review
-    navigateTo('review');
+  if (STATE.inBookingFlow && STATE.activeBooking) {
+    createPendingBooking();
   } else {
     navigateTo('dashboard');
   }
@@ -740,7 +803,8 @@ function checkLoggedInState() {
     userDisplay.style.display = 'flex';
     usernameSpan.textContent = STATE.user.display_name || STATE.user.username;
     authRequiredLinks.forEach(link => link.style.display = 'block');
-    
+
+    // Only admin can see the Admin Panel nav link
     if (STATE.user.role === 'admin') {
       adminRequiredLinks.forEach(link => link.style.display = 'block');
     } else {
@@ -883,7 +947,7 @@ function submitSimulatedSocialLogin(provider, account) {
 
 // --- Home / Featured Courts Section ---
 function loadFeaturedCourts() {
-  fetch(`/api/courts?date=${new Date().toISOString().split('T')[0]}`)
+  fetch(`/api/courts?date=${getDefaultDate()}`)
   .then(res => res.json())
   .then(courts => {
     STATE.courts = courts;
@@ -1000,8 +1064,63 @@ function initTimeslotHandlers() {
       showNotification('Sign in required to complete booking.', 'error');
       navigateTo('auth');
     } else {
-      navigateTo('review');
+      createPendingBooking();
     }
+  });
+}
+
+function createPendingBooking() {
+  const b = STATE.activeBooking;
+  if (!b) return;
+
+  const confirmBtn = document.getElementById('confirm-selection-btn');
+  const originalHTML = confirmBtn.innerHTML;
+  confirmBtn.disabled = true;
+  confirmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Securing timeslot...';
+
+  fetch('/api/bookings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.token}`
+    },
+    body: JSON.stringify({
+      court_id: b.court_id,
+      date: b.date,
+      start_time: b.start_time,
+      end_time: b.end_time
+    })
+  })
+  .then(res => res.json().then(data => ({ ok: res.ok, data })))
+  .then(({ ok, data }) => {
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = originalHTML;
+
+    if (ok && data.id) {
+      STATE.activeBooking = data;
+      STATE.inBookingFlow = false;
+      
+      if (data._cashBooking) {
+        showNotification('Booking confirmed! Cash payment recorded.', 'success');
+        renderETicket(data);
+        navigateTo('confirmation');
+      } else {
+        updateReviewDetails();
+        navigateTo('review');
+      }
+    } else {
+      showNotification(data.message || 'Unable to secure slot. It might have been booked by someone else.', 'error');
+      STATE.activeBooking = null;
+      STATE.selectedSlots = [];
+      refreshTimeGridSelection();
+      updateSelectionSummary();
+      navigateTo('timeslot');
+    }
+  })
+  .catch(() => {
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = originalHTML;
+    showNotification('Error securing timeslot. Please try again.', 'error');
   });
 }
 
@@ -1285,20 +1404,59 @@ function initPromoHandlers() {
     }
   });
 
-  // Proceed to payment gateway
+  // Proceed to payment gateway (or instant cash booking for mod/admin)
   document.getElementById('proceed-to-payment-btn').addEventListener('click', () => {
     if (!STATE.activeBooking) return;
-    
-    // Reset test mode checkbox
-    const testModeToggle = document.getElementById('test-mode-toggle');
-    if (testModeToggle) testModeToggle.checked = false;
 
-    // Save final price
+    // mod / admin → instant cash booking, no payment page
+    const role = STATE.user && STATE.user.role;
+    if (role === 'mod' || role === 'admin') {
+      const btn = document.getElementById('proceed-to-payment-btn');
+      const origHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Booking...';
+
+      const b = STATE.activeBooking;
+      fetch('/api/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${STATE.token}`
+        },
+        body: JSON.stringify({
+          court_id: b.court_id,
+          date: b.date,
+          start_time: b.start_time,
+          end_time: b.end_time,
+          promo_code: STATE.appliedPromo ? STATE.appliedPromo.code : null
+        })
+      })
+      .then(res => res.json())
+      .then(bookingData => {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+        if (bookingData.id) {
+          showNotification('Booking confirmed! Cash payment recorded.', 'success');
+          renderETicket(bookingData);
+          navigateTo('confirmation');
+        } else {
+          showNotification(bookingData.message || 'Unable to secure slot.', 'error');
+        }
+      })
+      .catch(() => {
+        btn.disabled = false;
+        btn.innerHTML = origHTML;
+        showNotification('Error communicating with server', 'error');
+      });
+      return;
+    }
+
+    // Regular user → go to payment page
     let finalPrice = STATE.activeBooking.price;
     if (STATE.appliedPromo) {
       finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
     }
-    
+
     // Update payment displays
     document.getElementById('payment-amount-display').textContent = `฿${finalPrice.toLocaleString()}`;
 
@@ -1326,9 +1484,39 @@ function updateReviewDetails() {
 // Intercept review navigation to update values on entry
 const originalNav = navigateTo;
 navigateTo = function(viewId) {
+  const targetBase = viewId.replace('-view', '');
+  const currentBase = STATE.currentView ? STATE.currentView.replace('-view', '') : '';
+
   if (viewId === 'review') {
     updateReviewDetails();
   }
+
+  // If navigating away from booking checkout screens to a different tab/home, cancel the pending booking
+  if ((currentBase === 'review' || currentBase === 'payment') && 
+      targetBase !== 'review' && targetBase !== 'payment' && targetBase !== 'confirmation') {
+    if (STATE.activeBooking && STATE.activeBooking.id) {
+      const cancelId = STATE.activeBooking.id;
+      // Clear local booking state immediately to avoid double cancel calls
+      STATE.activeBooking = null;
+      STATE.inBookingFlow = false;
+      
+      fetch(`/api/bookings/${cancelId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${STATE.token}`
+        }
+      })
+      .then(res => res.json())
+      .then(() => {
+        // Reload court grid if we're on the timeslot page
+        if (targetBase === 'timeslot') {
+          loadCourtsAvailability();
+        }
+      })
+      .catch(err => console.error('Error cancelling pending booking:', err));
+    }
+  }
+
   originalNav.apply(this, arguments);
 };
 
@@ -1589,7 +1777,7 @@ function submitBookingToDatabase() {
   if (!b || !STATE.token) return;
 
   const method = document.getElementById('pay-tab-card').classList.contains('active') ? 'Credit Card' : 'PromptPay QR';
-  
+
   if (method === 'PromptPay QR' && !STATE.slipImage) {
     showNotification('Please upload your payment slip first.', 'error');
     return;
@@ -1599,88 +1787,57 @@ function submitBookingToDatabase() {
   const payBtn = document.getElementById('pay-submit-btn');
   const originalBtnHTML = payBtn.innerHTML;
   payBtn.disabled = true;
-  payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Slip...';
+  payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Payment...';
 
-  const isTest = document.getElementById('test-mode-toggle') ? document.getElementById('test-mode-toggle').checked : false;
+  // Perform Payment processing on that Booking
+  showNotification('Verifying payment details...', 'info');
 
-  // 1. Create Booking in Database
-  fetch('/api/bookings', {
+  fetch(`/api/payment/${b.id}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${STATE.token}`
     },
     body: JSON.stringify({
-      court_id: b.court_id,
-      date: b.date,
-      start_time: b.start_time,
-      end_time: b.end_time,
-      is_test: isTest,
+      payment_method: method,
+      slip_image: STATE.slipImage,
       promo_code: STATE.appliedPromo ? STATE.appliedPromo.code : null
     })
   })
-  .then(res => res.json())
-  .then(bookingData => {
-    if (bookingData.id) {
-      // 2. Perform Payment processing on that Booking
-      showNotification('Verifying payment slip...', 'info');
-      
-      fetch(`/api/payment/${bookingData.id}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${STATE.token}`
-        },
-        body: JSON.stringify({ 
-          payment_method: method,
-          slip_image: STATE.slipImage
-        })
-      })
-      .then(payRes => {
-        return payRes.json().then(data => {
-          if (!payRes.ok) {
-            throw new Error(data.message || 'Verification failed');
-          }
-          return data;
-        });
-      })
-      .then(paymentResult => {
-        // Reset loading state
-        payBtn.disabled = false;
-        payBtn.innerHTML = originalBtnHTML;
-        
-        if (paymentResult.booking) {
-          // Clear active booking state and display E-ticket
-          clearInterval(countdownTimer);
-          showNotification('Payment verified successfully!', 'success');
-          
-          // Clear uploaded slip state
-          STATE.slipImage = null;
-          document.getElementById('slip-file-input').value = '';
-          document.getElementById('slip-preview-container').style.display = 'none';
-          document.getElementById('slip-upload-label').style.display = 'flex';
-          
-          renderETicket(paymentResult.booking);
-          navigateTo('confirmation');
-        } else {
-          showNotification(paymentResult.message || 'Slip verification failed', 'error');
-        }
-      })
-      .catch((err) => {
-        payBtn.disabled = false;
-        payBtn.innerHTML = originalBtnHTML;
-        showNotification(err.message || 'Error verifying payment slip', 'error');
-      });
-    } else {
-      payBtn.disabled = false;
-      payBtn.innerHTML = originalBtnHTML;
-      showNotification(bookingData.message || 'Unable to secure slot. Collision detected.', 'error');
-    }
+  .then(payRes => {
+    return payRes.json().then(data => {
+      if (!payRes.ok) {
+        throw new Error(data.message || 'Verification failed');
+      }
+      return data;
+    });
   })
-  .catch(() => {
+  .then(paymentResult => {
+    // Reset loading state
     payBtn.disabled = false;
     payBtn.innerHTML = originalBtnHTML;
-    showNotification('Error communicating with checkout server', 'error');
+
+    if (paymentResult.booking) {
+      // Clear active booking state and display E-ticket
+      clearInterval(countdownTimer);
+      showNotification('Payment verified successfully!', 'success');
+
+      // Clear uploaded slip state
+      STATE.slipImage = null;
+      document.getElementById('slip-file-input').value = '';
+      document.getElementById('slip-preview-container').style.display = 'none';
+      document.getElementById('slip-upload-label').style.display = 'flex';
+
+      renderETicket(paymentResult.booking);
+      navigateTo('confirmation');
+    } else {
+      showNotification(paymentResult.message || 'Payment verification failed', 'error');
+    }
+  })
+  .catch((err) => {
+    payBtn.disabled = false;
+    payBtn.innerHTML = originalBtnHTML;
+    showNotification(err.message || 'Error verifying payment', 'error');
   });
 }
 
@@ -1712,7 +1869,7 @@ function loadUserBookings() {
     totalCountEl.textContent = bookings.length;
     
     // Filter upcoming (date >= today)
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getLocalDateString();
     const upcoming = bookings.filter(b => b.date >= todayStr);
     upcomingCountEl.textContent = upcoming.length;
 
@@ -1756,7 +1913,8 @@ function loadUserBookings() {
         </div>
       `;
       
-      row.querySelector('.btn-ticket-view').addEventListener('click', () => {
+      row.style.cursor = 'pointer';
+      row.addEventListener('click', () => {
         renderETicket(b);
         navigateTo('confirmation');
       });
@@ -1779,14 +1937,14 @@ function changeDateByOffset(offset) {
   const currentDate = new Date(STATE.selectedDate);
   currentDate.setDate(currentDate.getDate() + offset);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const minSelectable = new Date(getDefaultDate());
+  minSelectable.setHours(0, 0, 0, 0);
 
   const maxBookingDate = new Date();
   maxBookingDate.setMonth(maxBookingDate.getMonth() + 3);
   maxBookingDate.setHours(23, 59, 59, 999);
 
-  if (currentDate < today) {
+  if (currentDate < minSelectable) {
     showNotification('Cannot select a past date', 'info');
     return;
   }
@@ -1887,7 +2045,7 @@ function loadAdminBookings() {
         <td><code>${b.pin_code}</code></td>
         <td><span class="booking-status-badge ${statusClass}">${b.status}</span></td>
         <td>
-          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminBooking(${b.id})">
+          <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)">
             <i class="fa-solid fa-trash"></i> Delete
           </button>
         </td>
@@ -1899,7 +2057,7 @@ function loadAdminBookings() {
 }
 
 function loadAdminCourts() {
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getDefaultDate();
   fetch(`/api/courts?date=${STATE.selectedDate || todayStr}`)
   .then(res => res.json())
   .then(courts => {
@@ -1971,7 +2129,7 @@ function handleAdminAddCourt(event) {
     // Refresh admin courts table
     loadAdminCourts();
     // Also refresh STATE.courts so home/timeslot views reflect changes in this session
-    const todayStr = new Date().toISOString().split('T')[0];
+    const todayStr = getDefaultDate();
     fetch(`/api/courts?date=${STATE.selectedDate || todayStr}`)
     .then(r => r.json())
     .then(courts => {
@@ -2078,8 +2236,12 @@ function resetCourtForm() {
   if (cancelBtn) cancelBtn.remove();
 }
 
-function deleteAdminBooking(id) {
+function deleteAdminBooking(id, btn) {
   if (!confirm('Are you sure you want to delete/cancel this booking?')) return;
+
+  // Optimistic UI: remove the row immediately
+  const row = btn ? btn.closest('tr') : null;
+  if (row) row.style.opacity = '0.4';
 
   fetch(`/api/admin/bookings/${id}`, {
     method: 'DELETE',
@@ -2090,8 +2252,18 @@ function deleteAdminBooking(id) {
     return res.json();
   })
   .then(() => {
+    // Remove from DOM instantly — no replication lag issue
+    if (row) row.remove();
+
+    // Check if table is now empty
+    const tbody = document.getElementById('admin-bookings-table-body');
+    if (tbody && tbody.children.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No bookings found in database.</td></tr>`;
+    }
+
     showNotification('Booking deleted', 'success');
-    loadAdminBookings();
+
+    // Update stats counter
     fetch('/api/admin/stats', {
       headers: { 'Authorization': `Bearer ${STATE.token}` }
     })
@@ -2102,7 +2274,10 @@ function deleteAdminBooking(id) {
     })
     .catch(() => {});
   })
-  .catch(() => showNotification('Error deleting booking', 'error'));
+  .catch(() => {
+    if (row) row.style.opacity = '1'; // revert fade on error
+    showNotification('Error deleting booking', 'error');
+  });
 }
 
 function deleteAdminCourt(id) {
@@ -2142,16 +2317,83 @@ function loadAdminUsers() {
 
     users.forEach(u => {
       const tr = document.createElement('tr');
-      const roleClass = u.role === 'admin' ? 'badge-neon' : '';
+      const roleColors = { admin: 'badge-neon', mod: 'badge-blue', user: '' };
+      const roleClass = roleColors[u.role] || '';
+
+      // Don't allow changing own role
+      const isSelf = STATE.user && u.id === STATE.user.id;
+
       tr.innerHTML = `
         <td>${u.id}</td>
-        <td><strong>${u.username}</strong></td>
+        <td><strong>${u.username}</strong>${isSelf ? ' <span class="badge" style="font-size:0.7rem;">You</span>' : ''}</td>
         <td>${u.email}</td>
         <td><span class="badge ${roleClass}">${u.role}</span></td>
         <td>${new Date(u.created_at).toLocaleString('th-TH')}</td>
+        <td>
+          ${isSelf ? '<span class="text-muted" style="font-size:0.8rem;">—</span>' : `
+          <select class="role-select-dropdown"
+            data-original="${u.role}"
+            onchange="changeUserRole(${u.id}, this.value, this)">
+            <option value="user" ${u.role === 'user' ? 'selected' : ''}>user</option>
+            <option value="mod" ${u.role === 'mod' ? 'selected' : ''}>mod</option>
+            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin</option>
+          </select>`}
+        </td>
       `;
       tbody.appendChild(tr);
     });
   })
   .catch(() => showNotification('Error loading users', 'error'));
 }
+
+function changeUserRole(userId, newRole, selectEl) {
+  // Save original value BEFORE any changes (data-original is set in HTML template)
+  const originalValue = selectEl.dataset.original || newRole;
+
+  fetch(`/api/admin/users/${userId}/role`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.token}`
+    },
+    body: JSON.stringify({ role: newRole })
+  })
+  .then(res => res.json().then(data => ({ ok: res.ok, data })))
+  .then(({ ok, data }) => {
+    if (!ok) {
+      showNotification(data.message || 'Failed to update role', 'error');
+      selectEl.value = originalValue;
+      return;
+    }
+    showNotification(data.message, 'success');
+    selectEl.dataset.original = newRole;
+    // Refresh the badge next to the dropdown
+    const badge = selectEl.closest('tr').querySelector('.badge');
+    if (badge) {
+      badge.textContent = newRole;
+      badge.className = 'badge ' + ({ admin: 'badge-neon', mod: 'badge-blue', user: '' }[newRole] || '');
+    }
+  })
+  .catch(() => {
+    showNotification('Error updating role', 'error');
+    selectEl.value = originalValue;
+  });
+}
+
+function initRealtimeSync() {
+  const evtSource = new EventSource('/api/events');
+  evtSource.onmessage = (event) => {
+    try {
+      const data = JSON.parse(event.data);
+      if (data.type === 'booking-updated') {
+        const view = STATE.currentView ? STATE.currentView.replace('-view', '') : '';
+        if (view === 'timeslot') {
+          loadCourtsAvailability();
+        }
+      }
+    } catch (e) {
+      // Ignore heartbeat parses
+    }
+  };
+}
+

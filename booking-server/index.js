@@ -207,8 +207,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
   try {
     const user = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
     if (!user) {
-      // Do not reveal if the user exists for security reasons
-      return res.json({ message: 'If the email exists, a PIN has been sent.' });
+      return res.status(404).json({ message: 'Email address not found in the system.' });
     }
 
     // Generate a 6-digit PIN
@@ -346,7 +345,7 @@ app.get('/api/courts', async (req, res) => {
   try {
     await cleanupExpiredBookings();
     const courts = await allPrimaryQuery('SELECT * FROM courts');
-    const bookings = await allQuery('SELECT court_id, start_time, end_time FROM bookings WHERE date = ? AND status IN (\'paid\', \'pending\')', [date]);
+    const bookings = await allPrimaryQuery('SELECT court_id, start_time, end_time FROM bookings WHERE date = ? AND status IN (\'paid\', \'pending\')', [date]);
 
     // Format court details with booked timeslots (removed location)
     const courtList = courts.map((court) => {
@@ -387,6 +386,7 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
   try {
     const { court_id, date, start_time, end_time, promo_code } = req.body;
     const user_id = req.user.id;
+    const userRole = req.user.role;
 
     if (!court_id || !date || !start_time || !end_time) {
       return res.status(400).json({ message: 'Missing booking details' });
@@ -412,7 +412,7 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
       return res.status(404).json({ message: 'Court not found' });
     }
 
-    const collision = await getQuery(
+    const collision = await getPrimaryQuery(
       `SELECT * FROM bookings 
        WHERE court_id = ? AND date = ? AND status IN ('paid', 'pending')
        AND (start_time < ? AND end_time > ?)`,
@@ -433,12 +433,27 @@ app.post('/api/bookings', authenticateToken, async (req, res) => {
       price = price * 0.90; // 10% discount
     }
 
-    // Support test mode pricing (0.1 Baht)
-    if (req.body.is_test === true) {
-      price = 0.1;
-    }
-
     const pin_code = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // mod and admin get instant paid booking (cash on-site)
+    const isPrivileged = userRole === 'mod' || userRole === 'admin';
+
+    if (isPrivileged) {
+      const result = await runQuery(
+        `INSERT INTO bookings (user_id, court_id, date, start_time, end_time, price, pin_code, status, payment_status, payment_method) 
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'paid', 'completed', 'Cash (Staff)')`,
+        [user_id, court_id, date, start_time, end_time, price, pin_code]
+      );
+      const bookingId = result.lastID;
+      const newBooking = await getPrimaryQuery(
+        `SELECT b.*, c.name as court_name
+         FROM bookings b 
+         JOIN courts c ON b.court_id = c.id 
+         WHERE b.id = ?`,
+        [bookingId]
+      );
+      return res.status(201).json({ ...newBooking, _cashBooking: true });
+    }
 
     const result = await runQuery(
       `INSERT INTO bookings (user_id, court_id, date, start_time, end_time, price, pin_code) 
@@ -497,9 +512,23 @@ app.get('/api/bookings/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// Cancel a pending booking to release timeslot
+app.post('/api/bookings/:id/cancel', authenticateToken, async (req, res) => {
+  try {
+    const bookingId = req.params.id;
+    await runQuery(
+      "DELETE FROM bookings WHERE id = ? AND user_id = ? AND status = 'pending'",
+      [bookingId, req.user.id]
+    );
+    res.json({ message: 'Booking cancelled successfully' });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error cancelling booking', error: err.message });
+  }
+});
+
 // --- Payment Route ---
 app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
-  const { payment_method } = req.body;
+  const { payment_method, promo_code } = req.body;
   const bookingId = req.params.bookingId;
 
   if (!payment_method) {
@@ -516,6 +545,20 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
 
     if (booking.status === 'paid') {
       return res.status(400).json({ message: 'Booking is already paid' });
+    }
+
+    // Apply Promo Code if valid and update price in DB
+    if (promo_code === 'ACE10') {
+      const court = await getQuery('SELECT * FROM courts WHERE id = ?', [booking.court_id]);
+      if (court) {
+        const startHour = parseInt(booking.start_time.split(':')[0]);
+        const endHour = parseInt(booking.end_time.split(':')[0]);
+        const duration = endHour - startHour;
+        const discountedPrice = court.price_per_hour * duration * 0.90;
+        
+        await runQuery('UPDATE bookings SET price = ? WHERE id = ?', [discountedPrice, bookingId]);
+        booking.price = discountedPrice; // Update in-memory copy
+      }
     }
 
     if (payment_method === 'PromptPay QR') {
@@ -593,55 +636,35 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
 
       if (apiKey) {
         try {
-          console.log('[Payment Route] Calling SLIP Solution API...');
-          // Real SLIP API verification
-          const response = await fetch('https://api.thunder.in.th/v2/verify/bank', {
+          console.log('[Payment Route] Calling Slip2Go API...');
+
+          // Convert base64 image to Buffer and wrap in native FormData (Node 18+)
+          const base64Data = slip_image.replace(/^data:image\/\w+;base64,/, '');
+          const imageBuffer = Buffer.from(base64Data, 'base64');
+          const formData = new FormData();
+          formData.append('file', new Blob([imageBuffer], { type: 'image/jpeg' }), 'slip.jpg');
+
+          const response = await fetch('https://connect.slip2go.com/api/verify-slip/qr-image/info', {
             method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              base64: slip_image,
-              checkDuplicate: true
-            })
+            headers: { 'Authorization': `Bearer ${apiKey}` },
+            body: formData
           });
 
-          console.log('[Payment Route] SLIP API response status:', response.status);
+          console.log('[Payment Route] Slip2Go API response status:', response.status);
           const result = await response.json();
-          console.log('[Payment Route] SLIP API response result:', JSON.stringify(result));
+          console.log('[Payment Route] Slip2Go API response result:', JSON.stringify(result));
 
-          if (!result.success) {
-            const errMsg = (result.error && result.error.message) ? result.error.message : 'Slip verification failed';
-            console.log('[Payment Route] Error: API returned success=false:', errMsg);
+          // Slip2Go returns code "200000" on success
+          if (result.code !== '200000' || !result.data) {
+            const errMsg = result.message || 'Slip verification failed';
+            console.log('[Payment Route] Error: Slip2Go returned non-success code:', result.code, errMsg);
             // Delete booking to release slot
             await runQuery('DELETE FROM bookings WHERE id = ?', [bookingId]);
             return res.status(400).json({ message: errMsg });
           }
 
-          // Check if slip is duplicate (has been used before)
-          if (result.data && result.data.isDuplicate === true) {
-            console.log('[Payment Route] Error: Duplicate slip detected');
-            // Cache it locally so we block it locally next time!
-            const transRef = result.data.rawSlip ? result.data.rawSlip.transRef : null;
-            const qrPayload = result.data.rawSlip ? (result.data.rawSlip.payload || localQRData) : localQRData;
-            if (transRef || qrPayload) {
-              try {
-                await runQuery(
-                  'INSERT OR IGNORE INTO verified_slips (image_hash, trans_ref, qr_payload, booking_id) VALUES (?, ?, ?, ?)',
-                  [imageHash, transRef || `DUP-${Date.now()}`, qrPayload, bookingId]
-                );
-              } catch (dbErr) {
-                console.error('[Payment Route] Error saving duplicate slip to cache:', dbErr.message);
-              }
-            }
-            // Delete booking to release slot
-            await runQuery('DELETE FROM bookings WHERE id = ?', [bookingId]);
-            return res.status(400).json({ message: 'This slip has already been used for another booking.' });
-          }
-
-          // Check if transRef is already in verified_slips (just to be extra safe against different image compressions of the same slip)
-          const transRef = result.data.rawSlip.transRef;
+          // Check if transRef is already in verified_slips
+          const transRef = result.data.transRef;
           if (transRef) {
             const existingTransRef = await getPrimaryQuery(
               'SELECT * FROM verified_slips WHERE trans_ref = ?',
@@ -656,17 +679,22 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
           }
 
           // Enforce Receiver Check (destination account)
+          // Slip2Go: data.receiver.account.proxy.account or data.receiver.account.bank.account
           if (result.data.receiver) {
             const cleanTarget = (process.env.PROMPAY_RECEIVER_ID || '0917291840').replace(/\D/g, '');
-            const receiverProxy = result.data.receiver.proxy ? result.data.receiver.proxy.value.replace(/\D/g, '') : '';
-            const receiverAccount = result.data.receiver.account ? result.data.receiver.account.value.replace(/\D/g, '') : '';
-            
-            const isMatch = 
-              (receiverProxy && (receiverProxy.endsWith(cleanTarget) || cleanTarget.endsWith(receiverProxy))) ||
-              (receiverAccount && (receiverAccount.endsWith(cleanTarget) || cleanTarget.endsWith(receiverAccount)));
-            
+            const proxyAccount = result.data.receiver.account && result.data.receiver.account.proxy
+              ? (result.data.receiver.account.proxy.account || '').replace(/\D/g, '')
+              : '';
+            const bankAccount = result.data.receiver.account && result.data.receiver.account.bank
+              ? (result.data.receiver.account.bank.account || '').replace(/\D/g, '')
+              : '';
+
+            const isMatch =
+              (proxyAccount && (proxyAccount.endsWith(cleanTarget) || cleanTarget.endsWith(proxyAccount))) ||
+              (bankAccount && (bankAccount.endsWith(cleanTarget) || cleanTarget.endsWith(bankAccount)));
+
             if (!isMatch) {
-              console.log('[Payment Route] Error: Receiver mismatch. Slip receiver proxy:', receiverProxy, 'account:', receiverAccount, 'expected:', cleanTarget);
+              console.log('[Payment Route] Error: Receiver mismatch. proxy:', proxyAccount, 'bank:', bankAccount, 'expected:', cleanTarget);
               // Delete booking to release slot
               await runQuery('DELETE FROM bookings WHERE id = ?', [bookingId]);
               return res.status(400).json({ message: 'Receiver account in the slip does not match our PromptPay account.' });
@@ -674,11 +702,12 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
           }
 
           // Enforce Date/Time check (transaction must be recent, within last 30 minutes)
-          if (result.data.date) {
-            const transTime = new Date(result.data.date);
+          // Slip2Go: data.dateTime
+          if (result.data.dateTime) {
+            const transTime = new Date(result.data.dateTime);
             const now = new Date();
             const timeDiffMinutes = (now - transTime) / 60000;
-            
+
             // Allow up to 30 minutes of time difference
             if (Math.abs(timeDiffMinutes) > 30) {
               console.log('[Payment Route] Error: Transaction time mismatch. Slip time:', transTime, 'Current server time:', now, 'Difference (min):', timeDiffMinutes);
@@ -689,20 +718,21 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
           }
 
           // Verify the amount matches (ignore precision minor errors)
-          const slipAmount = result.data.rawSlip.amount.amount;
+          // Slip2Go: data.amount (plain Number)
+          const slipAmount = result.data.amount;
           console.log('[Payment Route] Comparing amount: slip shows', slipAmount, 'booking needs', booking.price);
           if (Math.abs(slipAmount - booking.price) > 0.01) {
             console.log('[Payment Route] Error: Amount mismatch');
             // Delete booking to release slot
             await runQuery('DELETE FROM bookings WHERE id = ?', [bookingId]);
-            return res.status(400).json({ 
-              message: `Incorrect payment amount. Slip shows ฿${slipAmount}, but booking requires ฿${booking.price}.` 
+            return res.status(400).json({
+              message: `Incorrect payment amount. Slip shows ฿${slipAmount}, but booking requires ฿${booking.price}.`
             });
           }
 
           // Save to verified_slips to cache it
           if (transRef) {
-            const qrPayload = result.data.rawSlip.payload || localQRData;
+            const qrPayload = result.data.decode || localQRData;
             await runQuery(
               'INSERT INTO verified_slips (image_hash, trans_ref, qr_payload, booking_id) VALUES (?, ?, ?, ?)',
               [imageHash, transRef, qrPayload, bookingId]
@@ -720,10 +750,10 @@ app.post('/api/payment/:bookingId', authenticateToken, async (req, res) => {
             [refString, bookingId]
           );
         } catch (fetchErr) {
-          console.error('[Payment Route] SLIP API verification error catch:', fetchErr.message);
+          console.error('[Payment Route] Slip2Go API verification error catch:', fetchErr.message);
           // Delete booking to release slot
           await runQuery('DELETE FROM bookings WHERE id = ?', [bookingId]);
-          return res.status(500).json({ message: 'Error verifying slip with SLIP API: ' + fetchErr.message });
+          return res.status(500).json({ message: 'Error verifying slip with Slip2Go API: ' + fetchErr.message });
         }
       } else {
         // Simulation Fallback Mode
@@ -881,10 +911,80 @@ app.get('/api/admin/users', authenticateToken, requireAdmin, async (req, res) =>
   }
 });
 
+// 7. Change user role (admin only)
+app.put('/api/admin/users/:id/role', authenticateToken, requireAdmin, async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.body;
+  const validRoles = ['user', 'mod', 'admin'];
+
+  if (!validRoles.includes(role)) {
+    return res.status(400).json({ message: `Invalid role. Must be one of: ${validRoles.join(', ')}` });
+  }
+
+  // Prevent admin from demoting themselves
+  if (parseInt(id) === req.user.id) {
+    return res.status(400).json({ message: 'You cannot change your own role.' });
+  }
+
+  try {
+    await runQuery('UPDATE users SET role = ? WHERE id = ?', [role, id]);
+    res.json({ message: `User role updated to "${role}" successfully.` });
+  } catch (err) {
+    res.status(500).json({ message: 'Server error updating role', error: err.message });
+  }
+});
+
+// --- Real-time updates SSE endpoint ---
+let sseClients = [];
+
+app.get('/api/events', (req, res) => {
+  res.setHeader('Content-Type', 'text/event-stream');
+  res.setHeader('Cache-Control', 'no-cache');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('Content-Encoding', 'none');
+
+  res.write(': ok\n\n');
+  sseClients.push(res);
+
+  req.on('close', () => {
+    sseClients = sseClients.filter(c => c !== res);
+  });
+});
+
+function broadcastEvent(data) {
+  const msg = `data: ${JSON.stringify(data)}\n\n`;
+  sseClients.forEach(c => {
+    try {
+      c.write(msg);
+    } catch (e) {}
+  });
+}
+
+global.broadcastEvent = broadcastEvent;
+
+// Periodic heartbeat to prevent proxies from closing the connection
+setInterval(() => {
+  sseClients.forEach(c => {
+    try {
+      c.write(': heartbeat\n\n');
+    } catch (e) {}
+  });
+}, 20000);
+
+// Periodically clean up expired pending bookings every 10 seconds
+setInterval(async () => {
+  try {
+    await cleanupExpiredBookings();
+  } catch (e) {
+    console.error('Error in periodic expired bookings cleanup:', e.message);
+  }
+}, 10000);
+
 // For frontend single page app, redirect all non-API paths to index.html
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 
 // Initialize DB and start server
 initDb().then(() => {
