@@ -1114,6 +1114,89 @@ function closeSocialModal() {
   document.getElementById('social-modal').style.display = 'none';
 }
 
+function closePolicyModal() {
+  document.getElementById('policy-modal').style.display = 'none';
+}
+
+function showPolicy(type) {
+  const modal = document.getElementById('policy-modal');
+  const title = document.getElementById('policy-modal-title');
+  const body = document.getElementById('policy-modal-body');
+  
+  if (!modal || !title || !body) return;
+  
+  let contentHtml = '';
+  
+  if (type === 'privacy') {
+    title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> Privacy Policy (นโยบายความเป็นส่วนตัว)';
+    contentHtml = `
+      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+        <p class="mb-3">พวกเราที่ <strong>AcePoint</strong> ให้ความสำคัญต่อความเป็นส่วนตัวของคุณเป็นอันดับแรก นโยบายนี้ระบุหลักเกณฑ์การเก็บรวบรวมข้อมูลส่วนบุคคลของท่าน</p>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
+        <ul style="padding-left: 20px;" class="mb-3">
+          <li><strong>ข้อมูลลงทะเบียน:</strong> ชื่อ-นามสกุล, อีเมล, เบอร์โทรศัพท์ และรหัสผ่านที่ผ่านการเข้ารหัส</li>
+          <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และแฮชประวัติของรูปภาพสลิปที่ใช้ชำระเงิน</li>
+          <li><strong>Social Login:</strong> รูปโปรไฟล์ และอีเมลที่ได้รับจากระบบ Google OAuth</li>
+        </ul>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. การนำข้อมูลไปใช้</h5>
+        <p class="mb-3">ข้อมูลของท่านจะถูกใช้เฉพาะการบริหารจัดการการจองสนาม, ตรวจสอบยอดชำระเงินโดยอัตโนมัติผ่านทาง API ตรวจสอบสลิป, นำส่ง PIN 6 หลักเพื่อปลดล็อกใช้งานสนาม, และติดต่อช่วยเหลือผู้ใช้</p>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. ความปลอดภัยของข้อมูล</h5>
+        <p class="mb-3">ข้อมูลทั้งหมดจะได้รับการจัดเก็บในระบบ PostgreSQL ที่ปลอดภัย รหัสผ่านได้รับการเข้าแฮชผ่านกระบวนการ Cryptographic (bcrypt) เสมอ ข้อมูลรูปภาพสลิปจะไม่มีการส่งต่อไปที่ใดนอกเหนือจาก API ตรวจสอบสลิปอย่างปลอดภัย</p>
+      </div>
+    `;
+  } else if (type === 'terms') {
+    title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> Terms of Service (ข้อตกลงการให้บริการ)';
+    contentHtml = `
+      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+        <p class="mb-3">การเข้าใช้งานระบบ <strong>AcePoint</strong> ถือว่าท่านยอมรับข้อตกลงและเงื่อนไขการใช้บริการดังต่อไปนี้:</p>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. กติกาการจองและใช้สนาม</h5>
+        <ul style="padding-left: 20px;" class="mb-3">
+          <li>ผู้ใช้งานจะต้องเลือกช่วงเวลาที่ว่างและลงทะเบียนจองพร้อมโอนเงินชำระค่าบริการให้ถูกต้องเต็มจำนวนตามใบจอง</li>
+          <li>เมื่อการชำระเงินและตรวจสอบสลิปเสร็จสมบูรณ์ ท่านจะได้รับรหัส PIN 6 หลักทางหน้าเว็บและประวัติการจอง</li>
+          <li>รหัส PIN จะเปิดใช้งานได้เฉพาะคอร์ทและช่วงเวลาที่ท่านได้ระบุจองไว้เท่านั้น และจะสิ้นสุดลงทันทีเมื่อหมดรอบการจอง</li>
+        </ul>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. การปฏิเสธและคืนเงิน</h5>
+        <p class="mb-3">รายการจองที่ได้รับการอนุมัติและออกรหัส PIN แล้ว **ไม่สามารถยกเลิกหรือขอคืนเงินได้** หากท่านต้องการเลื่อนเวลา กรุณาประสานงานแอดมินล่วงหน้าอย่างน้อย 24 ชั่วโมงก่อนเริ่มเวลาการจอง</p>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. มาตรการป้องกันการทุจริตสลิป</h5>
+        <p class="mb-3">ระบบของเราติดตั้งระบบดักจับสลิปซ้ำและสลิปปลอมอัตโนมัติ หากผู้ใช้พยายามอัปโหลดสลิปที่ผ่านการตรวจแล้ว สลิปปลอม หรือสลิปที่แก้ไขตัวเลข ระบบจะทำการระงับบัญชีผู้ใช้งานทันที</p>
+      </div>
+    `;
+  } else if (type === 'support') {
+    title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> Help Support (ช่วยเหลือและสนับสนุน)';
+    contentHtml = `
+      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+        <p class="mb-3">ยินดีต้อนรับสู่ศูนย์ช่วยเหลือของ <strong>AcePoint Tennis Court</strong> หากท่านมีข้อสงสัยหรือพบปัญหาในการจอง/ใช้งานสนาม สามารถศึกษาคำแนะนำหรือติดต่อทีมงานด้านล่างนี้:</p>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> ขั้นตอนการเข้าสนาม</h5>
+        <ol style="padding-left: 20px;" class="mb-3">
+          <li>หลังจากทำการจองและอัปโหลดรูปภาพสลิปชำระเงินสำเร็จแล้ว ให้คัดลอกหรือแคปหน้าจอ **PIN 6 หลัก**</li>
+          <li>เดินทางมายังหน้าสนามเทนนิส และนำรหัส PIN ไปป้อนลงที่หน้าจออุปกรณ์ Android Kiosk ด้านหน้าประตู</li>
+          <li>เมื่อรหัสผ่านถูกต้อง ระบบ Kiosk จะปลดล็อกประตูและเปิดไฟฟ้าสนามให้ทำงานทันที</li>
+        </ol>
+        
+        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> ช่องทางติดต่อทีมงานแอดมิน</h5>
+        <ul style="padding-left: 20px; list-style: none;" class="mb-3">
+          <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> 02-123-4567</li>
+          <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@acepoint.com</li>
+          <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
+        </ul>
+        
+        <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">เปิดทำการและให้บริการช่วยเหลือลูกค้าเวลา 08:00 น. - 22:00 น. ทุกวัน</p>
+      </div>
+    `;
+  }
+  
+  body.innerHTML = contentHtml;
+  modal.style.display = 'flex';
+}
+
+
 function submitSimulatedSocialLogin(provider, account) {
   closeSocialModal();
   const endpoint = provider === 'google' ? '/api/auth/google-login' : '/api/auth/facebook-login';

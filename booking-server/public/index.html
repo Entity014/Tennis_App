@@ -838,12 +838,27 @@
     </div>
   </div>
 
+  <!-- Privacy / Terms / Support Modal -->
+  <div id="policy-modal" class="social-modal-overlay" style="display: none;">
+    <div class="social-modal glassmorphism" style="max-width: 600px; width: 95%;">
+      <div class="social-modal-header">
+        <span id="policy-modal-title" style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700;">Privacy Policy</span>
+        <button onclick="closePolicyModal()" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="social-modal-body" id="policy-modal-body" style="max-height: 400px; overflow-y: auto; text-align: left; padding-right: 8px;">
+        <!-- Dynamically populated content -->
+      </div>
+    </div>
+  </div>
+
   <!-- Footer -->
   <footer class="app-footer">
     <div class="container footer-content text-center text-muted">
       <p>&copy; 2026 AcePoint Tennis Court Booking. All rights reserved.</p>
       <div class="footer-links mt-2">
-        <a href="#privacy">Privacy Policy</a> &bull; <a href="#terms">Terms of Service</a> &bull; <a href="#help">Help Support</a>
+        <a href="javascript:void(0)" onclick="showPolicy('privacy')">Privacy Policy</a> &bull; 
+        <a href="javascript:void(0)" onclick="showPolicy('terms')">Terms of Service</a> &bull; 
+        <a href="javascript:void(0)" onclick="showPolicy('support')">Help Support</a>
       </div>
     </div>
   </footer>
