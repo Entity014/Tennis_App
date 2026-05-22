@@ -1118,6 +1118,20 @@ function closePolicyModal() {
   document.getElementById('policy-modal').style.display = 'none';
 }
 
+// Close modals when clicking on the overlay background
+window.addEventListener('click', (event) => {
+  const socialModal = document.getElementById('social-modal');
+  const policyModal = document.getElementById('policy-modal');
+  
+  if (event.target === socialModal) {
+    closeSocialModal();
+  }
+  if (event.target === policyModal) {
+    closePolicyModal();
+  }
+});
+
+
 function showPolicy(type) {
   const modal = document.getElementById('policy-modal');
   const title = document.getElementById('policy-modal-title');
