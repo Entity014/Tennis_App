@@ -15,6 +15,16 @@
 **/.env.*.local
 **/.env.local
 
+# Next.js & Vercel
+**/.next/
+**/out/
+**/.vercel/
+**/*.tsbuildinfo
+**/next-env.d.ts
+
+# AI Agent directories
+**/.agents/
+
 # SQLite Database & Local Data
 **/server/data/database.sqlite
 **/server/data/*.sqlite

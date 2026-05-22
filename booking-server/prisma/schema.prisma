@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                 Int       @id @default(autoincrement())
+  username           String    @unique
+  email              String    @unique
+  passwordHash       String    @map("password_hash")
+  role               String    @default("user")
+  avatar             String?
+  createdAt          DateTime  @default(now()) @map("created_at")
+  resetToken         String?   @map("reset_token")
+  resetTokenExpiry   DateTime? @map("reset_token_expiry")
+  displayName        String?   @map("display_name")
+  bookings           Booking[]
+
+  @@map("users")
+}
+
+model Court {
+  id           Int       @id @default(autoincrement())
+  name         String
+  pricePerHour Float     @map("price_per_hour")
+  description  String?
+  imageName    String?   @map("image_name")
+  bookings     Booking[]
+
+  @@map("courts")
+}
+
+model Booking {
+  id            Int            @id @default(autoincrement())
+  userId        Int            @map("user_id")
+  courtId       Int            @map("court_id")
+  date          String
+  startTime     String         @map("start_time")
+  endTime       String         @map("end_time")
+  price         Float
+  status        String         @default("pending")
+  pinCode       String         @map("pin_code")
+  paymentMethod String?        @map("payment_method")
+  paymentStatus String         @default("pending") @map("payment_status")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  user          User           @relation(fields: [userId], references: [id])
+  court         Court          @relation(fields: [courtId], references: [id])
+  verifiedSlips VerifiedSlip[]
+
+  @@map("bookings")
+}
+
+model VerifiedSlip {
+  id        Int      @id @default(autoincrement())
+  imageHash String   @unique @map("image_hash")
+  transRef  String   @unique @map("trans_ref")
+  qrPayload String?  @unique @map("qr_payload")
+  bookingId Int?     @map("booking_id")
+  booking   Booking? @relation(fields: [bookingId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("verified_slips")
+}

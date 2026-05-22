@@ -12,8 +12,7 @@ const STATE = {
   config: { googleClientId: '', facebookAppId: '', prompayReceiverId: '' }, // Exposed from server
   slipImage: null,
   inBookingFlow: false,
-  editingCourtId: null,
-  isResumedPayment: false
+  editingCourtId: null
 };
 
 // Date Utility Functions
@@ -45,12 +44,7 @@ const SIMULATED_ACCOUNTS = {
 };
 
 // Initialize Application on DOM Load
-let isAppInitialized = false;
-
-function initializeApp() {
-  if (isAppInitialized) return;
-  isAppInitialized = true;
-
+document.addEventListener('DOMContentLoaded', () => {
   initTheme();
   
   // Set default search date
@@ -76,17 +70,7 @@ function initializeApp() {
   }
   loadFeaturedCourts();
   initRealtimeSync();
-}
-
-// Listen to custom DOM ready event from React component
-window.addEventListener('app-dom-ready', () => {
-  initializeApp();
 });
-
-// Fallback in case the event was already fired or we are not in React
-if (document.getElementById('featured-courts-grid')) {
-  initializeApp();
-}
 
 
 // --- Theme Management (Auto OS & Manual Toggle) ---
@@ -155,53 +139,6 @@ function applyTheme(themeName) {
 let bookingDatePicker;
 let timeslotDatePicker;
 
-function updateAltInputLabel(dateObj, instance) {
-  if (!dateObj || !instance.altInput) return;
-  
-  const d = String(dateObj.getDate()).padStart(2, '0');
-  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const y = dateObj.getFullYear();
-  const dateStrDMY = `${d}/${m}/${y}`;
-
-  instance.altInput.value = dateStrDMY;
-}
-
-function updateCustomSearchDateDisplay(dateObj) {
-  if (!dateObj) return;
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = new Date();
-  tomorrow.setDate(tomorrow.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
-
-  const compareDate = new Date(dateObj);
-  compareDate.setHours(0, 0, 0, 0);
-
-  const d = String(dateObj.getDate()).padStart(2, '0');
-  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const y = dateObj.getFullYear();
-  const dateStrDMY = `${d}/${m}/${y}`;
-
-  const dayLabelEl = document.getElementById('search-date-day-label');
-  const subLabelEl = document.getElementById('search-date-sub-label');
-
-  if (!dayLabelEl || !subLabelEl) return;
-
-  subLabelEl.textContent = dateStrDMY;
-
-  if (compareDate.getTime() === today.getTime()) {
-    dayLabelEl.textContent = 'Today';
-  } else if (compareDate.getTime() === tomorrow.getTime()) {
-    dayLabelEl.textContent = 'Tomorrow';
-  } else {
-    // Large formatted date, e.g. "Monday, May 25"
-    const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    dayLabelEl.textContent = dateObj.toLocaleDateString('en-US', options);
-  }
-}
-
 function initFlatpickr() {
   const isDark = STATE.theme === 'dark';
   
@@ -213,23 +150,14 @@ function initFlatpickr() {
 
   const minDate = getDefaultDate();
 
-  const triggerEl = document.getElementById('search-date-trigger');
-  let finalTriggerEl = triggerEl;
-
-  if (triggerEl) {
-    const newTrigger = triggerEl.cloneNode(true);
-    triggerEl.parentNode.replaceChild(newTrigger, triggerEl);
-    finalTriggerEl = newTrigger;
-  }
-
   bookingDatePicker = flatpickr("#booking-date", {
-    altInput: false,
+    altInput: true,
+    altFormat: "d/m/Y",
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
     minDate: minDate,
     maxDate: maxDate,
-    positionElement: finalTriggerEl || undefined,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
         STATE.selectedDate = dateStr;
@@ -237,22 +165,8 @@ function initFlatpickr() {
           timeslotDatePicker.setDate(dateStr, false);
         }
       }
-    },
-    onValueUpdate: function(selectedDates, dateStr, instance) {
-      updateCustomSearchDateDisplay(selectedDates[0]);
-    },
-    onReady: function(selectedDates, dateStr, instance) {
-      updateCustomSearchDateDisplay(selectedDates[0]);
     }
   });
-
-  if (finalTriggerEl) {
-    finalTriggerEl.addEventListener('click', () => {
-      if (bookingDatePicker) {
-        bookingDatePicker.open();
-      }
-    });
-  }
 
   timeslotDatePicker = flatpickr("#timeslot-date-picker", {
     altInput: true,
@@ -262,7 +176,6 @@ function initFlatpickr() {
     theme: isDark ? "dark" : "light",
     minDate: minDate,
     maxDate: maxDate,
-    appendTo: document.querySelector('.timeslot-date-header-wrapper') || undefined,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
         STATE.selectedDate = dateStr;
@@ -271,24 +184,8 @@ function initFlatpickr() {
         }
         loadCourtsAvailability();
       }
-    },
-    onValueUpdate: function(selectedDates, dateStr, instance) {
-      updateAltInputLabel(selectedDates[0], instance);
-    },
-    onReady: function(selectedDates, dateStr, instance) {
-      updateAltInputLabel(selectedDates[0], instance);
-      instance.calendarContainer.classList.add('timeslot-calendar-popup');
     }
   });
-
-  const timeslotRow = document.querySelector('.timeslot-date-header-row');
-  if (timeslotRow) {
-    timeslotRow.addEventListener('click', () => {
-      if (timeslotDatePicker) {
-        timeslotDatePicker.open();
-      }
-    });
-  }
 }
 
 // Fetch Server Configurations (Client IDs)
@@ -304,7 +201,7 @@ async function fetchConfig() {
 }
 
 // Google GIS SDK onload callback — fires when accounts.google.com/gsi/client finishes loading
-function onGoogleScriptLoaded() {
+window.onGoogleGisLoad = function() {
   STATE.googleGisLoaded = true;
   if (STATE.configLoaded && STATE.config.googleClientId) {
     initGoogleGis();
@@ -321,15 +218,7 @@ function onGoogleScriptLoaded() {
       clearInterval(poll);
     }
   }, 200);
-}
-
-// Assign to callback hook
-window.onGoogleGisLoadCallback = onGoogleScriptLoaded;
-
-// Run if Google GIS script finished loading before app.js executed
-if (window.googleGisLoaded) {
-  onGoogleScriptLoaded();
-}
+};
 
 function initGoogleGis() {
   if (typeof google === 'undefined' || !google.accounts || !google.accounts.id) {
@@ -366,6 +255,7 @@ function initSocialSDKs() {
   if (isGoogleLoaded && STATE.config.googleClientId) {
     initGoogleGis();
   }
+  // Otherwise onGoogleGisLoad() will trigger init when SDK finishes loading
 
   // 2. Live Facebook Sign In
   if (STATE.config.facebookAppId) {
@@ -674,89 +564,9 @@ function initAuthForms() {
     registerPasswordError.style.display = 'none';
   };
 
-  const registerUsernameReqs = document.getElementById('register-username-requirements');
-  const registerPasswordReqs = document.getElementById('register-password-requirements');
-
-  // Username requirements elements
-  const reqUsernameLength = document.getElementById('username-req-length');
-  const reqUsernameChars = document.getElementById('username-req-chars');
-
-  // Password requirements elements
-  const reqPassLength = document.getElementById('pass-req-length');
-  const reqPassUpper = document.getElementById('pass-req-upper');
-  const reqPassLower = document.getElementById('pass-req-lower');
-  const reqPassNumber = document.getElementById('pass-req-number');
-
-  // Show requirements on focus
-  registerUsernameInput.addEventListener('focus', () => {
-    registerUsernameReqs.style.display = 'block';
-  });
-  registerPasswordInput.addEventListener('focus', () => {
-    registerPasswordReqs.style.display = 'block';
-  });
-
-  // Helper to update requirement item style
-  function updateReqItem(el, isValid, text) {
-    if (isValid) {
-      el.className = 'text-success';
-      el.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ${text}`;
-    } else {
-      el.className = 'text-danger';
-      el.innerHTML = `<i class="fa-solid fa-circle-xmark mr-1"></i> ${text}`;
-    }
-  }
-
-  // Reset to neutral state when empty
-  function resetReqItem(el, text) {
-    el.className = 'text-muted';
-    el.innerHTML = `<i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> ${text}`;
-  }
-
-  // Real-time username check
-  registerUsernameInput.addEventListener('input', () => {
-    registerUsernameError.style.display = 'none';
-    registerUsernameReqs.style.display = 'block';
-    const val = registerUsernameInput.value;
-    
-    if (val === '') {
-      resetReqItem(reqUsernameLength, '3 to 20 characters long');
-      resetReqItem(reqUsernameChars, 'Letters, numbers, and underscores only');
-      return;
-    }
-
-    const hasValidLength = val.length >= 3 && val.length <= 20;
-    const hasValidChars = /^[a-zA-Z0-9_]*$/.test(val);
-
-    updateReqItem(reqUsernameLength, hasValidLength, '3 to 20 characters long');
-    updateReqItem(reqUsernameChars, hasValidChars, 'Letters, numbers, and underscores only');
-  });
-
+  registerUsernameInput.addEventListener('input', () => registerUsernameError.style.display = 'none');
   registerEmailInput.addEventListener('input', () => registerEmailError.style.display = 'none');
-
-  // Real-time password check
-  registerPasswordInput.addEventListener('input', () => {
-    registerPasswordError.style.display = 'none';
-    registerPasswordReqs.style.display = 'block';
-    const val = registerPasswordInput.value;
-
-    if (val === '') {
-      resetReqItem(reqPassLength, 'At least 8 characters long');
-      resetReqItem(reqPassUpper, 'At least one uppercase letter (A-Z)');
-      resetReqItem(reqPassLower, 'At least one lowercase letter (a-z)');
-      resetReqItem(reqPassNumber, 'At least one number (0-9)');
-      return;
-    }
-
-    const hasLength = val.length >= 8;
-    const hasUpper = /[A-Z]/.test(val);
-    const hasLower = /[a-z]/.test(val);
-    const hasNumber = /\d/.test(val);
-
-    updateReqItem(reqPassLength, hasLength, 'At least 8 characters long');
-    updateReqItem(reqPassUpper, hasUpper, 'At least one uppercase letter (A-Z)');
-    updateReqItem(reqPassLower, hasLower, 'At least one lowercase letter (a-z)');
-    updateReqItem(reqPassNumber, hasNumber, 'At least one number (0-9)');
-  });
+  registerPasswordInput.addEventListener('input', () => registerPasswordError.style.display = 'none');
 
   // Submit Register
   registerForm.addEventListener('submit', (e) => {
@@ -768,14 +578,9 @@ function initAuthForms() {
     const password = registerPasswordInput.value;
     let isValid = true;
 
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     if (!username) {
       registerUsernameError.textContent = 'Username is required.';
       registerUsernameError.style.display = 'block';
-      isValid = false;
-    } else if (!usernameRegex.test(username)) {
-      registerUsernameReqs.style.display = 'block';
-      registerUsernameInput.dispatchEvent(new Event('input'));
       isValid = false;
     }
 
@@ -796,8 +601,15 @@ function initAuthForms() {
       registerPasswordError.style.display = 'block';
       isValid = false;
     } else if (!passwordRegex.test(password)) {
-      registerPasswordReqs.style.display = 'block';
-      registerPasswordInput.dispatchEvent(new Event('input'));
+      registerPasswordError.innerHTML = `
+        <ul style="margin: 0; padding-left: 1.2rem; text-align: left;">
+          <li>At least 8 characters long</li>
+          <li>At least one uppercase letter (A-Z)</li>
+          <li>At least one lowercase letter (a-z)</li>
+          <li>At least one number (0-9)</li>
+        </ul>
+      `;
+      registerPasswordError.style.display = 'block';
       isValid = false;
     }
 
@@ -1072,13 +884,6 @@ function toggleAuthTab(tab) {
     resetForm.style.display = 'block';
     resetForm.classList.add('active-form');
   }
-
-  // Force Google native button re-render now that the containers are visible!
-  if (STATE.config.googleClientId && typeof google !== 'undefined' && google.accounts && google.accounts.id) {
-    setTimeout(() => {
-      renderGoogleNativeButtons();
-    }, 50);
-  }
 }
 
 // --- Fallback Simulated Social Authentication Handlers ---
@@ -1156,7 +961,7 @@ function loadFeaturedCourts() {
       const imageClass = court.image_name || 'court_indoor_a';
       card.innerHTML = `
         <div class="court-img-container">
-          <i class="fa-solid fa-baseball court-img-svg"></i>
+          <i class="fa-solid fa-tennis-ball court-img-svg"></i>
           <div class="court-img-bg-shape"></div>
         </div>
         <div class="court-card-body">
@@ -1254,7 +1059,6 @@ function initTimeslotHandlers() {
     document.getElementById('promo-input').value = '';
 
     STATE.inBookingFlow = true;
-    STATE.isResumedPayment = false;
 
     if (!STATE.token) {
       showNotification('Sign in required to complete booking.', 'error');
@@ -1293,10 +1097,7 @@ function createPendingBooking() {
     confirmBtn.innerHTML = originalHTML;
 
     if (ok && data.id) {
-      STATE.activeBooking = {
-        ...STATE.activeBooking,
-        ...data
-      };
+      STATE.activeBooking = data;
       STATE.inBookingFlow = false;
       
       if (data._cashBooking) {
@@ -1603,43 +1404,6 @@ function initPromoHandlers() {
     }
   });
 
-  // Cancel and Back button on Review page
-  const reviewCancelBtn = document.getElementById('review-cancel-btn');
-  if (reviewCancelBtn) {
-    reviewCancelBtn.addEventListener('click', () => {
-      if (STATE.activeBooking && STATE.activeBooking.id) {
-        const cancelId = STATE.activeBooking.id;
-        reviewCancelBtn.disabled = true;
-        reviewCancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
-        
-        fetch(`/api/bookings/${cancelId}/cancel`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${STATE.token}`
-          }
-        })
-        .then(() => {
-          STATE.activeBooking = null;
-          STATE.inBookingFlow = false;
-          loadCourtsAvailability();
-          navigateTo('timeslot');
-          reviewCancelBtn.disabled = false;
-          reviewCancelBtn.innerHTML = 'Cancel & Back';
-        })
-        .catch(err => {
-          console.error('Error cancelling pending booking:', err);
-          STATE.activeBooking = null;
-          STATE.inBookingFlow = false;
-          navigateTo('timeslot');
-          reviewCancelBtn.disabled = false;
-          reviewCancelBtn.innerHTML = 'Cancel & Back';
-        });
-      } else {
-        navigateTo('timeslot');
-      }
-    });
-  }
-
   // Proceed to payment gateway (or instant cash booking for mod/admin)
   document.getElementById('proceed-to-payment-btn').addEventListener('click', () => {
     if (!STATE.activeBooking) return;
@@ -1706,7 +1470,7 @@ function updateReviewDetails() {
   if (!b) return;
 
   document.getElementById('rev-court-name').textContent = b.court_name;
-  document.getElementById('rev-date').textContent = formatDateDMY(b.date);
+  document.getElementById('rev-date').textContent = b.date;
   document.getElementById('rev-time').textContent = `${b.start_time} - ${b.end_time} (${b.duration} hrs)`;
   document.getElementById('rev-rate').textContent = `฿${b.rate}/hr`;
 
@@ -1720,9 +1484,39 @@ function updateReviewDetails() {
 // Intercept review navigation to update values on entry
 const originalNav = navigateTo;
 navigateTo = function(viewId) {
+  const targetBase = viewId.replace('-view', '');
+  const currentBase = STATE.currentView ? STATE.currentView.replace('-view', '') : '';
+
   if (viewId === 'review') {
     updateReviewDetails();
   }
+
+  // If navigating away from booking checkout screens to a different tab/home, cancel the pending booking
+  if ((currentBase === 'review' || currentBase === 'payment') && 
+      targetBase !== 'review' && targetBase !== 'payment' && targetBase !== 'confirmation') {
+    if (STATE.activeBooking && STATE.activeBooking.id) {
+      const cancelId = STATE.activeBooking.id;
+      // Clear local booking state immediately to avoid double cancel calls
+      STATE.activeBooking = null;
+      STATE.inBookingFlow = false;
+      
+      fetch(`/api/bookings/${cancelId}/cancel`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${STATE.token}`
+        }
+      })
+      .then(res => res.json())
+      .then(() => {
+        // Reload court grid if we're on the timeslot page
+        if (targetBase === 'timeslot') {
+          loadCourtsAvailability();
+        }
+      })
+      .catch(err => console.error('Error cancelling pending booking:', err));
+    }
+  }
+
   originalNav.apply(this, arguments);
 };
 
@@ -1807,66 +1601,23 @@ function initPaymentHandlers() {
   const slipPreviewImg = document.getElementById('slip-preview-img');
   const removeSlipBtn = document.getElementById('remove-slip-btn');
 
-  function processAndValidateSlip(file) {
-    if (!file.type.startsWith('image/')) {
-      showNotification('Please select an image file.', 'error');
-      slipInput.value = '';
-      return;
-    }
-    
-    showNotification('Analyzing slip image...', 'info');
-    
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const base64Data = event.target.result;
-      
-      // Client-side QR Code verification using jsQR
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        try {
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const decodedQR = jsQR(imageData.data, imageData.width, imageData.height);
-          
-          if (!decodedQR || !decodedQR.data) {
-            showNotification('No valid QR code detected. Please ensure you upload a clear PromptPay transfer slip to save API quota.', 'error');
-            slipInput.value = '';
-            STATE.slipImage = null;
-            slipPreviewImg.src = '';
-            slipPreviewContainer.style.display = 'none';
-            slipUploadLabel.style.display = 'flex';
-            return;
-          }
-          
-          // Valid QR code found! Save slip image state.
-          STATE.slipImage = base64Data;
-          slipPreviewImg.src = base64Data;
-          slipUploadLabel.style.display = 'none';
-          slipPreviewContainer.style.display = 'flex';
-          showNotification('Slip QR code detected successfully.', 'success');
-        } catch (err) {
-          console.error('Error decoding QR code on client side:', err);
-          // Fallback: if browser sandbox/canvas context fails, allow server validation
-          STATE.slipImage = base64Data;
-          slipPreviewImg.src = base64Data;
-          slipUploadLabel.style.display = 'none';
-          slipPreviewContainer.style.display = 'flex';
-        }
-      };
-      img.src = base64Data;
-    };
-    reader.readAsDataURL(file);
-  }
-
   slipInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
-      processAndValidateSlip(file);
+      if (!file.type.startsWith('image/')) {
+        showNotification('Please select an image file.', 'error');
+        slipInput.value = '';
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        STATE.slipImage = event.target.result;
+        slipPreviewImg.src = event.target.result;
+        slipUploadLabel.style.display = 'none';
+        slipPreviewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
     }
   });
 
@@ -1901,7 +1652,18 @@ function initPaymentHandlers() {
     const dt = e.dataTransfer;
     const file = dt.files[0];
     if (file) {
-      processAndValidateSlip(file);
+      if (!file.type.startsWith('image/')) {
+        showNotification('Please select an image file.', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        STATE.slipImage = event.target.result;
+        slipPreviewImg.src = event.target.result;
+        slipUploadLabel.style.display = 'none';
+        slipPreviewContainer.style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
     }
   });
 
@@ -2084,44 +1846,10 @@ function renderETicket(booking) {
   document.getElementById('ticket-date').textContent = formatDateDMY(booking.date);
   document.getElementById('ticket-time').textContent = `${booking.start_time} - ${booking.end_time}`;
   
-  const isPaid = booking.payment_status === 'completed';
-  const pinEl = document.getElementById('ticket-pin');
-  const barcodeEl = document.getElementById('ticket-barcode');
-  
-  if (isPaid) {
-    const pin = booking.pin_code;
-    const formattedPin = `${pin.substring(0,3)} ${pin.substring(3,6)}`;
-    pinEl.textContent = formattedPin;
-    pinEl.style.fontSize = '2.2rem';
-    pinEl.style.letterSpacing = 'normal';
-    document.querySelector('.pin-instruction').style.display = 'block';
-    
-    // Generate barcode from PIN
-    if (typeof JsBarcode !== 'undefined' && barcodeEl) {
-      try {
-        JsBarcode("#ticket-barcode", pin, {
-          format: "CODE128",
-          lineColor: "#000000",
-          width: 1.8,
-          height: 38,
-          displayValue: false,
-          margin: 0
-        });
-        barcodeEl.style.display = 'block';
-      } catch (err) {
-        console.error('Error generating barcode:', err);
-      }
-    }
-  } else {
-    pinEl.textContent = 'PENDING PAYMENT';
-    pinEl.style.fontSize = '1.4rem';
-    pinEl.style.letterSpacing = '1px';
-    document.querySelector('.pin-instruction').style.display = 'none';
-    if (barcodeEl) {
-      barcodeEl.style.display = 'none';
-    }
-  }
-  
+  // Format PIN code with space (e.g. 829104 -> 829 104)
+  const pin = booking.pin_code;
+  const formattedPin = `${pin.substring(0,3)} ${pin.substring(3,6)}`;
+  document.getElementById('ticket-pin').textContent = formattedPin;
   document.getElementById('ticket-ref-id').textContent = `REF: AP-${booking.date.replace(/-/g, '')}-00${booking.id}`;
 }
 
@@ -2161,14 +1889,13 @@ function loadUserBookings() {
       const row = document.createElement('div');
       row.className = 'booking-item';
       
-      const isPaid = b.payment_status === 'completed';
       const pin = b.pin_code;
-      const formattedPin = isPaid && pin !== 'PENDING' ? `${pin.substring(0,3)} ${pin.substring(3,6)}` : 'Pending';
+      const formattedPin = `${pin.substring(0,3)} ${pin.substring(3,6)}`;
 
       row.innerHTML = `
         <div class="booking-info-main">
           <div class="booking-court-avatar">
-            <i class="fa-solid fa-baseball"></i>
+            <i class="fa-solid fa-tennis-ball"></i>
           </div>
           <div class="booking-details-txt">
             <h4>${b.court_name}</h4>
@@ -2180,79 +1907,17 @@ function loadUserBookings() {
           </div>
         </div>
         <div class="booking-actions">
-          ${isPaid 
-            ? `<span class="badge badge-neon">PIN: ${formattedPin}</span>` 
-            : ''
-          }
-          <span class="booking-status-badge ${isPaid ? 'status-paid' : 'status-pending'}" style="${!isPaid ? 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);' : ''}">
-            ${isPaid ? 'Paid' : 'PENDING'}
-          </span>
-          ${isPaid 
-            ? `<button class="btn btn-outline btn-sm btn-ticket-view">View Ticket</button>` 
-            : `<button class="btn btn-danger btn-sm btn-cancel-booking" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Cancel</button>`
-          }
+          <span class="badge badge-neon">PIN: ${formattedPin}</span>
+          <span class="booking-status-badge status-paid">Paid</span>
+          <button class="btn btn-outline btn-sm btn-ticket-view">View Ticket</button>
         </div>
       `;
       
       row.style.cursor = 'pointer';
       row.addEventListener('click', () => {
-        if (isPaid) {
-          renderETicket(b);
-          navigateTo('confirmation');
-        } else {
-          // Resume payment flow for pending booking
-          STATE.isResumedPayment = true;
-          STATE.activeBooking = b;
-          document.getElementById('payment-amount-display').textContent = `฿${b.price.toLocaleString()}`;
-          navigateTo('payment');
-          togglePaymentMethod('qr');
-        }
+        renderETicket(b);
+        navigateTo('confirmation');
       });
-
-      // Handle View Ticket button click separately
-      const ticketBtn = row.querySelector('.btn-ticket-view');
-      if (ticketBtn) {
-        ticketBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          renderETicket(b);
-          navigateTo('confirmation');
-        });
-      }
-
-      // Handle Cancel booking button click separately
-      const cancelBtn = row.querySelector('.btn-cancel-booking');
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (confirm('Are you sure you want to cancel this pending booking?')) {
-            cancelBtn.disabled = true;
-            cancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
-            
-            fetch(`/api/bookings/${b.id}/cancel`, {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${STATE.token}`
-              }
-            })
-            .then(res => {
-              if (res.ok) {
-                showNotification('Booking cancelled successfully.', 'success');
-                loadUserBookings();
-              } else {
-                showNotification('Failed to cancel booking. Please try again.', 'error');
-                cancelBtn.disabled = false;
-                cancelBtn.innerHTML = 'Cancel';
-              }
-            })
-            .catch(() => {
-              showNotification('Error cancelling booking.', 'error');
-              cancelBtn.disabled = false;
-              cancelBtn.innerHTML = 'Cancel';
-            });
-          }
-        });
-      }
-
       bookingsList.appendChild(row);
     });
   })
@@ -2295,36 +1960,6 @@ function changeDateByOffset(offset) {
 
   timeslotDatePicker.setDate(newDateStr, true);
 }
-
-function changeSearchDateByOffset(offset) {
-  if (!bookingDatePicker) return;
-  const currentDate = new Date(STATE.selectedDate);
-  currentDate.setDate(currentDate.getDate() + offset);
-
-  const minSelectable = new Date(getDefaultDate());
-  minSelectable.setHours(0, 0, 0, 0);
-
-  const maxBookingDate = new Date();
-  maxBookingDate.setMonth(maxBookingDate.getMonth() + 3);
-  maxBookingDate.setHours(23, 59, 59, 999);
-
-  if (currentDate < minSelectable) {
-    showNotification('Cannot select a past date', 'info');
-    return;
-  }
-  if (currentDate > maxBookingDate) {
-    showNotification('Can only book up to 3 months in advance', 'info');
-    return;
-  }
-
-  const yyyy = currentDate.getFullYear();
-  const mm = String(currentDate.getMonth() + 1).padStart(2, '0');
-  const dd = String(currentDate.getDate()).padStart(2, '0');
-  const newDateStr = `${yyyy}-${mm}-${dd}`;
-
-  bookingDatePicker.setDate(newDateStr, true);
-}
-window.changeSearchDateByOffset = changeSearchDateByOffset;
 
 // --- Admin Panel Functions ---
 let activeAdminTab = 'bookings';
@@ -2483,10 +2118,9 @@ function handleAdminAddCourt(event) {
       image_name: img
     })
   })
-  .then(async res => {
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Error saving court details');
-    return data;
+  .then(res => {
+    if (!res.ok) throw new Error();
+    return res.json();
   })
   .then(() => {
     const actionText = STATE.editingCourtId ? 'updated' : 'added';
@@ -2509,7 +2143,7 @@ function handleAdminAddCourt(event) {
           card.className = 'court-card';
           card.innerHTML = `
             <div class="court-img-container">
-              <i class="fa-solid fa-baseball court-img-svg"></i>
+              <i class="fa-solid fa-tennis-ball court-img-svg"></i>
               <div class="court-img-bg-shape"></div>
             </div>
             <div class="court-card-body">
@@ -2542,7 +2176,7 @@ function handleAdminAddCourt(event) {
     })
     .catch(() => {});
   })
-  .catch(err => showNotification(err.message || 'Error saving court details', 'error'));
+  .catch(() => showNotification('Error saving court details', 'error'));
 }
 
 function startEditCourt(id, name, price, desc, img) {

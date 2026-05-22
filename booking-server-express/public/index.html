@@ -17,17 +17,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-theme">
   <!-- Flatpickr JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-  <!-- JsBarcode JS -->
-  <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <!-- Official Google Identity Services SDK -->
-  <script>
-    window.onGoogleGisLoad = function() {
-      window.googleGisLoaded = true;
-      if (window.onGoogleGisLoadCallback) {
-        window.onGoogleGisLoadCallback();
-      }
-    };
-  </script>
   <script src="https://accounts.google.com/gsi/client?onload=onGoogleGisLoad" async defer></script>
 </head>
 <body class="dark-theme">
@@ -38,7 +28,7 @@
   <header class="app-header">
     <div class="container navbar">
       <a href="/" class="logo" id="nav-logo">
-        <i class="fa-solid fa-baseball logo-icon text-neon"></i>
+        <i class="fa-solid fa-tennis-ball logo-icon text-neon"></i>
         <span class="logo-text">Ace<span class="text-neon">Point</span></span>
       </a>
       <nav class="nav-links">
@@ -106,23 +96,9 @@
         <div class="search-box glassmorphism">
           <h2 class="form-title text-center"><i class="fa-solid fa-magnifying-glass text-neon mr-2"></i> Find Available Timeslots</h2>
           <form id="search-form" class="search-form">
-            <div class="form-group text-center">
-              <label class="form-label-custom"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date</label>
-              <div class="search-date-display-wrapper">
-                <button type="button" class="btn-date-arrow-large" onclick="changeSearchDateByOffset(-1)" title="Previous Day">
-                  <i class="fa-solid fa-chevron-left"></i>
-                </button>
-                
-                <div class="search-date-center-trigger" id="search-date-trigger">
-                  <div class="search-date-day-label" id="search-date-day-label">Today</div>
-                  <div class="search-date-sub-label" id="search-date-sub-label">23/05/2026</div>
-                </div>
-                
-                <button type="button" class="btn-date-arrow-large" onclick="changeSearchDateByOffset(1)" title="Next Day">
-                  <i class="fa-solid fa-chevron-right"></i>
-                </button>
-              </div>
-              <input type="text" id="booking-date" style="display: none;" required>
+            <div class="form-group">
+              <label for="booking-date"><i class="fa-regular fa-calendar mr-1"></i> Date</label>
+              <input type="date" id="booking-date" class="form-control" required>
             </div>
             
             <button type="submit" class="btn btn-primary btn-block mt-4" id="search-submit-btn">
@@ -288,12 +264,6 @@
                 <i class="fa-solid fa-user input-icon"></i>
                 <input type="text" id="register-username" class="form-control" placeholder="Choose a username" required autocomplete="username">
               </div>
-              <div id="register-username-requirements" class="auth-requirements mt-2" style="display: none;">
-                <ul class="requirements-list">
-                  <li id="username-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> 3 to 20 characters long</li>
-                  <li id="username-req-chars" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Letters, numbers, and underscores only</li>
-                </ul>
-              </div>
               <div id="register-username-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
             <div class="form-group">
@@ -309,14 +279,6 @@
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
                 <input type="password" id="register-password" class="form-control" placeholder="Choose a strong password" required autocomplete="new-password">
-              </div>
-              <div id="register-password-requirements" class="auth-requirements mt-2" style="display: none;">
-                <ul class="requirements-list">
-                  <li id="pass-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least 8 characters long</li>
-                  <li id="pass-req-upper" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one uppercase letter (A-Z)</li>
-                  <li id="pass-req-lower" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one lowercase letter (a-z)</li>
-                  <li id="pass-req-number" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one number (0-9)</li>
-                </ul>
               </div>
               <div id="register-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
@@ -428,7 +390,7 @@
           </div>
 
           <div class="action-buttons mt-5">
-            <button class="btn btn-outline" id="review-cancel-btn">Cancel & Back</button>
+            <button class="btn btn-outline" onclick="navigateTo('timeslot-view')">Cancel & Back</button>
             <button class="btn btn-primary" id="proceed-to-payment-btn">
               Proceed to Payment <i class="fa-solid fa-credit-card ml-1"></i>
             </button>
@@ -561,7 +523,7 @@
           <div class="ticket glassmorphism mt-4">
             <div class="ticket-header">
               <div class="ticket-logo">
-                <i class="fa-solid fa-baseball logo-icon text-neon"></i>
+                <i class="fa-solid fa-tennis-ball logo-icon text-neon"></i>
                 <span class="logo-text text-white">Ace<span class="text-neon">Point</span></span>
               </div>
               <span class="ticket-badge">E-TICKET</span>
@@ -600,7 +562,18 @@
             </div>
 
             <div class="ticket-footer">
-              <svg id="ticket-barcode" class="ticket-barcode"></svg>
+              <div class="ticket-barcode">
+                <div class="barcode-line w-10"></div>
+                <div class="barcode-line w-2"></div>
+                <div class="barcode-line w-15"></div>
+                <div class="barcode-line w-5"></div>
+                <div class="barcode-line w-8"></div>
+                <div class="barcode-line w-12"></div>
+                <div class="barcode-line w-3"></div>
+                <div class="barcode-line w-6"></div>
+                <div class="barcode-line w-14"></div>
+                <div class="barcode-line w-5"></div>
+              </div>
               <div class="ticket-ref" id="ticket-ref-id">REF: AP-20260520-001</div>
             </div>
           </div>
@@ -692,7 +665,7 @@
             </div>
           </div>
           <div class="stat-card glassmorphism">
-            <div class="stat-icon bg-yellow-alpha"><i class="fa-solid fa-baseball text-yellow"></i></div>
+            <div class="stat-icon bg-yellow-alpha"><i class="fa-solid fa-tennis-ball text-yellow"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="admin-stat-courts">0</span>
               <span class="stat-label">Active Courts</span>
@@ -706,7 +679,7 @@
             <i class="fa-solid fa-calendar-days mr-1"></i> Bookings
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-courts" onclick="switchAdminTab('courts')">
-            <i class="fa-solid fa-baseball mr-1"></i> Courts
+            <i class="fa-solid fa-tennis-ball mr-1"></i> Courts
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-users" onclick="switchAdminTab('users')">
             <i class="fa-solid fa-users mr-1"></i> Users
@@ -772,7 +745,7 @@
                 </div>
                 <div class="form-group mb-3">
                   <label for="court-price-input">Price Per Hour (฿)</label>
-                  <input type="number" id="court-price-input" class="form-control" placeholder="e.g. 500" min="0" required>
+                  <input type="number" id="court-price-input" class="form-control" placeholder="e.g. 500" required>
                 </div>
                 <div class="form-group mb-3">
                   <label for="court-desc-input">Description</label>
@@ -849,7 +822,6 @@
   </footer>
 
   <!-- JS Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
-  <script src="app.js?v=2"></script>
+  <script src="app.js"></script>
 </body>
 </html>
