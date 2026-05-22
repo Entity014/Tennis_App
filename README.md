@@ -13,13 +13,12 @@
 
 ```mermaid
 graph TD
-    subgraph "🌐 System 1: AcePoint Booking Platform"
+    subgraph "🌐 System 1: AcePoint Booking Platform (Next.js)"
         User["👤 ผู้ใช้/ลูกค้า\n(Web Browser)"]
         BookingWeb["💻 AcePoint Web App\n(HTML + Vanilla JS + CSS)"]
-        BookingServer["⚙️ Booking API Server\n(Node.js + Express)"]
-        PrimaryDB[("🗄️ Primary DB\n(SQLite - Writes)")]
-        SubDB[("🗄️ Sub DB\n(SQLite - Reads)")]
-        SlipAPI["💳 SLIP Verify API\n(thunder.in.th)"]
+        BookingServer["⚙️ Next.js App Router API\n(Next.js Server Actions/Routes)"]
+        Database[("🗄️ PostgreSQL DB\n(Prisma ORM)")]
+        SlipAPI["💳 SLIP Verify API\n(Thunder / Slip2Go)"]
         SMTP["📧 SMTP Server\n(Nodemailer / Gmail)"]
     end
 
@@ -32,8 +31,7 @@ graph TD
 
     User --> BookingWeb
     BookingWeb <--> BookingServer
-    BookingServer --> PrimaryDB
-    PrimaryDB -->|"Replication (50ms lag)"| SubDB
+    BookingServer --> Database
     BookingServer --> SlipAPI
     BookingServer --> SMTP
 
@@ -52,17 +50,20 @@ Tennis_App/
 ├── .env                        # ตัวแปรสภาพแวดล้อมหลัก (root-level)
 ├── .gitignore
 │
-├── booking-server/             # ⭐ ระบบที่ 1: AcePoint Booking Web App
-│   ├── index.js                # Entry point หลักของ Express API Server
-│   ├── database.js             # Primary/Sub dual-DB replication logic
+├── booking-server/             # ⭐ ระบบที่ 1: AcePoint Booking Web App (Next.js)
+│   ├── app/                    # Next.js App Router (API Endpoints, Layouts, Pages)
+│   ├── lib/                    # Helper libraries (Prisma, Auth, SSE)
+│   ├── prisma/                 # Prisma schema & seed script สำหรับ PostgreSQL
+│   │   ├── schema.prisma
+│   │   └── seed.js
 │   ├── package.json            # Node.js dependencies
-│   ├── .env                    # ตัวแปรสภาพแวดล้อมของ Booking Server
-│   ├── primary.db              # SQLite ฐานข้อมูลหลัก (Writes)
-│   ├── sub.db                  # SQLite ฐานข้อมูลสำรอง (Reads)
+│   ├── .env                    # ตัวแปรสภาพแวดล้อมของ Booking Server (Next.js)
 │   └── public/                 # Static frontend files
-│       ├── index.html          # หน้าเว็บหลัก (Single Page App)
+│       ├── index.html          # หน้าเว็บหลัก (SPA)
 │       ├── app.js              # JavaScript logic ทั้งหมดของ Web App
 │       └── style.css           # Stylesheet (Dark mode / Glassmorphism)
+│
+├── booking-server-express/     # ⭐ (Legacy Backup) ระบบที่ 1 เดิม (Express.js & SQLite)
 │
 ├── server/                     # ⭐ ระบบที่ 2: TennisLock Kiosk Backend
 │   ├── index.js                # Entry point ของ Kiosk API Server
@@ -119,18 +120,19 @@ Tennis_App/
 
 | Layer | Technology |
 |---|---|
-| **Frontend** | HTML5, Vanilla JavaScript (ES6+), CSS3 (Dark mode / Glassmorphism) |
-| **Backend** | Node.js, Express.js |
-| **Database** | SQLite3 (Dual DB: Primary write + Sub read replica) |
+| **Frontend** | HTML5, Vanilla JavaScript (ES6+), CSS3 (Custom Scrollbars / Theme Dropdown / Glow Icons) |
+| **Backend** | Next.js API Routes (App Router) |
+| **Database** | PostgreSQL + Prisma ORM (พร้อม Concurrency & Transaction Control) |
 | **Auth** | JWT (jsonwebtoken), bcryptjs |
-| **Payment** | PromptPay QR (EMV payload), Thunder Slip Verify API |
+| **Payment** | PromptPay QR (EMV payload), Slip2Go Verify API, Client-Side QR Detection (jsQR) |
 | **Email** | Nodemailer (SMTP / Gmail) |
-| **Image processing** | Jimp + jsQR (local QR decode จากสลิป) |
+| **Anti-Abuse Cache** | Slip Hash Cache (ป้องกันการใช้สลิปเดิมยึดตรวจซ้ำใน DB เพื่อเซฟโควตา API) |
 
 ## 🚀 การติดตั้งและรัน
 
 ### ข้อกำหนดเบื้องต้น
 - Node.js v18 ขึ้นไป
+- PostgreSQL database (พร้อมใช้สำหรับต่อ Prisma)
 - npm
 
 ### ขั้นตอน
@@ -142,26 +144,37 @@ cd booking-server
 # 2. ติดตั้ง dependencies
 npm install
 
-# 3. คัดลอกและแก้ไขไฟล์ config
+# 3. คัดลอกและแก้ไขไฟล์ config (.env)
 cp .env.example .env
-# แก้ไขค่าใน .env ตามที่ต้องการ
+# กรอกค่า DATABASE_URL และตัวแปรอื่นๆ ตามต้องการ
 
-# 4. รัน server
+# 4. ซิงค์โครงสร้างฐานข้อมูลผ่าน Prisma
+npx prisma db push
+
+# 5. ใส่ข้อมูลเริ่มต้น (Seed Database)
+npx prisma db seed
+
+# 6. รันเซิร์ฟเวอร์สำหรับพัฒนา (Development Mode)
+npm run dev
+
+# 7. หรือทำการบิลด์และรันโหมดจริง (Production Mode)
+npm run build
 npm start
 ```
 
-เว็บแอปจะเปิดที่: **http://localhost:3001**
+เว็บแอปจะเปิดที่: **http://localhost:3000** (หรือตามพอร์ตที่กำหนดใน Next.js)
 
 ### ตัวแปรสภาพแวดล้อม (`.env`)
 
 ```env
-PORT=3001
+PORT=3000
+DATABASE_URL="postgresql://user:password@localhost:5432/tennis_db?schema=public"
 JWT_SECRET=your_jwt_secret_here
 
 # Google OAuth (ถ้าต้องการใช้ Social Login)
 GOOGLE_CLIENT_ID=your_google_client_id
 
-# Thunder Slip Verify API (ถ้าไม่ใส่จะเป็น Simulation Mode อัตโนมัติ)
+# Thunder / Slip2Go Verify API (ถ้าไม่ใส่จะเป็น Simulation Mode อัตโนมัติ)
 SLIP_API_KEY=your_slip_api_key
 
 # PromptPay รับเงิน (เบอร์โทรหรือเลขบัตรประชาชน)
@@ -176,7 +189,7 @@ SMTP_PASS=your_app_password
 
 ### บัญชีเริ่มต้น (Seed Accounts)
 
-ระบบจะสร้างบัญชีเริ่มต้นอัตโนมัติเมื่อ database ว่างเปล่า:
+ระบบจะสร้างบัญชีเริ่มต้นเมื่อกดรันคำสั่ง Seed:
 
 | Username | Password | Role |
 |---|---|---|
@@ -184,7 +197,7 @@ SMTP_PASS=your_app_password
 | `admin` | `admin123` | admin |
 
 > [!WARNING]
-> เปลี่ยนรหัสผ่านเหล่านี้ทันทีก่อนใช้งานใน Production
+> เปลี่ยนรหัสผ่านเหล่านี้ทันทีก่อนใช้งานจริงบนอินเทอร์เน็ต
 
 ## 📡 Booking API Reference
 
@@ -223,44 +236,60 @@ SMTP_PASS=your_app_password
 | `DELETE` | `/api/admin/courts/:id` | ลบคอร์ต |
 | `GET` | `/api/admin/users` | ดูรายชื่อผู้ใช้ทั้งหมด |
 
-## 🔄 Dual Database Architecture
+## 🔄 Database Concurrency & Architecture
 
-ระบบใช้ SQLite 2 ฐานข้อมูลเพื่อแยก Read/Write load:
+ระบบที่ 1 (Next.js) ได้รับการอัปเกรดระบบฐานข้อมูลจาก SQLite เดิมเป็น **PostgreSQL** โดยสื่อสารผ่าน **Prisma ORM** เพื่อตอบโจทย์ความคงเส้นคงวาและความปลอดภัยในการจองสนาม:
 
 ```
-Write Operation (runQuery)
-    └─► Primary DB (primary.db) ──[50ms lag]──► Sub DB (sub.db)
-
-Read Operation
-    ├─► allQuery / getQuery      → Sub DB    (eventual consistency)
-    └─► allPrimaryQuery / getPrimaryQuery → Primary DB (strong consistency)
+[Web UI Request] ──► [Next.js API Route] ──► [Prisma Client] ──► [PostgreSQL Database]
+                                                                        │
+                                                         (Transaction & Locks เพื่อป้องกันการจองซ้ำซ้อน)
 ```
 
 > [!NOTE]
-> Courts, bookings ที่เพิ่งสร้าง/แก้ไข จะใช้ `allPrimaryQuery` เพื่อให้ได้ข้อมูลล่าสุดทันที
+> ระบบจองใช้ความสามารถ **Prisma Transaction ($transaction)** ในการรวบและป้องกันปัญหาการจองเวลาชนกัน (Overlapping Bookings) ของผู้ใช้งานหลายคนพร้อมกันในเสี้ยววินาทีเดียวกันได้อย่างสมบูรณ์แบบ
+>
+> ส่วนเซิร์ฟเวอร์ระบบที่ 2 (Kiosk Server) ยังคงใช้ SQLite เพื่อความเบาตัวและง่ายต่อการรันบนอุปกรณ์ Kiosk หน้าสนาม (Dockerized) เช่นเดิม
 
-## 🔐 Payment Flow
+## 🔐 Payment & Slip Verification Flow
 
 ```mermaid
 sequenceDiagram
     actor User
-    participant Web as Web App
-    participant Server as Booking Server
-    participant SlipAPI as Thunder Slip API
+    participant Web as Web App (Client)
+    participant Server as Next.js Server
+    participant DB as PostgreSQL (DB)
+    participant SlipAPI as Thunder / Slip2Go API
 
-    User->>Web: เลือกคอร์ต + เวลา + กด Book
+    User->>Web: เลือกคอร์ท + เวลา + กด Book
     Web->>Server: POST /api/bookings
-    Server-->>Web: booking ID + ราคา
-    Web->>User: แสดง PromptPay QR Code
-    User->>User: โอนเงินและถ่ายรูปสลิป
-    User->>Web: อัปโหลดสลิป
-    Web->>Server: POST /api/payment/:id + slip image (base64)
-    Server->>Server: Decode QR code จากสลิปด้วย jsQR
-    Server->>SlipAPI: ยืนยันสลิปกับ Thunder API
-    SlipAPI-->>Server: ผลการตรวจสอบ (amount, receiver, duplicate check)
-    Server->>Server: ตรวจสอบ receiver, amount, timestamp
-    Server-->>Web: Payment Success + E-Ticket PIN
-    Web->>User: แสดง E-Ticket พร้อม PIN 6 หลัก
+    Server-->>Web: booking ID + ยอดเงินสุทธิ
+    Web->>User: แสดงหน้าสแกนจ่าย PromptPay QR Code
+    User->>User: สแกนโอนเงินและบันทึกรูปสลิป
+    User->>Web: อัปโหลดรูปสลิป
+    Note over Web: ตรวจหา QR Code ในสลิปก่อนส่งด้วย jsQR
+    alt ไม่พบ QR Code ในรูปภาพ
+        Web->>User: แจ้งเตือน: "รูปสลิปนี้ไม่มีคิวอาร์โค้ด" (ไม่ยิง API ประหยัดโควตา)
+    else พบ QR Code ในรูปภาพ
+        Web->>Server: POST /api/payment/:id + ข้อมูลรูป (Base64)
+        Note over Server: คำนวณ Hash (SHA-256) ของไฟล์สลิป
+        Server->>DB: ตรวจสอบประวัติสลิปจาก Hash
+        alt สลิปเคยใช้แล้ว (Duplicate Slip Hash)
+            DB-->>Server: พบแฮชซ้ำในระบบ
+            Server-->>Web: ส่งข้อผิดพลาดกลับ (ไม่อนุญาต/ไม่ตรวจซ้ำ)
+        else สลิปใหม่
+            Server->>SlipAPI: ยิงตรวจสอบสลิปผ่าน API
+            SlipAPI-->>Server: ผลตอบรับ (จำนวนเงิน, ผู้รับโอน, หมายเลขอ้างอิง)
+            alt ข้อมูลสลิปถูกต้อง
+                Server->>DB: บันทึกประวัติสลิป (บันทึกแฮชกันการสปัม) + อัปเดต Booking
+                Server-->>Web: ยืนยันสำเร็จ (Payment Success) + PIN 6 หลัก
+                Web->>User: แสดง E-Ticket พร้อม PIN ปลดล็อก Kiosk หน้าสนาม
+            else สลิปไม่ถูกต้อง (แต่ยิงแล้ว)
+                Server->>DB: บันทึกแฮชสลิปนี้ (เพื่อแบนรูปเดิมไม่ให้กดสปัมตรวจสอบซ้ำ)
+                Server-->>Web: ส่งข้อผิดพลาดกลับ (ข้อมูลสลิปไม่ตรงเงื่อนไข)
+            end
+        end
+    end
 ```
 
 ---
