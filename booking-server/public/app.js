@@ -2191,22 +2191,36 @@ function renderETicket(booking) {
     pinEl.textContent = formattedPin;
     pinEl.style.fontSize = '2.2rem';
     pinEl.style.letterSpacing = 'normal';
-    document.querySelector('.pin-instruction').style.display = 'block';
     
-    // Generate barcode from PIN
-    if (typeof JsBarcode !== 'undefined' && barcodeEl) {
-      try {
-        JsBarcode("#ticket-barcode", pin, {
-          format: "CODE128",
-          lineColor: "#000000",
-          width: 1.8,
-          height: 38,
-          displayValue: false,
-          margin: 0
-        });
-        barcodeEl.style.display = 'block';
-      } catch (err) {
-        console.error('Error generating barcode:', err);
+    // Check if booking has expired (end_time passed or marked completed/expired on server)
+    const bookingEndStr = `${booking.date}T${booking.end_time}:00+07:00`;
+    const isExpired = booking.status === 'completed' || booking.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
+    
+    if (isExpired) {
+      pinEl.style.color = '#64748b';
+      pinEl.style.textDecoration = 'line-through';
+      document.querySelector('.pin-instruction').innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 text-muted"></i> This booking is completed. The PIN has expired.`;
+      if (barcodeEl) barcodeEl.style.display = 'none';
+    } else {
+      pinEl.style.color = '';
+      pinEl.style.textDecoration = '';
+      document.querySelector('.pin-instruction').innerHTML = `<i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.`;
+      
+      // Generate barcode from PIN
+      if (typeof JsBarcode !== 'undefined' && barcodeEl) {
+        try {
+          JsBarcode("#ticket-barcode", pin, {
+            format: "CODE128",
+            lineColor: "#000000",
+            width: 1.8,
+            height: 38,
+            displayValue: false,
+            margin: 0
+          });
+          barcodeEl.style.display = 'block';
+        } catch (err) {
+          console.error('Error generating barcode:', err);
+        }
       }
     }
   } else {
@@ -2262,6 +2276,10 @@ function loadUserBookings() {
       const pin = b.pin_code;
       const formattedPin = isPaid && pin !== 'PENDING' ? `${pin.substring(0,3)} ${pin.substring(3,6)}` : 'Pending';
 
+      // Check if booking has expired (end_time passed or marked completed/expired on server)
+      const bookingEndStr = `${b.date}T${b.end_time}:00+07:00`;
+      const isExpired = b.status === 'completed' || b.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
+
       row.innerHTML = `
         <div class="booking-info-main">
           <div class="booking-court-avatar">
@@ -2278,11 +2296,21 @@ function loadUserBookings() {
         </div>
         <div class="booking-actions">
           ${isPaid 
-            ? `<span class="badge badge-neon">PIN: ${formattedPin}</span>` 
+            ? (isExpired
+                ? `<span class="badge" style="background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);">PIN: ${formattedPin}</span>`
+                : `<span class="badge badge-neon">PIN: ${formattedPin}</span>`
+              )
             : ''
           }
-          <span class="booking-status-badge ${isPaid ? 'status-paid' : 'status-pending'}" style="${!isPaid ? 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);' : ''}">
-            ${isPaid ? 'Paid' : 'PENDING'}
+          <span class="booking-status-badge ${isPaid ? (isExpired ? 'status-completed' : 'status-paid') : 'status-pending'}" style="${
+            !isPaid 
+              ? 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);' 
+              : (isExpired
+                  ? 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'
+                  : ''
+                )
+          }">
+            ${isPaid ? (isExpired ? 'Completed' : 'Paid') : 'PENDING'}
           </span>
           ${isPaid 
             ? `<button class="btn btn-outline btn-sm btn-ticket-view">View Ticket</button>` 

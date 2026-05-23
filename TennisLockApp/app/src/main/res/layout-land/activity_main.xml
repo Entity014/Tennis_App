@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    tools:context=".MainActivity">
+
+    <!-- Glowing Background Circle Top-Right -->
+    <View
+        android:id="@+id/bg_glow_top"
+        android:layout_width="@dimen/glow_top_size"
+        android:layout_height="@dimen/glow_top_size"
+        android:background="@drawable/bg_gradient_circle_purple"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/glow_top_margin_top"
+        android:layout_marginEnd="@dimen/glow_top_margin_end"
+        android:alpha="0.25"/>
+
+    <!-- Glowing Background Circle Bottom-Left -->
+    <View
+        android:id="@+id/bg_glow_bottom"
+        android:layout_width="@dimen/glow_bottom_size"
+        android:layout_height="@dimen/glow_bottom_size"
+        android:background="@drawable/bg_gradient_circle_teal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="@dimen/glow_bottom_margin_bottom"
+        android:layout_marginStart="@dimen/glow_bottom_margin_start"
+        android:alpha="0.2"/>
+
+    <!-- ==================== 1. LOCKED VIEW ==================== -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_locked"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <!-- Split Screen Guideline at 45% of width -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_lock"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45" />
+
+        <!-- Left Pane: Logo, Lock Status, PIN dots -->
+        <LinearLayout
+            android:id="@+id/layout_lock_info"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_lock"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/layout_lock_footer">
+
+            <LinearLayout
+                android:id="@+id/lock_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/land_lock_icon_size"
+                    android:layout_height="@dimen/land_lock_icon_size"
+                    android:src="@drawable/ic_secure_lock_vector"
+                    app:tint="@color/neon_green"
+                    android:contentDescription="Locked Icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="DEVICE LOCKED"
+                    android:textColor="@color/text_main"
+                    android:textSize="@dimen/land_lock_title_size"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-condensed"
+                    android:letterSpacing="0.1"
+                    android:layout_marginTop="16dp"/>
+
+                <TextView
+                    android:id="@+id/tv_lock_status_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Enter PIN to activate device"
+                    android:textColor="@color/text_muted"
+                    android:textSize="@dimen/land_lock_status_size"
+                    android:gravity="center"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+
+            <!-- PIN Display Dots -->
+            <LinearLayout
+                android:id="@+id/layout_pin_dots"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="@dimen/pin_dots_margin_top">
+
+                <View android:id="@+id/dot1" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+                <View android:id="@+id/dot2" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+                <View android:id="@+id/dot3" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+                <View android:id="@+id/dot4" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+                <View android:id="@+id/dot5" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+                <View android:id="@+id/dot6" android:layout_width="@dimen/land_pin_dot_size" android:layout_height="@dimen/land_pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Right Pane: Numeric Keypad Grid -->
+        <GridLayout
+            android:id="@+id/grid_keypad"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="3"
+            android:rowCount="4"
+            android:alignmentMode="alignBounds"
+            android:columnOrderPreserved="false"
+            app:layout_constraintStart_toEndOf="@id/guideline_lock"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Buttons from 1 to 9 -->
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_1" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="1" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_2" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="2" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_3" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="3" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_4" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="4" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_5" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="5" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_6" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="6" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_7" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="7" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_8" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="8" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_9" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="9" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_clear" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="C" android:textColor="@color/red_error" android:textSize="@dimen/land_keypad_clear_text_size" android:textStyle="bold" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/red_error" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_0" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="0" android:textColor="@color/text_main" android:textSize="@dimen/land_keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_enter" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/land_keypad_btn_size" android:layout_height="@dimen/land_keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="OK" android:textColor="@color/neon_green" android:textSize="@dimen/land_keypad_enter_text_size" android:textStyle="bold" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/neon_green" app:strokeWidth="2dp"/>
+        </GridLayout>
+
+        <!-- Lock Footer (Absolute bottom, spans entire width) -->
+        <LinearLayout
+            android:id="@+id/layout_lock_footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingHorizontal="40dp"
+            android:layout_marginBottom="24dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <TextView
+                android:id="@+id/tv_lock_device_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device ID: Getting..."
+                android:textColor="@color/text_muted"
+                android:textSize="@dimen/land_footer_text_size"
+                android:gravity="center"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ==================== 2. ACTIVE VIEW ==================== -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_active"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <!-- Split Screen Guideline for Active State -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_active"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.45" />
+
+        <!-- Left Pane: Active Header, battery & Session controls -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:paddingHorizontal="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/guideline_active"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <!-- Active Header -->
+            <LinearLayout
+                android:id="@+id/active_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="SESSION ACTIVE"
+                    android:textColor="@color/neon_green"
+                    android:textSize="@dimen/land_active_title_size"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.1"/>
+
+                <!-- Pulsing green status light layout -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center"
+                    android:layout_marginTop="12dp">
+
+                    <View
+                        android:layout_width="@dimen/land_active_status_dot_size"
+                        android:layout_height="@dimen/land_active_status_dot_size"
+                        android:background="@drawable/bg_icon_ring"
+                        android:backgroundTint="@color/neon_green"
+                        android:layout_marginEnd="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Device unlocked &amp; active"
+                        android:textColor="@color/text_muted"
+                        android:textSize="@dimen/land_active_status_text_size"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- battery & session status -->
+            <TextView
+                android:id="@+id/tv_session_battery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Battery: 100% | Sync Active"
+                android:textColor="@color/text_muted"
+                android:textSize="@dimen/land_session_battery_size"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="32dp"/>
+
+            <!-- Swipe to Lock Slider -->
+            <FrameLayout
+                android:id="@+id/layout_slide_to_lock"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_slide_track">
+
+                <!-- Dynamic Fill Bar -->
+                <View
+                    android:id="@+id/view_slide_fill"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_slide_fill"/>
+
+                <TextView
+                    android:id="@+id/tv_slide_hint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="Swipe right to lock"
+                    android:textColor="#88FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:letterSpacing="0.05"/>
+
+                <FrameLayout
+                    android:id="@+id/view_slide_thumb"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center_vertical|start"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/bg_slide_thumb">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_secure_lock_vector"
+                        app:tint="#FFFFFF"/>
+                </FrameLayout>
+            </FrameLayout>
+        </LinearLayout>
+
+        <!-- Right Pane: Premium Timer Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_timer"
+            android:layout_width="@dimen/land_timer_card_size"
+            android:layout_height="@dimen/land_timer_card_size"
+            app:cardCornerRadius="@dimen/land_timer_card_radius"
+            app:cardBackgroundColor="@color/bg_card"
+            app:strokeWidth="2dp"
+            app:strokeColor="@color/border_color"
+            app:layout_constraintStart_toEndOf="@id/guideline_active"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/timer_card_padding">
+
+                <!-- Circular Progress Indicator -->
+                <com.google.android.material.progressindicator.CircularProgressIndicator
+                    android:id="@+id/progress_timer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    app:indicatorSize="@dimen/land_timer_indicator_size"
+                    app:trackThickness="@dimen/land_timer_track_thickness"
+                    app:indicatorColor="@color/neon_green"
+                    app:trackColor="@color/bg_dark"
+                    android:progress="100"
+                    android:max="100"
+                    android:indeterminate="false"/>
+
+                <!-- Time text overlay -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/tv_remaining_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00:00"
+                        android:textColor="@color/text_main"
+                        android:textSize="@dimen/land_timer_text_size"
+                        android:textStyle="bold"
+                        android:fontFamily="monospace"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="REMAINING"
+                        android:textColor="@color/text_muted"
+                        android:textSize="@dimen/land_timer_label_size"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.15"
+                        android:layout_marginTop="6dp"/>
+                </LinearLayout>
+            </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- ==================== 3. ADMIN SETTINGS VIEW ==================== -->
+    <ScrollView
+        android:id="@+id/layout_admin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:fillViewport="true">
+
+        <!-- Constrain width for professional landscape styling -->
+        <LinearLayout
+            android:layout_width="@dimen/land_admin_content_width"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/land_admin_padding"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ADMIN DASHBOARD"
+                android:textColor="@color/text_main"
+                android:textSize="@dimen/land_admin_title_size"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-condensed"
+                android:letterSpacing="0.05"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tv_admin_device_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device ID: Getting..."
+                android:textColor="@color/text_muted"
+                android:textSize="14sp"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Device Owner Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                app:cardCornerRadius="16dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/border_color"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Device Owner Status:"
+                            android:textColor="@color/text_main"
+                            android:textSize="@dimen/land_admin_btn_text_size"
+                            android:textStyle="bold"/>
+
+                        <TextView
+                            android:id="@+id/tv_device_owner_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="INACTIVE"
+                            android:textColor="@color/red_error"
+                            android:textSize="@dimen/land_admin_btn_text_size"
+                            android:textStyle="bold"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tv_adb_instructions_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="To lock down the device properly, make this app the Device Owner by running this ADB command on your computer:"
+                        android:textColor="@color/text_muted"
+                        android:textSize="12sp"
+                        android:layout_marginTop="12dp"/>
+
+                    <!-- Scrollable ADB Command text box -->
+                    <HorizontalScrollView
+                        android:id="@+id/layout_adb_box"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/bg_dark"
+                        android:padding="12dp">
+
+                        <TextView
+                            android:id="@+id/tv_adb_command"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="adb shell dpm set-device-owner com.example.tennislockapp/.LockDeviceAdminReceiver"
+                            android:textColor="@color/neon_green"
+                            android:textSize="12sp"
+                            android:fontFamily="monospace"
+                            android:textIsSelectable="true"/>
+                    </HorizontalScrollView>
+
+                    <TextView
+                        android:id="@+id/tv_adb_hint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tip: Long-press command to select and copy."
+                        android:textColor="@color/text_muted"
+                        android:textSize="10sp"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Configuration Inputs -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Server Base URL (e.g. http://192.168.1.10:3000)"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/neon_green"
+                app:boxStrokeColor="@color/neon_green"
+                app:boxBackgroundColor="@color/bg_card"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_server_url"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main"
+                    android:inputType="textUri"
+                    android:textSize="@dimen/land_admin_input_text_size"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Launch App Package (e.g. com.google.android.youtube)"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/neon_green"
+                app:boxStrokeColor="@color/neon_green"
+                app:boxBackgroundColor="@color/bg_card"
+                android:layout_marginBottom="16dp"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_kiosk_package_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_main"
+                    android:inputType="text"
+                    android:textSize="@dimen/land_admin_input_text_size"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Action Buttons -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_exit_kiosk"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_btn_height"
+                android:text="Unlock Phone"
+                android:textColor="@color/white"
+                android:textSize="@dimen/land_admin_btn_text_size"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/red_error"
+                android:layout_marginBottom="12dp"
+                android:enabled="false"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_save_settings"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_btn_height"
+                android:text="Save Configuration"
+                android:textColor="@color/bg_dark"
+                android:textSize="@dimen/land_admin_btn_text_size"
+                android:textStyle="bold"
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/neon_green"
+                android:layout_marginBottom="12dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_back_to_lock"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/admin_btn_height"
+                android:text="Cancel"
+                android:textColor="@color/text_main"
+                android:textSize="@dimen/land_admin_btn_text_size"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="32dp"/>
+        </LinearLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

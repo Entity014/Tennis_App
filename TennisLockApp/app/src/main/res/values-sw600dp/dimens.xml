@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ============================================ -->
+    <!-- Tablet (sw600dp = 7-inch+) Portrait Overrides -->
+    <!-- ============================================ -->
+
+    <!-- ============ Lock Screen ============ -->
+    <!-- Header -->
+    <dimen name="lock_icon_size">72dp</dimen>
+    <dimen name="lock_title_size">32sp</dimen>
+    <dimen name="lock_status_size">18sp</dimen>
+    <dimen name="lock_header_margin_top">80dp</dimen>
+
+    <!-- PIN Dots -->
+    <dimen name="pin_dot_size">24dp</dimen>
+    <dimen name="pin_dot_margin">12dp</dimen>
+    <dimen name="pin_dots_margin_top">48dp</dimen>
+
+    <!-- Keypad -->
+    <dimen name="keypad_btn_size">100dp</dimen>
+    <dimen name="keypad_btn_margin">14dp</dimen>
+    <dimen name="keypad_text_size">32sp</dimen>
+    <dimen name="keypad_clear_text_size">28sp</dimen>
+    <dimen name="keypad_enter_text_size">24sp</dimen>
+    <dimen name="keypad_margin_top">40dp</dimen>
+
+    <!-- Footer -->
+    <dimen name="lock_footer_text_size">16sp</dimen>
+    <dimen name="lock_footer_margin_bottom">40dp</dimen>
+    <dimen name="lock_footer_padding_horizontal">40dp</dimen>
+
+    <!-- ============ Active Screen ============ -->
+    <!-- Header -->
+    <dimen name="active_title_size">24sp</dimen>
+    <dimen name="active_header_margin_top">80dp</dimen>
+    <dimen name="active_status_dot_size">12dp</dimen>
+    <dimen name="active_status_text_size">18sp</dimen>
+
+    <!-- Timer Card -->
+    <dimen name="timer_card_size">380dp</dimen>
+    <dimen name="timer_card_radius">190dp</dimen>
+    <dimen name="timer_indicator_size">320dp</dimen>
+    <dimen name="timer_track_thickness">14dp</dimen>
+    <dimen name="timer_text_size">56sp</dimen>
+    <dimen name="timer_label_size">16sp</dimen>
+    <dimen name="timer_card_padding">28dp</dimen>
+
+    <!-- Battery & Session -->
+    <dimen name="session_battery_size">18sp</dimen>
+
+    <!-- Lock Device Button -->
+    <dimen name="finish_btn_height">64dp</dimen>
+    <dimen name="finish_btn_text_size">18sp</dimen>
+    <dimen name="finish_btn_margin_horizontal">80dp</dimen>
+    <dimen name="finish_btn_margin_bottom">80dp</dimen>
+
+    <!-- ============ Admin Screen ============ -->
+    <dimen name="admin_title_size">28sp</dimen>
+    <dimen name="admin_padding">48dp</dimen>
+    <dimen name="admin_title_margin_top">48dp</dimen>
+    <dimen name="admin_btn_height">60dp</dimen>
+    <dimen name="admin_btn_text_size">18sp</dimen>
+    <dimen name="admin_input_text_size">18sp</dimen>
+    <dimen name="admin_content_width">0dp</dimen>
+
+    <!-- ============ Background Glow ============ -->
+    <dimen name="glow_top_size">450dp</dimen>
+    <dimen name="glow_top_margin_top">-140dp</dimen>
+    <dimen name="glow_top_margin_end">-140dp</dimen>
+    <dimen name="glow_bottom_size">500dp</dimen>
+    <dimen name="glow_bottom_margin_bottom">-160dp</dimen>
+    <dimen name="glow_bottom_margin_start">-160dp</dimen>
+
+    <!-- ============ Landscape Specific ============ -->
+    <dimen name="land_lock_icon_size">80dp</dimen>
+    <dimen name="land_lock_title_size">34sp</dimen>
+    <dimen name="land_lock_status_size">20sp</dimen>
+    <dimen name="land_pin_dot_size">28dp</dimen>
+    <dimen name="land_keypad_btn_size">110dp</dimen>
+    <dimen name="land_keypad_text_size">34sp</dimen>
+    <dimen name="land_keypad_clear_text_size">28sp</dimen>
+    <dimen name="land_keypad_enter_text_size">26sp</dimen>
+    <dimen name="land_footer_text_size">16sp</dimen>
+    <dimen name="land_active_title_size">28sp</dimen>
+    <dimen name="land_active_status_dot_size">14dp</dimen>
+    <dimen name="land_active_status_text_size">18sp</dimen>
+    <dimen name="land_timer_card_size">380dp</dimen>
+    <dimen name="land_timer_card_radius">190dp</dimen>
+    <dimen name="land_timer_indicator_size">330dp</dimen>
+    <dimen name="land_timer_track_thickness">14dp</dimen>
+    <dimen name="land_timer_text_size">56sp</dimen>
+    <dimen name="land_timer_label_size">16sp</dimen>
+    <dimen name="land_session_battery_size">18sp</dimen>
+    <dimen name="land_finish_btn_text_size">18sp</dimen>
+    <dimen name="land_admin_title_size">28sp</dimen>
+    <dimen name="land_admin_content_width">640dp</dimen>
+    <dimen name="land_admin_padding">48dp</dimen>
+    <dimen name="land_admin_btn_text_size">18sp</dimen>
+    <dimen name="land_admin_input_text_size">18sp</dimen>
+</resources>

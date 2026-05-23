@@ -18,7 +18,14 @@ export async function GET(req) {
     const date = searchParams.get('date');
 
     if (!date) {
-      return NextResponse.json({ message: 'Date query parameter is required (format: YYYY-MM-DD)' }, { status: 400 });
+      const courts = await prisma.court.findMany();
+      return NextResponse.json(courts.map(c => ({
+        id: c.id,
+        name: c.name,
+        price_per_hour: c.pricePerHour,
+        description: c.description,
+        image_name: c.imageName
+      })));
     }
 
     await cleanupExpiredBookings();

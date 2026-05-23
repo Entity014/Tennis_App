@@ -51,30 +51,14 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Court not found' }, { status: 404 });
     }
 
-    // Check collision (double booking overlap check)
-    const collision = await prisma.booking.findFirst({
-      where: {
-        courtId: parseInt(court_id),
-        date: date,
-        status: {
-          in: ['paid', 'pending']
-        },
-        startTime: {
-          lt: end_time
-        },
-        endTime: {
-          gt: start_time
-        }
-      }
-    });
-
-    if (collision) {
-      return NextResponse.json({ message: 'Timeslot is already booked' }, { status: 409 });
-    }
-
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
     const duration = endHour - startHour;
+
+    if (duration <= 0) {
+      return NextResponse.json({ message: 'Invalid booking duration.' }, { status: 400 });
+    }
+
     let price = court.pricePerHour * duration;
 
     // Apply Promo Code validation on the server
@@ -87,24 +71,65 @@ export async function POST(req) {
     // mod and admin get instant paid booking (cash on-site)
     const isPrivileged = userRole === 'mod' || userRole === 'admin';
 
-    let newBooking;
-    if (isPrivileged) {
-      newBooking = await prisma.booking.create({
-        data: {
-          userId: user_id,
-          courtId: parseInt(court_id),
-          date,
-          startTime: start_time,
-          endTime: end_time,
-          price,
-          pinCode: pin_code,
-          status: 'paid',
-          paymentStatus: 'completed',
-          paymentMethod: 'Cash (Staff)'
-        },
-        include: {
-          court: true
+    try {
+      const newBooking = await prisma.$transaction(async (tx) => {
+        // Check collision (double booking overlap check) inside transaction
+        const collision = await tx.booking.findFirst({
+          where: {
+            courtId: parseInt(court_id),
+            date: date,
+            status: {
+              in: ['paid', 'pending']
+            },
+            startTime: {
+              lt: end_time
+            },
+            endTime: {
+              gt: start_time
+            }
+          }
+        });
+
+        if (collision) {
+          throw new Error('Timeslot is already booked');
         }
+
+        if (isPrivileged) {
+          return await tx.booking.create({
+            data: {
+              userId: user_id,
+              courtId: parseInt(court_id),
+              date,
+              startTime: start_time,
+              endTime: end_time,
+              price,
+              pinCode: pin_code,
+              status: 'paid',
+              paymentStatus: 'completed',
+              paymentMethod: 'Cash (Staff)'
+            },
+            include: {
+              court: true
+            }
+          });
+        }
+
+        return await tx.booking.create({
+          data: {
+            userId: user_id,
+            courtId: parseInt(court_id),
+            date,
+            startTime: start_time,
+            endTime: end_time,
+            price,
+            pinCode: pin_code
+          },
+          include: {
+            court: true
+          }
+        });
+      }, {
+        isolationLevel: 'Serializable'
       });
 
       // Broadcast update
@@ -124,43 +149,14 @@ export async function POST(req) {
         payment_status: newBooking.paymentStatus,
         created_at: newBooking.createdAt,
         court_name: newBooking.court.name,
-        _cashBooking: true
+        _cashBooking: isPrivileged ? true : undefined
       }, { status: 201 });
-    }
-
-    newBooking = await prisma.booking.create({
-      data: {
-        userId: user_id,
-        courtId: parseInt(court_id),
-        date,
-        startTime: start_time,
-        endTime: end_time,
-        price,
-        pinCode: pin_code
-      },
-      include: {
-        court: true
+    } catch (txErr) {
+      if (txErr.message === 'Timeslot is already booked') {
+        return NextResponse.json({ message: txErr.message }, { status: 409 });
       }
-    });
-
-    // Broadcast update
-    broadcastEvent({ type: 'booking-updated' });
-
-    return NextResponse.json({
-      id: newBooking.id,
-      user_id: newBooking.userId,
-      court_id: newBooking.courtId,
-      date: newBooking.date,
-      start_time: newBooking.startTime,
-      end_time: newBooking.endTime,
-      price: newBooking.price,
-      status: newBooking.status,
-      pin_code: newBooking.paymentStatus === 'completed' ? newBooking.pinCode : 'PENDING',
-      payment_method: newBooking.paymentMethod,
-      payment_status: newBooking.paymentStatus,
-      created_at: newBooking.createdAt,
-      court_name: newBooking.court.name
-    }, { status: 201 });
+      throw txErr;
+    }
   } catch (err) {
     return NextResponse.json({ message: 'Server error placing booking', error: err.message }, { status: 500 });
   }

@@ -11,6 +11,37 @@ public class LockAccessibilityService extends AccessibilityService {
 
     private static final String TAG = "LockAccessibility";
 
+    private final android.content.BroadcastReceiver forceLockReceiver = new android.content.BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("com.example.tennislockapp.FORCE_LOCK".equals(intent.getAction())) {
+                Log.d(TAG, "Received FORCE_LOCK broadcast, bringing MainActivity to front...");
+                Intent forceFront = new Intent(context, MainActivity.class);
+                forceFront.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                context.startActivity(forceFront);
+            }
+        }
+    };
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        android.content.IntentFilter filter = new android.content.IntentFilter("com.example.tennislockapp.FORCE_LOCK");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            registerReceiver(forceLockReceiver, filter, Context.RECEIVER_NOT_EXPORTED);
+        } else {
+            registerReceiver(forceLockReceiver, filter);
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            unregisterReceiver(forceLockReceiver);
+        } catch (Exception ignored) {}
+    }
+
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
@@ -22,6 +53,25 @@ public class LockAccessibilityService extends AccessibilityService {
                 boolean isActive = prefs.getBoolean("is_active", false);
                 boolean isAdminMode = prefs.getBoolean("is_admin_mode", false);
                 boolean isPermanentlyUnlocked = prefs.getBoolean("is_permanently_unlocked", false);
+
+                // If device is LOCKED, force MainActivity to front if any unauthorized app is opened
+                boolean isLocked = !isActive && !isAdminMode && !isPermanentlyUnlocked;
+                if (isLocked) {
+                    boolean isAllowedPackage = packageName.equals("com.example.tennislockapp") ||
+                            packageName.equals("com.android.systemui") ||
+                            packageName.contains("inputmethod") ||
+                            packageName.contains("keyboard");
+                    
+                    if (!isAllowedPackage) {
+                        Log.d(TAG, "Suppressed package during LOCK state: " + packageName);
+                        performGlobalAction(GLOBAL_ACTION_BACK);
+                        
+                        Intent forceFront = new Intent(this, MainActivity.class);
+                        forceFront.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                        startActivity(forceFront);
+                        return;
+                    }
+                }
 
                 // Settings, Wi-Fi quick settings, and Package Installers are blocked unless the admin is logged in
                 boolean blockSettings = !isAdminMode && !isPermanentlyUnlocked;

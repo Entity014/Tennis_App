@@ -32,8 +32,8 @@ public class MyHttpClient {
                 conn.setRequestMethod("POST");
                 conn.setRequestProperty("Content-Type", "application/json; utf-8");
                 conn.setRequestProperty("Accept", "application/json");
-                conn.setConnectTimeout(8000);
-                conn.setReadTimeout(8000);
+                conn.setConnectTimeout(2000);
+                conn.setReadTimeout(3000);
                 conn.setDoOutput(true);
 
                 // Write JSON payload

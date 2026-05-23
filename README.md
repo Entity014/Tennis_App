@@ -244,11 +244,11 @@ SMTP_PASS=your_app_password
 ```
 [Web UI Request] ──► [Next.js API Route] ──► [Prisma Client] ──► [PostgreSQL Database]
                                                                         │
-                                                         (Transaction & Locks เพื่อป้องกันการจองซ้ำซ้อน)
+                                                         (Serializable Transaction & Locks ป้องกันการจองซ้ำซ้อน)
 ```
 
 > [!NOTE]
-> ระบบจองใช้ความสามารถ **Prisma Transaction ($transaction)** ในการรวบและป้องกันปัญหาการจองเวลาชนกัน (Overlapping Bookings) ของผู้ใช้งานหลายคนพร้อมกันในเสี้ยววินาทีเดียวกันได้อย่างสมบูรณ์แบบ
+> ระบบจองใช้ความสามารถ **Prisma Transaction ($transaction)** ด้วยระดับ `isolationLevel: 'Serializable'` และมีการตรวจสอบ Logic (เช่น ป้องกัน duration ติดลบ) ทำให้ระบบป้องกันปัญหาการจองเวลาชนกัน (Overlapping Bookings) หรือโจมตีระบบราคากลายเป็นติดลบได้อย่างสมบูรณ์แบบ
 >
 > ส่วนเซิร์ฟเวอร์ระบบที่ 2 (Kiosk Server) ยังคงใช้ SQLite เพื่อความเบาตัวและง่ายต่อการรันบนอุปกรณ์ Kiosk หน้าสนาม (Dockerized) เช่นเดิม
 
@@ -398,6 +398,9 @@ http://192.168.1.100:3000
 | `POST` | `/api/device/heartbeat`  | รายงานสถานะทุก 15 วินาที | `{"device_id": "...", "battery_level": 85, "status": "IN_USE"}` |
 
 ### Admin Endpoints (เรียกจาก Web Dashboard)
+
+> [!WARNING]
+> ทุก Endpoint ของ Admin ได้รับการปกป้องด้วย Authentication Middleware ผู้เรียกต้องแนบ Header `Authorization: Bearer <KIOSK_SYNC_SECRET>` เสมอ เพื่อป้องกันผู้ไม่หวังดีเข้ามาควบคุมระบบในเครือข่ายเดียวกัน
 
 | Method   | Endpoint                      | Description               | Payload / Params                      |
 | -------- | ----------------------------- | ------------------------- | ------------------------------------- |

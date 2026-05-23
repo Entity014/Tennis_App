@@ -16,6 +16,8 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 import org.json.JSONObject;
@@ -59,6 +61,12 @@ public class LockForegroundService extends Service {
             return START_NOT_STICKY;
         }
 
+        if (intent != null && intent.hasExtra("update_button_state")) {
+            String state = intent.getStringExtra("update_button_state");
+            updateFloatingButtonState(state);
+            return START_STICKY;
+        }
+
         SharedPreferences prefs = getSharedPreferences("LockAppPrefs", MODE_PRIVATE);
         boolean isActive = prefs.getBoolean("is_active", false);
 
@@ -89,9 +97,11 @@ public class LockForegroundService extends Service {
         if (isActive && remainingMs > 0) {
             startCountdown();
             stopLockWatcher(); // No watcher needed when in active rental
+            showFloatingButton();
         } else {
             stopCountdown();
             startLockWatcher(); // Watch persistently to enforce Kiosk locking
+            hideFloatingButton();
         }
 
         startHeartbeat();
@@ -115,6 +125,7 @@ public class LockForegroundService extends Service {
                          .apply();
 
                     Intent tickIntent = new Intent(ACTION_TIME_TICK);
+                    tickIntent.setPackage(getPackageName());
                     tickIntent.putExtra(EXTRA_REMAINING_MS, remainingMs);
                     sendBroadcast(tickIntent);
 
@@ -207,7 +218,7 @@ public class LockForegroundService extends Service {
             @Override
             public void run() {
                 sendHeartbeatToServer();
-                heartbeatHandler.postDelayed(this, 15000); // Every 15 seconds
+                heartbeatHandler.postDelayed(this, 3000); // Every 3 seconds
             }
         };
         heartbeatHandler.post(heartbeatRunnable);
@@ -263,6 +274,7 @@ public class LockForegroundService extends Service {
         prefs.edit()
              .putBoolean("is_active", true)
              .putLong("remaining_ms", durationMs)
+             .putLong("initial_duration_ms", durationMs)
              .putLong("last_save_time", System.currentTimeMillis())
              .apply();
 
@@ -277,14 +289,17 @@ public class LockForegroundService extends Service {
         // Relaunch MainActivity in active state
         Intent activeIntent = new Intent(this, MainActivity.class);
         activeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        activeIntent.putExtra("EXTRA_LAUNCH_KIOSK_APP", true);
         startActivity(activeIntent);
 
         startCountdown();
         stopLockWatcher();
+        showFloatingButton();
     }
 
     private void stopSession(boolean showLockScreen) {
         stopCountdown();
+        hideFloatingButton();
 
         SharedPreferences prefs = getSharedPreferences("LockAppPrefs", MODE_PRIVATE);
         prefs.edit()
@@ -295,6 +310,7 @@ public class LockForegroundService extends Service {
         remainingMs = 0;
 
         Intent tickIntent = new Intent(ACTION_TIME_TICK);
+        tickIntent.setPackage(getPackageName());
         tickIntent.putExtra(EXTRA_REMAINING_MS, 0L);
         sendBroadcast(tickIntent);
 
@@ -309,6 +325,12 @@ public class LockForegroundService extends Service {
             lockIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             lockIntent.putExtra("EXTRA_LOCK", true);
             startActivity(lockIntent);
+            
+            // Send FORCE_LOCK broadcast to trigger accessibility service bypass for background launch
+            Intent forceLockIntent = new Intent("com.example.tennislockapp.FORCE_LOCK");
+            forceLockIntent.setPackage(getPackageName());
+            sendBroadcast(forceLockIntent);
+
             startLockWatcher(); // Force watch again
         } else {
             Intent unlockIntent = new Intent(this, MainActivity.class);
@@ -387,6 +409,7 @@ public class LockForegroundService extends Service {
     public void onDestroy() {
         stopCountdown();
         stopLockWatcher();
+        hideFloatingButton();
         if (heartbeatHandler != null) {
             heartbeatHandler.removeCallbacks(heartbeatRunnable);
         }
@@ -422,5 +445,232 @@ public class LockForegroundService extends Service {
         Intent restartActivityIntent = new Intent(getApplicationContext(), MainActivity.class);
         restartActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         getApplicationContext().startActivity(restartActivityIntent);
+    }
+
+    private View floatingButton;
+    private WindowManager windowManager;
+
+    private void showFloatingButton() {
+        if (floatingButton != null) return;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+            Log.w(TAG, "Overlay permission not granted. Floating button skipped.");
+            return;
+        }
+
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    windowManager = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+                    if (windowManager == null) return;
+
+                    int layoutType;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        layoutType = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+                    } else {
+                        layoutType = WindowManager.LayoutParams.TYPE_PHONE;
+                    }
+
+                    final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                            WindowManager.LayoutParams.WRAP_CONTENT,
+                            WindowManager.LayoutParams.WRAP_CONTENT,
+                            layoutType,
+                            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
+                            android.graphics.PixelFormat.TRANSLUCENT
+                    );
+
+                    params.gravity = android.view.Gravity.TOP | android.view.Gravity.LEFT;
+                    
+                    android.util.DisplayMetrics metrics = new android.util.DisplayMetrics();
+                    windowManager.getDefaultDisplay().getMetrics(metrics);
+                    params.x = metrics.widthPixels - dpToPx(130); // Place on the right side initially
+                    params.y = dpToPx(120);
+
+                    // Create view container
+                    android.widget.FrameLayout container = new android.widget.FrameLayout(LockForegroundService.this);
+                    
+                    // Create text view styled like a pill
+                    android.widget.TextView textView = new android.widget.TextView(LockForegroundService.this);
+                    
+                    if ("home".equals(currentButtonState)) {
+                        textView.setText("🎾 Reopen App");
+                        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+                        gd.setColor(0xEEFF9800); // Amber/yellow color to warn/indicate "Reopen"
+                        gd.setCornerRadius(dpToPx(24));
+                        gd.setStroke(dpToPx(2), 0xFFFFFFFF);
+                        textView.setBackground(gd);
+                    } else {
+                        textView.setText("🎾 Back to Home");
+                        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+                        gd.setColor(0xEE03DAC5); // Neon Teal
+                        gd.setCornerRadius(dpToPx(24));
+                        gd.setStroke(dpToPx(2), 0xFFFFFFFF);
+                        textView.setBackground(gd);
+                    }
+                    
+                    textView.setTextColor(android.graphics.Color.WHITE);
+                    textView.setTextSize(android.util.TypedValue.COMPLEX_UNIT_SP, 14);
+                    textView.setTypeface(android.graphics.Typeface.create("sans-serif-medium", android.graphics.Typeface.NORMAL));
+                    
+                    int paddingX = dpToPx(16);
+                    int paddingY = dpToPx(10);
+                    textView.setPadding(paddingX, paddingY, paddingX, paddingY);
+
+                    container.addView(textView);
+                    floatingButton = container;
+
+                    floatingButton.setOnTouchListener(new android.view.View.OnTouchListener() {
+                        private int initialX;
+                        private int initialY;
+                        private float initialTouchX;
+                        private float initialTouchY;
+                        private boolean isMoving = false;
+                        private long touchStartTime;
+
+                        @Override
+                        public boolean onTouch(android.view.View v, android.view.MotionEvent event) {
+                            switch (event.getAction()) {
+                                case android.view.MotionEvent.ACTION_DOWN:
+                                    initialX = params.x;
+                                    initialY = params.y;
+                                    initialTouchX = event.getRawX();
+                                    initialTouchY = event.getRawY();
+                                    touchStartTime = System.currentTimeMillis();
+                                    isMoving = false;
+                                    return true;
+                                case android.view.MotionEvent.ACTION_MOVE:
+                                    int dx = (int) (event.getRawX() - initialTouchX);
+                                    int dy = (int) (event.getRawY() - initialTouchY);
+                                    
+                                    if (Math.abs(dx) > 10 || Math.abs(dy) > 10) {
+                                        isMoving = true;
+                                    }
+                                    
+                                    if (isMoving) {
+                                        int newX = initialX + dx;
+                                        int newY = initialY + dy;
+                                        
+                                        // Bound checking to prevent dragging off-screen
+                                        android.util.DisplayMetrics displayMetrics = new android.util.DisplayMetrics();
+                                        windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+                                        
+                                        int maxX = displayMetrics.widthPixels - v.getWidth();
+                                        int maxY = displayMetrics.heightPixels - v.getHeight();
+                                        
+                                        if (newX < 0) newX = 0;
+                                        if (newX > maxX) newX = maxX;
+                                        if (newY < 0) newY = 0;
+                                        if (newY > maxY) newY = maxY;
+                                        
+                                        params.x = newX;
+                                        params.y = newY;
+                                        windowManager.updateViewLayout(floatingButton, params);
+                                    }
+                                    return true;
+                                case android.view.MotionEvent.ACTION_UP:
+                                    long duration = System.currentTimeMillis() - touchStartTime;
+                                    if (!isMoving && duration < 250) {
+                                        v.performClick();
+                                        if ("home".equals(currentButtonState)) {
+                                            // Launch the target app again
+                                            SharedPreferences prefs1 = getSharedPreferences("LockAppPrefs", MODE_PRIVATE);
+                                            String targetPkg = prefs1.getString("kiosk_package_name", "com.google.android.youtube").trim();
+                                            if (!targetPkg.isEmpty()) {
+                                                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPkg);
+                                                if (launchIntent != null) {
+                                                    launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                    try {
+                                                        startActivity(launchIntent);
+                                                    } catch (Exception e) {
+                                                        Log.e(TAG, "Failed to launch package: " + targetPkg, e);
+                                                    }
+                                                }
+                                            }
+                                        } else {
+                                            // Return to MainActivity
+                                            Intent homeIntent = new Intent(LockForegroundService.this, MainActivity.class);
+                                            homeIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                                            startActivity(homeIntent);
+                                        }
+                                    }
+                                    return true;
+                            }
+                            return false;
+                        }
+                    });
+
+                    windowManager.addView(floatingButton, params);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error displaying floating button overlay", e);
+                }
+            }
+        });
+    }
+
+    private void hideFloatingButton() {
+        if (floatingButton != null) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (floatingButton != null && windowManager != null) {
+                            windowManager.removeView(floatingButton);
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error removing floating button", e);
+                    } finally {
+                        floatingButton = null;
+                    }
+                }
+            });
+        }
+    }
+
+    private int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
+    }
+
+    private String currentButtonState = "app"; // "app" or "home"
+
+    private void updateFloatingButtonState(String state) {
+        currentButtonState = state;
+        if (floatingButton == null) return;
+        
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (floatingButton == null) return;
+                    
+                    android.widget.TextView textView = null;
+                    if (floatingButton instanceof android.widget.FrameLayout) {
+                        android.widget.FrameLayout container = (android.widget.FrameLayout) floatingButton;
+                        if (container.getChildCount() > 0 && container.getChildAt(0) instanceof android.widget.TextView) {
+                            textView = (android.widget.TextView) container.getChildAt(0);
+                        }
+                    }
+                    
+                    if (textView == null) return;
+                    
+                    if ("home".equals(currentButtonState)) {
+                        textView.setText("🎾 Reopen App");
+                        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+                        gd.setColor(0xEEFF9800); // Amber/orange color to warn/indicate "Reopen"
+                        gd.setCornerRadius(dpToPx(24));
+                        gd.setStroke(dpToPx(2), 0xFFFFFFFF);
+                        textView.setBackground(gd);
+                    } else {
+                        textView.setText("🎾 Back to Home");
+                        android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable();
+                        gd.setColor(0xEE03DAC5); // Neon Teal
+                        gd.setCornerRadius(dpToPx(24));
+                        gd.setStroke(dpToPx(2), 0xFFFFFFFF);
+                        textView.setBackground(gd);
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error updating floating button state", e);
+                }
+            }
+        });
     }
 }

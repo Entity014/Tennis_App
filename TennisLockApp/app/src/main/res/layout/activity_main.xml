@@ -4,31 +4,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#121214"
+    android:background="@color/bg_dark"
     tools:context=".MainActivity">
 
     <!-- Glowing Background Circle Top-Right -->
     <View
         android:id="@+id/bg_glow_top"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="@dimen/glow_top_size"
+        android:layout_height="@dimen/glow_top_size"
         android:background="@drawable/bg_gradient_circle_purple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="-100dp"
-        android:layout_marginEnd="-100dp"
+        android:layout_marginTop="@dimen/glow_top_margin_top"
+        android:layout_marginEnd="@dimen/glow_top_margin_end"
         android:alpha="0.25"/>
 
     <!-- Glowing Background Circle Bottom-Left -->
     <View
         android:id="@+id/bg_glow_bottom"
-        android:layout_width="350dp"
-        android:layout_height="350dp"
+        android:layout_width="@dimen/glow_bottom_size"
+        android:layout_height="@dimen/glow_bottom_size"
         android:background="@drawable/bg_gradient_circle_teal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginBottom="-120dp"
-        android:layout_marginStart="-120dp"
+        android:layout_marginBottom="@dimen/glow_bottom_margin_bottom"
+        android:layout_marginStart="@dimen/glow_bottom_margin_start"
         android:alpha="0.2"/>
 
     <!-- ==================== 1. LOCKED VIEW ==================== -->
@@ -45,24 +45,24 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="60dp"
+            android:layout_marginTop="@dimen/lock_header_margin_top"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <ImageView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:src="@android:drawable/ic_secure"
-                app:tint="#FF3700B3"
+                android:layout_width="@dimen/lock_icon_size"
+                android:layout_height="@dimen/lock_icon_size"
+                android:src="@drawable/ic_secure_lock_vector"
+                app:tint="@color/neon_green"
                 android:contentDescription="Locked Icon" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="DEVICE LOCKED"
-                android:textColor="#FFFFFF"
-                android:textSize="20sp"
+                android:textColor="@color/text_main"
+                android:textSize="@dimen/lock_title_size"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed"
                 android:letterSpacing="0.1"
@@ -73,8 +73,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Enter PIN to activate device"
-                android:textColor="#B3FFFFFF"
-                android:textSize="14sp"
+                android:textColor="@color/text_muted"
+                android:textSize="@dimen/lock_status_size"
                 android:layout_marginTop="4dp"/>
         </LinearLayout>
 
@@ -85,17 +85,17 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/pin_dots_margin_top"
             app:layout_constraintTop_toBottomOf="@id/lock_header"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
-            <View android:id="@+id/dot1" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
-            <View android:id="@+id/dot2" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
-            <View android:id="@+id/dot3" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
-            <View android:id="@+id/dot4" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
-            <View android:id="@+id/dot5" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
-            <View android:id="@+id/dot6" android:layout_width="16dp" android:layout_height="16dp" android:layout_margin="8dp" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot1" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot2" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot3" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot4" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot5" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
+            <View android:id="@+id/dot6" android:layout_width="@dimen/pin_dot_size" android:layout_height="@dimen/pin_dot_size" android:layout_margin="@dimen/pin_dot_margin" android:background="@drawable/bg_icon_ring" android:alpha="0.3"/>
         </LinearLayout>
 
         <!-- Numeric Keypad Grid -->
@@ -107,28 +107,28 @@
             android:rowCount="4"
             android:alignmentMode="alignBounds"
             android:columnOrderPreserved="false"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="@dimen/keypad_margin_top"
             app:layout_constraintTop_toBottomOf="@id/layout_pin_dots"
             app:layout_constraintBottom_toTopOf="@id/layout_lock_footer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <!-- Buttons from 1 to 9 -->
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_1" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="1" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_2" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="2" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_3" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="3" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_1" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="1" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_2" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="2" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_3" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="3" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
 
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_4" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="4" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_5" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="5" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_6" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="6" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_4" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="4" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_5" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="5" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_6" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="6" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
 
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_7" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="7" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_8" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="8" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_9" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="9" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_7" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="7" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_8" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="8" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_9" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="9" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
 
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_clear" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="C" android:textColor="#FF6200EE" android:textSize="20sp" android:textStyle="bold" android:background="@drawable/bg_icon_ring"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_0" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="0" android:textColor="#FFFFFF" android:textSize="24sp" android:background="@drawable/bg_icon_ring" app:strokeColor="#3A3A40" app:strokeWidth="1dp"/>
-            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_enter" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="72dp" android:layout_height="72dp" android:layout_margin="10dp" android:text="OK" android:textColor="#FF03DAC5" android:textSize="18sp" android:textStyle="bold" android:background="@drawable/bg_icon_ring"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_clear" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="C" android:textColor="@color/red_error" android:textSize="@dimen/keypad_clear_text_size" android:textStyle="bold" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/red_error" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_0" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="0" android:textColor="@color/text_main" android:textSize="@dimen/keypad_text_size" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/button_border" app:strokeWidth="2dp"/>
+            <com.google.android.material.button.MaterialButton android:id="@+id/btn_key_enter" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="@dimen/keypad_btn_size" android:layout_height="@dimen/keypad_btn_size" android:layout_margin="@dimen/keypad_btn_margin" android:text="OK" android:textColor="@color/neon_green" android:textSize="@dimen/keypad_enter_text_size" android:textStyle="bold" android:background="@drawable/bg_icon_ring" app:strokeColor="@color/neon_green" app:strokeWidth="2dp"/>
         </GridLayout>
 
         <!-- Lock Footer -->
@@ -138,31 +138,19 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center"
-            android:paddingHorizontal="24dp"
-            android:layout_marginBottom="32dp"
+            android:paddingHorizontal="@dimen/lock_footer_padding_horizontal"
+            android:layout_marginBottom="@dimen/lock_footer_margin_bottom"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <TextView
                 android:id="@+id/tv_lock_device_id"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Device ID: Getting..."
-                android:textColor="#80FFFFFF"
-                android:textSize="12sp"
-                android:gravity="start"/>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_goto_settings"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Admin"
-                android:textColor="#FF03DAC5"
-                android:textSize="12sp"
-                app:icon="@android:drawable/ic_menu_preferences"
-                app:iconTint="#FF03DAC5"
-                app:iconSize="14dp"/>
+                android:text="Device ID: Getting..."
+                android:textColor="@color/text_muted"
+                android:textSize="@dimen/lock_footer_text_size"
+                android:gravity="center"
+                android:visibility="gone"/>
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -180,7 +168,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:gravity="center"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="@dimen/active_header_margin_top"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
@@ -189,8 +177,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SESSION ACTIVE"
-                android:textColor="#FF03DAC5"
-                android:textSize="16sp"
+                android:textColor="@color/neon_green"
+                android:textSize="@dimen/active_title_size"
                 android:textStyle="bold"
                 android:letterSpacing="0.1"/>
 
@@ -203,39 +191,39 @@
                 android:layout_marginTop="8dp">
 
                 <View
-                    android:layout_width="8dp"
-                    android:layout_height="8dp"
+                    android:layout_width="@dimen/active_status_dot_size"
+                    android:layout_height="@dimen/active_status_dot_size"
                     android:background="@drawable/bg_icon_ring"
-                    android:backgroundTint="#FF03DAC5"
+                    android:backgroundTint="@color/neon_green"
                     android:layout_marginEnd="6dp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Device unlocked"
-                    android:textColor="#B3FFFFFF"
-                    android:textSize="13sp"/>
+                    android:textColor="@color/text_muted"
+                    android:textSize="@dimen/active_status_text_size"/>
             </LinearLayout>
         </LinearLayout>
 
         <!-- Premium Glassmorphic Circle Timer Card -->
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_timer"
-            android:layout_width="260dp"
-            android:layout_height="260dp"
-            app:cardCornerRadius="130dp"
-            app:cardBackgroundColor="#1F1F23"
+            android:layout_width="@dimen/timer_card_size"
+            android:layout_height="@dimen/timer_card_size"
+            app:cardCornerRadius="@dimen/timer_card_radius"
+            app:cardBackgroundColor="@color/bg_card"
             app:strokeWidth="2dp"
-            app:strokeColor="#3A3A40"
+            app:strokeColor="@color/border_color"
             app:layout_constraintTop_toBottomOf="@id/active_header"
-            app:layout_constraintBottom_toTopOf="@id/btn_finish_session"
+            app:layout_constraintBottom_toTopOf="@id/layout_slide_to_lock"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent">
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="20dp">
+                android:padding="@dimen/timer_card_padding">
 
                 <!-- Circular Progress Indicator -->
                 <com.google.android.material.progressindicator.CircularProgressIndicator
@@ -243,10 +231,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    app:indicatorSize="210dp"
-                    app:trackThickness="10dp"
-                    app:indicatorColor="#FF03DAC5"
-                    app:trackColor="#2A2A30"
+                    app:indicatorSize="@dimen/timer_indicator_size"
+                    app:trackThickness="@dimen/timer_track_thickness"
+                    app:indicatorColor="@color/neon_green"
+                    app:trackColor="@color/bg_dark"
                     android:progress="100"
                     android:max="100"
                     android:indeterminate="false"/>
@@ -264,8 +252,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="00:00:00"
-                        android:textColor="#FFFFFF"
-                        android:textSize="40sp"
+                        android:textColor="@color/text_main"
+                        android:textSize="@dimen/timer_text_size"
                         android:textStyle="bold"
                         android:fontFamily="monospace"/>
 
@@ -273,8 +261,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="REMAINING"
-                        android:textColor="#80FFFFFF"
-                        android:textSize="11sp"
+                        android:textColor="@color/text_muted"
+                        android:textSize="@dimen/timer_label_size"
                         android:textStyle="bold"
                         android:letterSpacing="0.15"
                         android:layout_marginTop="4dp"/>
@@ -288,30 +276,59 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Battery: 100% | Sync Active"
-            android:textColor="#80FFFFFF"
-            android:textSize="13sp"
+            android:textColor="@color/text_muted"
+            android:textSize="@dimen/session_battery_size"
             android:layout_marginTop="16dp"
             app:layout_constraintTop_toBottomOf="@id/card_timer"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
-        <!-- Finish early / Lock device button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_finish_session"
+        <!-- Swipe to Lock Slider -->
+        <FrameLayout
+            android:id="@+id/layout_slide_to_lock"
             android:layout_width="match_parent"
             android:layout_height="56dp"
-            android:layout_marginHorizontal="48dp"
-            android:layout_marginBottom="60dp"
-            android:text="Lock Device"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold"
-            app:cornerRadius="16dp"
-            app:backgroundTint="#FF6200EE"
-            app:elevation="4dp"
+            android:layout_marginHorizontal="@dimen/finish_btn_margin_horizontal"
+            android:layout_marginBottom="@dimen/finish_btn_margin_bottom"
+            android:background="@drawable/bg_slide_track"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <!-- Dynamic Fill Bar -->
+            <View
+                android:id="@+id/view_slide_fill"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_slide_fill"/>
+
+            <TextView
+                android:id="@+id/tv_slide_hint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Swipe right to lock"
+                android:textColor="#88FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.05"/>
+
+            <FrameLayout
+                android:id="@+id/view_slide_thumb"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_vertical|start"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_slide_thumb">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_secure_lock_vector"
+                    app:tint="#FFFFFF"/>
+            </FrameLayout>
+        </FrameLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- ==================== 3. ADMIN SETTINGS VIEW ==================== -->
@@ -326,30 +343,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="28dp"
+            android:padding="@dimen/admin_padding"
             android:gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ADMIN DASHBOARD"
-                android:textColor="#FFFFFF"
-                android:textSize="22sp"
+                android:textColor="@color/text_main"
+                android:textSize="@dimen/admin_title_size"
                 android:textStyle="bold"
                 android:fontFamily="sans-serif-condensed"
                 android:letterSpacing="0.05"
-                android:layout_marginTop="32dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="@dimen/admin_title_margin_top"
+                android:layout_marginBottom="8dp"/>
+
+            <TextView
+                android:id="@+id/tv_admin_device_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Device ID: Getting..."
+                android:textColor="@color/text_muted"
+                android:textSize="14sp"
+                android:layout_marginBottom="24dp"/>
 
             <!-- Device Owner Status Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1F1F23"
+                app:cardBackgroundColor="@color/bg_card"
                 app:strokeWidth="1dp"
-                app:strokeColor="#3A3A40"
+                app:strokeColor="@color/border_color"
                 android:layout_marginBottom="20dp">
 
                 <LinearLayout
@@ -369,8 +395,8 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Device Owner Status:"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
+                            android:textColor="@color/text_main"
+                            android:textSize="@dimen/admin_btn_text_size"
                             android:textStyle="bold"/>
 
                         <TextView
@@ -378,8 +404,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="INACTIVE"
-                            android:textColor="#FF6200EE"
-                            android:textSize="14sp"
+                            android:textColor="@color/red_error"
+                            android:textSize="@dimen/admin_btn_text_size"
                             android:textStyle="bold"/>
                     </LinearLayout>
 
@@ -388,7 +414,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="To lock down the device properly, make this app the Device Owner by running this ADB command on your computer:"
-                        android:textColor="#B3FFFFFF"
+                        android:textColor="@color/text_muted"
                         android:textSize="12sp"
                         android:layout_marginTop="12dp"/>
 
@@ -398,7 +424,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:background="#121214"
+                        android:background="@color/bg_dark"
                         android:padding="12dp">
 
                         <TextView
@@ -406,7 +432,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="adb shell dpm set-device-owner com.example.tennislockapp/.LockDeviceAdminReceiver"
-                            android:textColor="#FF03DAC5"
+                            android:textColor="@color/neon_green"
                             android:textSize="12sp"
                             android:fontFamily="monospace"
                             android:textIsSelectable="true"/>
@@ -417,62 +443,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tip: Long-press command to select and copy."
-                        android:textColor="#80FFFFFF"
+                        android:textColor="@color/text_muted"
                         android:textSize="10sp"
                         android:layout_marginTop="4dp"/>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Accessibility Guard Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="16dp"
-                app:cardBackgroundColor="#1F1F23"
-                app:strokeWidth="1dp"
-                app:strokeColor="#3A3A40"
-                android:layout_marginBottom="20dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="16dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:gravity="center_vertical">
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Accessibility Guard:"
-                            android:textColor="#FFFFFF"
-                            android:textSize="14sp"
-                            android:textStyle="bold"/>
-
-                        <TextView
-                            android:id="@+id/tv_accessibility_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="INACTIVE"
-                            android:textColor="#FFFF6200"
-                            android:textSize="14sp"
-                            android:textStyle="bold"/>
-                    </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btn_enable_accessibility"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Activate Accessibility Guard"
-                        android:textColor="#FFFFFF"
-                        android:layout_marginTop="12dp"
-                        app:cornerRadius="8dp"
-                        app:backgroundTint="#FF6200EE"/>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -481,10 +454,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Server Base URL (e.g. http://192.168.1.10:3000)"
-                android:textColorHint="#80FFFFFF"
-                app:hintTextColor="#FF03DAC5"
-                app:boxStrokeColor="#FF03DAC5"
-                app:boxBackgroundColor="#1F1F23"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/neon_green"
+                app:boxStrokeColor="@color/neon_green"
+                app:boxBackgroundColor="@color/bg_card"
                 android:layout_marginBottom="16dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
 
@@ -492,65 +465,64 @@
                     android:id="@+id/et_server_url"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/text_main"
                     android:inputType="textUri"
-                    android:textSize="15sp"/>
+                    android:textSize="@dimen/admin_input_text_size"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Admin PIN (Required for dashboard access)"
-                android:textColorHint="#80FFFFFF"
-                app:hintTextColor="#FF03DAC5"
-                app:boxStrokeColor="#FF03DAC5"
-                app:boxBackgroundColor="#1F1F23"
-                android:layout_marginBottom="24dp"
+                android:hint="Launch App Package (e.g. com.google.android.youtube)"
+                android:textColorHint="@color/text_muted"
+                app:hintTextColor="@color/neon_green"
+                app:boxStrokeColor="@color/neon_green"
+                app:boxBackgroundColor="@color/bg_card"
+                android:layout_marginBottom="16dp"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/et_admin_pin"
+                    android:id="@+id/et_kiosk_package_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
-                    android:inputType="numberPassword"
-                    android:maxLength="6"
-                    android:textSize="15sp"/>
+                    android:textColor="@color/text_main"
+                    android:inputType="text"
+                    android:textSize="@dimen/admin_input_text_size"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <!-- Action Buttons -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_exit_kiosk"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="@dimen/admin_btn_height"
                 android:text="Unlock Phone"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textColor="@color/white"
+                android:textSize="@dimen/admin_btn_text_size"
                 app:cornerRadius="12dp"
-                app:backgroundTint="#FF6200EE"
+                app:backgroundTint="@color/red_error"
                 android:layout_marginBottom="12dp"
                 android:enabled="false"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_save_settings"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="@dimen/admin_btn_height"
                 android:text="Save Configuration"
-                android:textColor="#121214"
-                android:textSize="14sp"
+                android:textColor="@color/bg_dark"
+                android:textSize="@dimen/admin_btn_text_size"
                 android:textStyle="bold"
                 app:cornerRadius="12dp"
-                app:backgroundTint="#FF03DAC5"
+                app:backgroundTint="@color/neon_green"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_back_to_lock"
                 style="@style/Widget.MaterialComponents.Button.TextButton"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
+                android:layout_height="@dimen/admin_btn_height"
                 android:text="Cancel"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
+                android:textColor="@color/text_main"
+                android:textSize="@dimen/admin_btn_text_size"
                 app:cornerRadius="12dp"
                 android:layout_marginBottom="32dp"/>
         </LinearLayout>

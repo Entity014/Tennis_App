@@ -1,10 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Booking Server Dark Theme Colors -->
+    <color name="bg_dark">#090D16</color>
+    <color name="bg_card">#111827</color>
+    <color name="border_color">#14FFFFFF</color> <!-- 8% opacity white -->
+    <color name="text_main">#F3F4F6</color>
+    <color name="text_muted">#9CA3AF</color>
+    <color name="neon_green">#CFFE1C</color>
+    <color name="neon_green_hover">#BCE910</color>
+    <color name="neon_green_alpha">#26CFFE1C</color> <!-- 15% opacity neon green -->
+    <color name="neon_green_alpha_solid">#4DCFFE1C</color> <!-- 30% opacity neon green -->
+    <color name="blue_primary">#3B82F6</color>
+    <color name="blue_alpha">#263B82F6</color> <!-- 15% opacity blue -->
+    <color name="green_primary">#10B981</color>
+    <color name="green_alpha">#2610B981</color>
+    <color name="yellow_primary">#EAB308</color>
+    <color name="yellow_alpha">#26EAB308</color>
+    <color name="red_error">#EF4444</color>
+    <color name="red_alpha">#26EF4444</color>
+    <color name="button_border">#4DFFFFFF</color> <!-- 30% opacity white border -->
+
+    <!-- Base / Fallback Colors for standard Android views -->
+    <color name="purple_200">#CFFE1C</color>
+    <color name="purple_500">#BCE910</color>
+    <color name="purple_700">#9CA3AF</color>
+    <color name="teal_200">#3B82F6</color>
+    <color name="teal_700">#10B981</color>
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
 </resources>

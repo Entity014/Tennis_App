@@ -2,9 +2,21 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database');
 const crypto = require('crypto');
+const { autoExpireSessions } = require('../utils');
+
+// 0. Admin Authentication Middleware
+router.use((req, res, next) => {
+  const authHeader = req.headers.authorization;
+  const secret = process.env.KIOSK_SYNC_SECRET;
+  
+  if (secret && (!authHeader || authHeader !== `Bearer ${secret}`)) {
+    return res.status(401).json({ error: 'Unauthorized: Invalid Admin Token' });
+  }
+  next();
+});
 
 // PIN expiry time in minutes (PINs not used within this time will expire)
-const PIN_EXPIRY_MINUTES = 10; // Change to 10 for production
+const PIN_EXPIRY_MINUTES = 10;
 
 // Utility to generate a random 6-digit PIN
 function generatePIN() {
@@ -44,31 +56,58 @@ router.post('/generate-pin', (req, res) => {
   });
 });
 
+// 2.5 Get list of courts from the booking-server (Railway)
+router.get('/courts', async (req, res) => {
+  const serverUrl = process.env.BOOKING_SERVER_URL;
+  if (!serverUrl) {
+    return res.json([]);
+  }
+
+  try {
+    const cleanUrl = serverUrl.replace(/\/$/, '');
+    const response = await fetch(`${cleanUrl}/api/courts`);
+    if (!response.ok) {
+      return res.status(500).json({ error: 'Failed to fetch courts from booking-server' });
+    }
+    const courts = await response.json();
+    res.json(courts);
+  } catch (err) {
+    console.error('[Admin API] Error fetching courts:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// 2.6 Assign court to device
+router.post('/device/:id/court', (req, res) => {
+  const { court_id } = req.body;
+  const deviceId = req.params.id;
+
+  const assignedCourtId = court_id ? parseInt(court_id) : null;
+
+  db.run(`UPDATE devices SET court_id = ? WHERE device_id = ?`, [assignedCourtId, deviceId], function(err) {
+    if (err) return res.status(500).json({ error: err.message });
+    res.json({ message: `Device ${deviceId} assigned to court ${assignedCourtId || 'none'}` });
+  });
+});
+
 // 3. Get all sessions (with pagination support)
 router.get('/sessions', (req, res) => {
   const limit = Math.min(parseInt(req.query.limit) || 10, 100);
   const offset = parseInt(req.query.offset) || 0;
 
-  // Auto-expire UNUSED sessions older than PIN_EXPIRY_MINUTES
-  const expirySeconds = PIN_EXPIRY_MINUTES * 60;
-  db.run(`UPDATE sessions SET status = 'EXPIRED' WHERE status = 'UNUSED' AND (strftime('%s', 'now') - strftime('%s', created_at)) > ${expirySeconds}`, function(expireErr) {
-    if (expireErr) console.error('Error expiring unused sessions:', expireErr.message);
+  // Use the timezone-safe autoExpireSessions utility to update states
+  autoExpireSessions(() => {
+    db.get(`SELECT COUNT(*) as total FROM sessions`, [], (countErr, countRow) => {
+      if (countErr) return res.status(500).json({ error: countErr.message });
 
-    // Auto-expire ACTIVE sessions whose duration has elapsed
-    db.run(`UPDATE sessions SET status = 'EXPIRED' WHERE status = 'ACTIVE' AND (strftime('%s', 'now') - strftime('%s', used_at)) > (duration_minutes * 60)`, function(activeExpireErr) {
-      if (activeExpireErr) console.error('Error expiring active sessions:', activeExpireErr.message);
-
-      db.get(`SELECT COUNT(*) as total FROM sessions`, [], (countErr, countRow) => {
-        if (countErr) return res.status(500).json({ error: countErr.message });
-
-        db.all(`SELECT * FROM sessions ORDER BY created_at DESC LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
-          if (err) return res.status(500).json({ error: err.message });
-          res.json({ sessions: rows, total: countRow.total, limit, offset, server_time: Date.now() });
-        });
+      db.all(`SELECT * FROM sessions ORDER BY CASE status WHEN 'ACTIVE' THEN 1 WHEN 'UNUSED' THEN 2 WHEN 'EXPIRED' THEN 3 ELSE 4 END ASC, created_at DESC LIMIT ? OFFSET ?`, [limit, offset], (err, rows) => {
+        if (err) return res.status(500).json({ error: err.message });
+        res.json({ sessions: rows, total: countRow.total, limit, offset, server_time: Date.now() });
       });
     });
   });
 });
+
 // 3.5 Clear all sessions
 router.delete('/sessions', (req, res) => {
   db.run(`DELETE FROM sessions`, function(err) {
@@ -91,8 +130,22 @@ router.post('/device/:id/force', (req, res) => {
       db.run(`UPDATE devices SET status = 'LOCKED' WHERE device_id = ?`, [deviceId], function(err) {
         if (err) return console.error('Error force updating device status to LOCKED:', err.message);
       });
-      db.run(`UPDATE sessions SET status = 'EXPIRED' WHERE device_id = ? AND status = 'ACTIVE'`, [deviceId], function(err) {
-        if (err) return console.error('Error force expiring session:', err.message);
+      
+      db.get(`SELECT id, booking_id FROM sessions WHERE device_id = ? AND status = 'ACTIVE'`, [deviceId], (err, session) => {
+        if (err) return console.error('Error getting active session for device:', err.message);
+        if (session) {
+          db.run(`UPDATE sessions SET status = 'EXPIRED' WHERE id = ?`, [session.id], function(updateErr) {
+            if (updateErr) return console.error('Error force expiring session:', updateErr.message);
+            if (session.booking_id) {
+              try {
+                const { updateCloudBookingStatus } = require('../sync');
+                updateCloudBookingStatus(session.booking_id, 'completed');
+              } catch (syncErr) {
+                console.error('[ForceLock] Error triggering cloud booking status update:', syncErr.message);
+              }
+            }
+          });
+        }
       });
     } else if (command === 'UNLOCK') {
       db.run(`UPDATE devices SET status = 'IN_USE' WHERE device_id = ?`, [deviceId], function(err) {

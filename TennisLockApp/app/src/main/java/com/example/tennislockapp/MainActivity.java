@@ -2,6 +2,7 @@ package com.example.tennislockapp;
 
 import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
+import android.content.res.Configuration;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final String PREFS_NAME = "LockAppPrefs";
+    private static final String ADMIN_PIN = "999999";
 
     // Track activity visibility for background security watcher service
     public static boolean isActivityVisible = false;
@@ -61,14 +63,13 @@ public class MainActivity extends AppCompatActivity {
     // Admin View Elements
     private TextView tvDeviceOwnerStatus;
     private TextView tvAdbCommand;
+    private TextView tvAdminDeviceId;
     private View layoutAdbBox;
     private View tvAdbInstructionsLabel;
     private View tvAdbHint;
     private TextInputEditText etServerUrl;
-    private TextInputEditText etAdminPin;
+    private TextInputEditText etKioskPackageName;
     private MaterialButton btnExitKiosk;
-    private TextView tvAccessibilityStatus;
-    private MaterialButton btnEnableAccessibility;
 
     // Device Admin Details
     private DevicePolicyManager dpm;
@@ -144,6 +145,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        // Save current active tab/view visibility state
+        int lockedVisibility = (layoutLocked != null) ? layoutLocked.getVisibility() : View.VISIBLE;
+        int activeVisibility = (layoutActive != null) ? layoutActive.getVisibility() : View.GONE;
+        int adminVisibility = (layoutAdmin != null) ? layoutAdmin.getVisibility() : View.GONE;
+
+        // Reload layout XML (it will load the land or port version automatically)
+        setContentView(R.layout.activity_main);
+
+        // Re-initialize views and bindings
+        initViews();
+        setupKeypad();
+        setupAdminDashboard();
+        setupActiveView();
+
+        // Restore layout visibilities
+        if (layoutLocked != null) layoutLocked.setVisibility(lockedVisibility);
+        if (layoutActive != null) layoutActive.setVisibility(activeVisibility);
+        if (layoutAdmin != null) layoutAdmin.setVisibility(adminVisibility);
+
+        // Restore dynamic values
+        updatePinDots();
+        
+        // Refresh lock status text based on current security state
+        if (layoutLocked != null && layoutLocked.getVisibility() == View.VISIBLE) {
+            if (!isLockSecure()) {
+                setLockStatusText("⚠️ Setup Incomplete! Enter Admin PIN to configure launcher/overlay.", getResources().getColor(R.color.yellow_primary));
+            } else {
+                setLockStatusText("Enter PIN to activate device", getResources().getColor(R.color.text_muted));
+            }
+        }
+
+        // And if in active state, we can refresh the UI
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        long remainingMs = prefs.getLong("remaining_ms", 0);
+        if (activeVisibility == View.VISIBLE && remainingMs > 0) {
+            updateActiveUI(remainingMs);
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
@@ -195,22 +239,23 @@ public class MainActivity extends AppCompatActivity {
         if (isAdmin || isPermanentlyUnlocked) {
             switchToAdminState();
         } else if (isActive && remainingMs > 0) {
-            switchToActiveState(remainingMs);
+            boolean shouldLaunch = getIntent().getBooleanExtra("EXTRA_LAUNCH_KIOSK_APP", false);
+            getIntent().removeExtra("EXTRA_LAUNCH_KIOSK_APP");
+            switchToActiveState(remainingMs, shouldLaunch);
+
+            Intent serviceIntent = new Intent(this, LockForegroundService.class);
+            serviceIntent.putExtra("update_button_state", "home");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
         } else {
             switchToLockedState();
         }
 
-        // Request Device Admin if not active, otherwise check Default Launcher, then Overlay permission
-        if (dpm != null && !dpm.isAdminActive(adminComponent)) {
-            showActivateAdminDialog();
-        } else if (!isDefaultLauncher()) {
-            showDefaultLauncherDialog();
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
-            showOverlayPermissionDialog();
-        }
-
-        // Request notifications permission for Android 13+
-        requestNotificationPermission();
+        // Permission dialogs removed from auto-show.
+        // Admin can configure these manually via Admin Dashboard if needed.
     }
 
     @Override
@@ -221,6 +266,19 @@ public class MainActivity extends AppCompatActivity {
         try {
             unregisterReceiver(networkStateReceiver);
         } catch (Exception ignored) {}
+
+        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        boolean isActive = prefs.getBoolean("is_active", false);
+        long remainingMs = prefs.getLong("remaining_ms", 0);
+        if (isActive && remainingMs > 0) {
+            Intent serviceIntent = new Intent(this, LockForegroundService.class);
+            serviceIntent.putExtra("update_button_state", "app");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                startForegroundService(serviceIntent);
+            } else {
+                startService(serviceIntent);
+            }
+        }
         stopLockedHeartbeat();
     }
 
@@ -250,20 +308,22 @@ public class MainActivity extends AppCompatActivity {
 
         // Admin Dashboard elements
         tvDeviceOwnerStatus = findViewById(R.id.tv_device_owner_status);
+        tvAdminDeviceId = findViewById(R.id.tv_admin_device_id);
+        if (tvAdminDeviceId != null) {
+            tvAdminDeviceId.setText("Device ID: " + deviceId);
+        }
         tvAdbInstructionsLabel = findViewById(R.id.tv_adb_instructions_label);
         layoutAdbBox = findViewById(R.id.layout_adb_box);
         tvAdbCommand = findViewById(R.id.tv_adb_command);
         tvAdbHint = findViewById(R.id.tv_adb_hint);
         etServerUrl = findViewById(R.id.et_server_url);
-        etAdminPin = findViewById(R.id.et_admin_pin);
+        etKioskPackageName = findViewById(R.id.et_kiosk_package_name);
         btnExitKiosk = findViewById(R.id.btn_exit_kiosk);
-        tvAccessibilityStatus = findViewById(R.id.tv_accessibility_status);
-        btnEnableAccessibility = findViewById(R.id.btn_enable_accessibility);
 
         // Load SharedPreferences to Admin Panel Inputs
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         etServerUrl.setText(prefs.getString("server_url", "http://192.168.1.100:3000"));
-        etAdminPin.setText(prefs.getString("admin_pin", "999999"));
+        etKioskPackageName.setText(prefs.getString("kiosk_package_name", "com.google.android.youtube"));
     }
 
     // ==================== STATE TRANSITIONS ====================
@@ -274,8 +334,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             hasOverlay = Settings.canDrawOverlays(this);
         }
-        boolean isLauncher = isDefaultLauncher();
-        return isOwner || (isLauncher && hasOverlay);
+        return isOwner || hasOverlay;
     }
 
     private void switchToLockedState() {
@@ -295,9 +354,9 @@ public class MainActivity extends AppCompatActivity {
         updatePinDots();
 
         if (!isLockSecure()) {
-            setLockStatusText("⚠️ Setup Incomplete! Click 'Admin' below to configure launcher/overlay.", 0xFFFF6200);
+            setLockStatusText("⚠️ Setup Incomplete! Enter Admin PIN to configure launcher/overlay.", getResources().getColor(R.color.yellow_primary));
         } else {
-            setLockStatusText("Enter PIN to activate device", 0xFFB3FFFF);
+            setLockStatusText("Enter PIN to activate device", getResources().getColor(R.color.text_muted));
         }
 
         // Show overlay to block status bar pull-down
@@ -313,7 +372,7 @@ public class MainActivity extends AppCompatActivity {
         startLockedHeartbeat();
     }
 
-    private void switchToActiveState(long durationMs) {
+    private void switchToActiveState(long durationMs, boolean shouldLaunchApp) {
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         prefs.edit()
                 .putBoolean("is_active", true)
@@ -337,7 +396,11 @@ public class MainActivity extends AppCompatActivity {
         // Keep Immersive Mode active to hide navigation keys!
         enableImmersiveMode(true);
 
-        initialDurationMs = durationMs;
+        long savedInitial = prefs.getLong("initial_duration_ms", durationMs);
+        if (savedInitial <= 0) {
+            savedInitial = durationMs;
+        }
+        initialDurationMs = savedInitial;
         updateActiveUI(durationMs);
 
         // Stop locked heartbeat since service will do heartbeats
@@ -350,6 +413,24 @@ public class MainActivity extends AppCompatActivity {
             startForegroundService(serviceIntent);
         } else {
             startService(serviceIntent);
+        }
+
+        // Launch target app if requested and package name is configured
+        if (shouldLaunchApp) {
+            String targetPackage = prefs.getString("kiosk_package_name", "com.google.android.youtube").trim();
+            if (!targetPackage.isEmpty()) {
+                try {
+                    Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPackage);
+                    if (launchIntent != null) {
+                        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(launchIntent);
+                    } else {
+                        Toast.makeText(this, "Target app not found: " + targetPackage, Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    Log.e(TAG, "Error launching target app: " + targetPackage, e);
+                }
+            }
         }
     }
 
@@ -412,67 +493,29 @@ public class MainActivity extends AppCompatActivity {
         boolean isOwner = dpm.isDeviceOwnerApp(getPackageName());
         if (isOwner) {
             tvDeviceOwnerStatus.setText("ACTIVE");
-            tvDeviceOwnerStatus.setTextColor(0xFF03DAC5); // Teal color
+            tvDeviceOwnerStatus.setTextColor(getResources().getColor(R.color.neon_green));
             tvAdbInstructionsLabel.setVisibility(View.GONE);
             layoutAdbBox.setVisibility(View.GONE);
             tvAdbHint.setVisibility(View.GONE);
             btnExitKiosk.setEnabled(true);
         } else {
             tvDeviceOwnerStatus.setText("INACTIVE");
-            tvDeviceOwnerStatus.setTextColor(0xFFFF6200); // Orange/Red color
+            tvDeviceOwnerStatus.setTextColor(getResources().getColor(R.color.red_error));
             tvAdbInstructionsLabel.setVisibility(View.VISIBLE);
             layoutAdbBox.setVisibility(View.VISIBLE);
             tvAdbHint.setVisibility(View.VISIBLE);
             btnExitKiosk.setEnabled(true); // Always enable exit kiosk button for Admin!
         }
 
-        // Update Accessibility Guard UI details
-        boolean isAccessibilityEnabled = isAccessibilityServiceEnabled();
-        if (isAccessibilityEnabled) {
-            tvAccessibilityStatus.setText("ACTIVE");
-            tvAccessibilityStatus.setTextColor(0xFF03DAC5); // Teal color
-            btnEnableAccessibility.setText("Accessibility Guard is Active");
-            btnEnableAccessibility.setEnabled(false);
-        } else {
-            tvAccessibilityStatus.setText("INACTIVE");
-            tvAccessibilityStatus.setTextColor(0xFFFF6200); // Orange/Red color
-            btnEnableAccessibility.setText("Activate Accessibility Guard");
-            btnEnableAccessibility.setEnabled(true);
-            btnEnableAccessibility.setOnClickListener(v -> openAccessibilitySettings());
-        }
-    }
-
-    private boolean isAccessibilityServiceEnabled() {
-        int accessibilityEnabled = 0;
-        final String service = getPackageName() + "/" + LockAccessibilityService.class.getName();
-        try {
-            accessibilityEnabled = android.provider.Settings.Secure.getInt(
-                    getContentResolver(),
-                    android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
-        } catch (android.provider.Settings.SettingNotFoundException ignored) {
-        }
-        android.text.TextUtils.SimpleStringSplitter mStringColonSplitter = new android.text.TextUtils.SimpleStringSplitter(':');
-        if (accessibilityEnabled == 1) {
-            String settingValue = android.provider.Settings.Secure.getString(
-                    getContentResolver(),
-                    android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
-            if (settingValue != null) {
-                mStringColonSplitter.setString(settingValue);
-                while (mStringColonSplitter.hasNext()) {
-                    String accessibilityService = mStringColonSplitter.next();
-                    if (accessibilityService.equalsIgnoreCase(service)) {
-                        return true;
-                    }
-                }
+        // Auto-prompt missing permissions when entering Admin Dashboard
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && !Settings.canDrawOverlays(this)) {
+                showOverlayPermissionDialog();
             }
-        }
-        return false;
+        }, 500);
     }
 
-    private void openAccessibilitySettings() {
-        Intent intent = new Intent(android.provider.Settings.ACTION_ACCESSIBILITY_SETTINGS);
-        startActivity(intent);
-    }
+
 
     private void setUninstallBlockedState(boolean blocked) {
         try {
@@ -541,9 +584,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // 1. Check if matches Admin PIN locally
-        SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String adminPin = prefs.getString("admin_pin", "999999");
-        if (enteredPin.equals(adminPin)) {
+        if (enteredPin.equals(ADMIN_PIN)) {
             enteredPin = "";
             updatePinDots();
             switchToAdminState();
@@ -557,11 +598,16 @@ public class MainActivity extends AppCompatActivity {
     // ==================== NETWORKS SYNC ====================
 
     private void verifyPinWithServer(final String pin) {
+        if (!isNetworkConnected()) {
+            handlePinError("Cannot connect to server. Check IP Address & Port.");
+            return;
+        }
+
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String serverUrl = prefs.getString("server_url", "http://192.168.1.100:3000");
         String url = serverUrl + "/api/device/verify-pin";
 
-        setLockStatusText("Verifying PIN...", 0xFFB3FFFF);
+        setLockStatusText("Verifying PIN...", getResources().getColor(R.color.text_muted));
         disableKeypad(true);
 
         try {
@@ -583,11 +629,12 @@ public class MainActivity extends AppCompatActivity {
                             getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
                                     .putBoolean("is_active", true)
                                     .putLong("remaining_ms", durationMs)
+                                    .putLong("initial_duration_ms", durationMs)
                                     .putLong("last_save_time", System.currentTimeMillis())
                                     .apply();
 
-                            setLockStatusText("PIN Verified! Unlocking...", 0xFF03DAC5);
-                            switchToActiveState(durationMs);
+                            setLockStatusText("PIN Verified! Unlocking...", getResources().getColor(R.color.neon_green));
+                            switchToActiveState(durationMs, true);
                         } else {
                             handlePinError("Invalid duration returned from server");
                         }
@@ -617,13 +664,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void handlePinError(String errorMsg) {
-        setLockStatusText(errorMsg, 0xFFE040FB); // Magenta glow error
+        setLockStatusText(errorMsg, getResources().getColor(R.color.red_error));
         enteredPin = "";
         updatePinDots();
 
-        // Shake screen/vibrate feedback if desired
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            setLockStatusText("Enter PIN to activate device", 0xFFB3FFFF);
+            checkNetworkAndSetupUI();
         }, 3000);
     }
 
@@ -655,22 +701,98 @@ public class MainActivity extends AppCompatActivity {
     // ==================== ACTIVE SESSION STATE ====================
 
     private void setupActiveView() {
-        findViewById(R.id.btn_finish_session).setOnClickListener(v -> {
-            // Early end session
-            switchToLockedState();
+        android.view.View slideTrack = findViewById(R.id.layout_slide_to_lock);
+        final android.view.View slideThumb = findViewById(R.id.view_slide_thumb);
+        final android.view.View slideFill = findViewById(R.id.view_slide_fill);
+        if (slideTrack == null || slideThumb == null || slideFill == null) return;
 
-            // Stop Foreground Countdown Service
-            Intent serviceIntent = new Intent(MainActivity.this, LockForegroundService.class);
-            stopService(serviceIntent);
+        // Reset fill to initial layout state
+        android.view.ViewGroup.LayoutParams initialParams = slideFill.getLayoutParams();
+        initialParams.width = 0;
+        slideFill.setLayoutParams(initialParams);
 
-            // Notify server of unlock (LOCKED)
-            getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
-                    .putBoolean("is_active", false)
-                    .putLong("remaining_ms", 0L)
-                    .apply();
+        slideThumb.setOnTouchListener(new android.view.View.OnTouchListener() {
+            private float initialX;
+            private float initialTouchX;
+            private boolean isMoving = false;
 
-            Toast.makeText(MainActivity.this, "Session terminated manually", Toast.LENGTH_SHORT).show();
+            @Override
+            public boolean onTouch(android.view.View v, android.view.MotionEvent event) {
+                switch (event.getAction()) {
+                    case android.view.MotionEvent.ACTION_DOWN:
+                        initialX = v.getX();
+                        initialTouchX = event.getRawX();
+                        isMoving = true;
+                        return true;
+
+                    case android.view.MotionEvent.ACTION_MOVE:
+                        if (!isMoving) return false;
+                        float dx = event.getRawX() - initialTouchX;
+                        float newX = initialX + dx;
+
+                        float minX = 4 * getResources().getDisplayMetrics().density; // 4dp padding margin
+                        float maxX = slideTrack.getWidth() - v.getWidth() - minX;
+
+                        if (newX < minX) newX = minX;
+                        if (newX > maxX) newX = maxX;
+
+                        v.setX(newX);
+
+                        // Update dynamic fill width
+                        android.view.ViewGroup.LayoutParams fillParams = slideFill.getLayoutParams();
+                        fillParams.width = (int) (newX + v.getWidth());
+                        slideFill.setLayoutParams(fillParams);
+                        return true;
+
+                    case android.view.MotionEvent.ACTION_UP:
+                    case android.view.MotionEvent.ACTION_CANCEL:
+                        isMoving = false;
+                        float currentX = v.getX();
+                        float startMinX = 4 * getResources().getDisplayMetrics().density;
+                        float endMaxX = slideTrack.getWidth() - v.getWidth() - startMinX;
+                        
+                        if (currentX >= endMaxX * 0.85f) {
+                            // Snap thumb back, reset fill width, and terminate
+                            v.setX(startMinX);
+                            android.view.ViewGroup.LayoutParams finalFillParams = slideFill.getLayoutParams();
+                            finalFillParams.width = 0;
+                            slideFill.setLayoutParams(finalFillParams);
+                            terminateSessionManually();
+                        } else {
+                            // Snap back smoothly with animated fill width reduction
+                            v.animate().x(startMinX).setDuration(200)
+                                .setUpdateListener(new android.animation.ValueAnimator.AnimatorUpdateListener() {
+                                    @Override
+                                    public void onAnimationUpdate(android.animation.ValueAnimator animation) {
+                                        float animatedX = (float) animation.getAnimatedValue();
+                                        android.view.ViewGroup.LayoutParams fillParams = slideFill.getLayoutParams();
+                                        fillParams.width = (int) (animatedX + slideThumb.getWidth());
+                                        slideFill.setLayoutParams(fillParams);
+                                    }
+                                })
+                                .start();
+                        }
+                        return true;
+                }
+                return false;
+            }
         });
+    }
+
+    private void terminateSessionManually() {
+        switchToLockedState();
+
+        // Stop Foreground Countdown Service
+        Intent serviceIntent = new Intent(MainActivity.this, LockForegroundService.class);
+        stopService(serviceIntent);
+
+        // Notify server of unlock (LOCKED)
+        getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit()
+                .putBoolean("is_active", false)
+                .putLong("remaining_ms", 0L)
+                .apply();
+
+        Toast.makeText(MainActivity.this, "Session terminated manually", Toast.LENGTH_SHORT).show();
     }
 
     private void updateActiveUI(long remainingMs) {
@@ -709,15 +831,10 @@ public class MainActivity extends AppCompatActivity {
     private void setupAdminDashboard() {
         findViewById(R.id.btn_save_settings).setOnClickListener(v -> {
             String url = etServerUrl.getText().toString().trim();
-            String pin = etAdminPin.getText().toString().trim();
+            String kioskPackage = etKioskPackageName.getText().toString().trim();
 
-            if (TextUtils.isEmpty(url) || TextUtils.isEmpty(pin)) {
+            if (TextUtils.isEmpty(url)) {
                 Toast.makeText(this, "Fields cannot be empty", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            if (pin.length() != 6) {
-                Toast.makeText(this, "Admin PIN must be exactly 6 digits", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -725,7 +842,7 @@ public class MainActivity extends AppCompatActivity {
             SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
             prefs.edit()
                     .putString("server_url", url)
-                    .putString("admin_pin", pin)
+                    .putString("kiosk_package_name", kioskPackage)
                     .apply();
 
             Toast.makeText(this, "Configuration Saved!", Toast.LENGTH_SHORT).show();
@@ -752,8 +869,18 @@ public class MainActivity extends AppCompatActivity {
         try {
             boolean isOwner = dpm.isDeviceOwnerApp(getPackageName());
             if (isOwner) {
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+                String targetPackage = prefs.getString("kiosk_package_name", "com.google.android.youtube").trim();
+                
+                String[] packages;
+                if (!targetPackage.isEmpty()) {
+                    packages = new String[] { getPackageName(), targetPackage };
+                } else {
+                    packages = new String[] { getPackageName() };
+                }
+                
                 // Set lock task whitelist packages
-                dpm.setLockTaskPackages(adminComponent, new String[] { getPackageName() });
+                dpm.setLockTaskPackages(adminComponent, packages);
 
                 // Lock screen (Device Owner way)
                 startLockTask();
@@ -838,7 +965,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
                 sendLockedHeartbeat();
-                lockedHeartbeatHandler.postDelayed(this, 15000); // Every 15 seconds
+                lockedHeartbeatHandler.postDelayed(this, 3000); // Every 3 seconds
             }
         };
         lockedHeartbeatHandler.post(lockedHeartbeatRunnable);
@@ -887,7 +1014,7 @@ public class MainActivity extends AppCompatActivity {
                                         .putLong("remaining_ms", durationMs)
                                         .putLong("last_save_time", System.currentTimeMillis())
                                         .apply();
-                                switchToActiveState(durationMs);
+                                switchToActiveState(durationMs, true);
                             }
                         }
                     } catch (Exception e) {
@@ -1204,15 +1331,15 @@ public class MainActivity extends AppCompatActivity {
 
         boolean isConnected = isNetworkConnected();
         if (!isConnected) {
-            setLockStatusText("⚠️ NO INTERNET CONNECTION! Please swipe down and turn on Wi-Fi.", 0xFFFF3333);
-            disableKeypad(true);
+            setLockStatusText("⚠️ NO INTERNET CONNECTION! Enter Admin PIN to configure settings.", getResources().getColor(R.color.red_error));
+            disableKeypad(false);
         } else {
             // Restore normal secure / insecure state text
             disableKeypad(false);
             if (!isLockSecure()) {
-                setLockStatusText("⚠️ Setup Incomplete! Click 'Admin' below to configure launcher/overlay.", 0xFFFF6200);
+                setLockStatusText("⚠️ Setup Incomplete! Enter Admin PIN to configure launcher/overlay.", getResources().getColor(R.color.yellow_primary));
             } else {
-                setLockStatusText("Enter PIN to activate device", 0xFFB3FFFF);
+                setLockStatusText("Enter PIN to activate device", getResources().getColor(R.color.text_muted));
             }
         }
     }
