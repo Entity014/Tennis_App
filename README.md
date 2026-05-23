@@ -247,10 +247,15 @@ SMTP_PASS=your_app_password
                                                          (Serializable Transaction & Locks ป้องกันการจองซ้ำซ้อน)
 ```
 
-> [!NOTE]
-> ระบบจองใช้ความสามารถ **Prisma Transaction ($transaction)** ด้วยระดับ `isolationLevel: 'Serializable'` และมีการตรวจสอบ Logic (เช่น ป้องกัน duration ติดลบ) ทำให้ระบบป้องกันปัญหาการจองเวลาชนกัน (Overlapping Bookings) หรือโจมตีระบบราคากลายเป็นติดลบได้อย่างสมบูรณ์แบบ
->
-> ส่วนเซิร์ฟเวอร์ระบบที่ 2 (Kiosk Server) ยังคงใช้ SQLite เพื่อความเบาตัวและง่ายต่อการรันบนอุปกรณ์ Kiosk หน้าสนาม (Dockerized) เช่นเดิม
+ส่วนเซิร์ฟเวอร์ระบบที่ 2 (Kiosk Server) ยังคงใช้ SQLite เพื่อความเบาตัวและง่ายต่อการรันบนอุปกรณ์ Kiosk หน้าสนาม (Dockerized)
+
+## 🔒 ความปลอดภัยและระบบป้องกัน (Security & Concurrency)
+
+เราให้ความสำคัญกับความปลอดภัยและเสถียรภาพของระบบ ได้มีการอุดช่องโหว่และเพิ่มการป้องกันดังนี้:
+
+- **ป้องกันการจองซ้ำซ้อน (Double Booking / Race Condition):** ระบบใช้ `Prisma $transaction` ในระดับ `isolationLevel: 'Serializable'` เพื่อล็อกข้อมูล ป้องกันกรณีผู้ใช้หลายคนกดจองคอร์ตและเวลาเดียวกันพร้อมๆ กัน
+- **ป้องกันการโจมตีค่าธรรมเนียมติดลบ (Negative Duration Bug):** ระบบตรวจสอบและบังคับให้เวลาสิ้นสุด (`end_time`) ต้องมากกว่าเวลาเริ่มต้นเสมอ (`duration > 0`) ก่อนนำไปคำนวณราคา
+- **ป้องกันการเจาะระบบแผงควบคุม Kiosk (API Authentication):** ทุก Endpoint ของ Kiosk Admin API (`/api/admin/*`) ถูกล็อกด้วย Middleware Authentication โดยต้องแนบ Header `Authorization: Bearer <KIOSK_SYNC_SECRET>` ป้องกันผู้ไม่หวังดีในเครือข่าย Network เข้ามายึดเครื่อง หรือสั่ง Force Unlock
 
 ## 🔐 Payment & Slip Verification Flow
 
