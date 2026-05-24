@@ -229,6 +229,7 @@ function initFlatpickr() {
     theme: isDark ? "dark" : "light",
     minDate: minDate,
     maxDate: maxDate,
+    disableMobile: true,
     positionElement: finalTriggerEl || undefined,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
@@ -262,6 +263,7 @@ function initFlatpickr() {
     theme: isDark ? "dark" : "light",
     minDate: minDate,
     maxDate: maxDate,
+    disableMobile: true,
     appendTo: document.querySelector('.timeslot-date-header-wrapper') || undefined,
     onChange: function(selectedDates, dateStr) {
       if (dateStr) {
@@ -277,7 +279,9 @@ function initFlatpickr() {
     },
     onReady: function(selectedDates, dateStr, instance) {
       updateAltInputLabel(selectedDates[0], instance);
-      instance.calendarContainer.classList.add('timeslot-calendar-popup');
+      if (instance.calendarContainer) {
+        instance.calendarContainer.classList.add('timeslot-calendar-popup');
+      }
     }
   });
 
@@ -288,7 +292,8 @@ function initFlatpickr() {
       altFormat: "d/m/Y",
       dateFormat: "Y-m-d",
       theme: isDark ? "dark" : "light",
-      minDate: "today"
+      minDate: "today",
+      disableMobile: true
     });
   }
 
