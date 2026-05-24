@@ -112,6 +112,7 @@ Tennis_App/
 ### สำหรับ Admin
 
 - **แผงควบคุม Admin** — ดู stats, จัดการการจอง, จัดการคอร์ต, ดูผู้ใช้
+- **ระบบจัดการโปรโมชั่นโค้ด (Promo Code Setting)** — จัดการโค้ดส่วนลด (จำกัดเฉพาะตัวอักษรภาษาอังกฤษและตัวเลข) พร้อมระบบเลือกวันที่แบบจำกัดไม่ให้เลือกอดีต
 - **CRUD Courts** — เพิ่ม / แก้ไข / ลบคอร์ตแบบ Real-time
 - **ดูรายการจองทั้งหมด** — พร้อม PIN code และสถานะการชำระเงิน
 - **ลบ/ยกเลิกการจอง** — จัดการ bookings ได้โดยตรง
@@ -308,10 +309,12 @@ sequenceDiagram
 
 ### Android Kiosk App (`TennisLockApp`)
 
+- **Tablet Optimization** — รองรับและปรับแต่งหน้าต่าง UI ให้เหมาะสมกับอุปกรณ์จอใหญ่ (Tablet) เช่น sw600dp
 - **Relentless Launcher Lock** — ตั้งตัวเองเป็น Default Launcher, หน้าจอล็อก Kiosk เปิดขึ้นทันทีเมื่อเครื่อง boot หากผู้ใช้ปัดแอปออก ระบบจะดึงกลับมาภายใน **200ms**
 - **Accessibility Service Guard** — บล็อกการเข้า Settings, Package Installer และการลากแถบ Notification Shade / Quick Settings
 - **Persistent Foreground Service** — นับถอยหลังเวลาใช้งาน (Countdown Timer) และส่ง Heartbeat ไปยังเซิร์ฟเวอร์ทุก **15 วินาที**
 - **Device Owner Integration** — รองรับสิทธิ์สูงสุด (Device Owner) สำหรับ Lock Task Mode ระดับฮาร์ดแวร์
+- **App Auto-Launch** — เปิดแอปพลิเคชันเป้าหมาย (เช่น YouTube) อัตโนมัติทันทีที่กรอก PIN ปลดล็อกสำเร็จ
 - **Remote Command** — รับคำสั่ง Force Lock / Force Unlock จากเซิร์ฟเวอร์ผ่าน Heartbeat response
 
 ### Kiosk Backend Server (`server/`)
@@ -319,7 +322,7 @@ sequenceDiagram
 - **PIN Generator** — สร้าง PIN 6 หลักพร้อมกำหนดเวลาหมดอายุ
 - **Auto-Expiration** — PIN ที่ไม่ได้ใช้ใน **10 นาที** จะ expire อัตโนมัติ
 - **Real-time Status** — ติดตามสถานะอุปกรณ์ (ONLINE/OFFLINE/IN_USE/LOCKED) และแบตเตอรี่
-- **Admin Dashboard** — หน้าจอควบคุม Tailwind CSS สำหรับ Admin
+- **Admin Dashboard** — หน้าจอควบคุม Tailwind CSS สำหรับ Admin พร้อมระบบตั้งค่า **Target App Package** (เช่น `com.google.android.youtube`) สำหรับแอปหน้า Kiosk
 
 ## 🛠️ Tech Stack
 

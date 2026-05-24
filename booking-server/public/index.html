@@ -711,6 +711,9 @@
           <button class="btn btn-outline" id="btn-admin-tab-users" onclick="switchAdminTab('users')">
             <i class="fa-solid fa-users mr-1"></i> Users
           </button>
+          <button class="btn btn-outline" id="btn-admin-tab-promocodes" onclick="switchAdminTab('promocodes')">
+            <i class="fa-solid fa-tags mr-1"></i> Promo Codes
+          </button>
         </div>
 
         <!-- Tab 1: Bookings Management -->
@@ -814,6 +817,70 @@
                 <!-- Populated dynamically -->
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <!-- Tab 4: Promo Codes Management -->
+        <div class="admin-tab-content glassmorphism p-4" id="admin-tab-promocodes-content" style="display: none;">
+          <div class="admin-courts-grid">
+            <div class="courts-list-section">
+              <h3 class="mb-4">Active Promo Codes</h3>
+              <div class="table-responsive">
+                <table class="table admin-table">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Code</th>
+                      <th>Discount</th>
+                      <th>Valid Until</th>
+                      <th>Uses</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-promocodes-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            
+            <div class="add-court-section p-4 glassmorphism border-neon">
+              <h3 class="mb-4 text-neon">Add Promo Code</h3>
+              <form id="admin-add-promocode-form" onsubmit="handleAdminAddPromoCode(event)">
+                <div class="form-group mb-3">
+                  <label for="promo-code-input">Code</label>
+                  <input type="text" id="promo-code-input" class="form-control" placeholder="e.g. SUMMER20" required style="text-transform: uppercase;" pattern="[A-Za-z0-9_\-]+" oninput="this.value = this.value.replace(/[^a-zA-Z0-9_\-]/g, '').toUpperCase()">
+                </div>
+                <div class="form-row mb-3" style="display: flex; gap: 10px;">
+                  <div class="form-group" style="flex: 1;">
+                    <label for="promo-discount-amount">Amount</label>
+                    <input type="number" id="promo-discount-amount" class="form-control" placeholder="e.g. 20" min="0" required>
+                  </div>
+                  <div class="form-group" style="flex: 1;">
+                    <label for="promo-discount-type">Type</label>
+                    <select id="promo-discount-type" class="form-control">
+                      <option value="percent">% Percent</option>
+                      <option value="fixed">฿ Fixed</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="promo-valid-until">Valid Until (Optional)</label>
+                  <div class="input-icon-group">
+                    <i class="fa-regular fa-calendar input-icon text-neon" style="pointer-events: none;"></i>
+                    <input type="date" id="promo-valid-until" class="form-control" placeholder="Select Expiry Date">
+                  </div>
+                </div>
+                <div class="form-group mb-4">
+                  <label for="promo-max-uses">Max Uses (Optional)</label>
+                  <input type="number" id="promo-max-uses" class="form-control" placeholder="e.g. 100" min="1">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fa-solid fa-plus mr-1"></i> Save Promo Code
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </div>

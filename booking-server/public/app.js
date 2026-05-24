@@ -281,6 +281,17 @@ function initFlatpickr() {
     }
   });
 
+  const promoDateEl = document.getElementById('promo-valid-until');
+  if (promoDateEl) {
+    flatpickr(promoDateEl, {
+      altInput: true,
+      altFormat: "d/m/Y",
+      dateFormat: "Y-m-d",
+      theme: isDark ? "dark" : "light",
+      minDate: "today"
+    });
+  }
+
   const timeslotRow = document.querySelector('.timeslot-date-header-row');
   if (timeslotRow) {
     timeslotRow.addEventListener('click', () => {
@@ -2478,6 +2489,8 @@ function switchAdminTab(tabName) {
     loadAdminCourts();
   } else if (tabName === 'users') {
     loadAdminUsers();
+  } else if (tabName === 'promocodes') {
+    loadAdminPromoCodes();
   }
 }
 
@@ -2869,6 +2882,101 @@ function changeUserRole(userId, newRole, selectEl) {
     showNotification('Error updating role', 'error');
     selectEl.value = originalValue;
   });
+}
+
+function loadAdminPromoCodes() {
+  fetch('/api/admin/promo-codes', {
+    headers: { 'Authorization': `Bearer ${STATE.token}` }
+  })
+  .then(res => res.json())
+  .then(promos => {
+    const tbody = document.getElementById('admin-promocodes-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    if (!Array.isArray(promos) || promos.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No promo codes found.</td></tr>`;
+      return;
+    }
+
+    promos.forEach(p => {
+      const tr = document.createElement('tr');
+      const statusClass = p.isActive ? 'badge-neon' : 'badge-danger';
+      const statusText = p.isActive ? 'Active' : 'Inactive';
+      const validUntilStr = p.validUntil ? formatDateDMY(p.validUntil.substring(0, 10)) : 'Never';
+      const discountText = p.discountType === 'percent' ? `${p.discountAmount}%` : `฿${p.discountAmount}`;
+
+      tr.innerHTML = `
+        <td>${p.id}</td>
+        <td><strong>${p.code}</strong></td>
+        <td>${discountText}</td>
+        <td>${validUntilStr}</td>
+        <td>${p.currentUses} / ${p.maxUses || '∞'}</td>
+        <td><span class="badge ${statusClass}">${statusText}</span></td>
+        <td>
+          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminPromoCode(${p.id})">
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(() => showNotification('Error loading promo codes', 'error'));
+}
+
+function handleAdminAddPromoCode(event) {
+  event.preventDefault();
+  
+  const code = document.getElementById('promo-code-input').value;
+  const amount = document.getElementById('promo-discount-amount').value;
+  const type = document.getElementById('promo-discount-type').value;
+  const validUntil = document.getElementById('promo-valid-until').value;
+  const maxUses = document.getElementById('promo-max-uses').value;
+
+  fetch('/api/admin/promo-codes', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.token}`
+    },
+    body: JSON.stringify({
+      code,
+      discountAmount: amount,
+      discountType: type,
+      validUntil: validUntil || null,
+      maxUses: maxUses || null
+    })
+  })
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error saving promo code');
+    return data;
+  })
+  .then(() => {
+    showNotification('Promo code added successfully', 'success');
+    document.getElementById('admin-add-promocode-form').reset();
+    loadAdminPromoCodes();
+  })
+  .catch(err => showNotification(err.message || 'Error saving promo code', 'error'));
+}
+
+function deleteAdminPromoCode(id) {
+  if (!confirm('Are you sure you want to delete this promo code?')) return;
+
+  fetch(`/api/admin/promo-codes/${id}`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${STATE.token}` }
+  })
+  .then(res => {
+    if (!res.ok) throw new Error();
+    return res.json();
+  })
+  .then(() => {
+    showNotification('Promo code deleted', 'success');
+    loadAdminPromoCodes();
+  })
+  .catch(() => showNotification('Error deleting promo code', 'error'));
 }
 
 function initRealtimeSync() {

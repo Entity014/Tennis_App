@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🌐 AcePoint Booking Web App
 
-## Getting Started
+This is the Booking Server component for the AcePoint Tennis Court Booking system, built with [Next.js](https://nextjs.org/) (App Router).
 
-First, run the development server:
+## 🚀 Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Real-time Court Booking**: Users can view court availability and book slots in real-time.
+- **Next-Day Date Rollover**: Automatically shifts the minimum booking date to the next day after 21:00.
+- **Secure Transactions**: Built with Prisma and PostgreSQL, utilizing `$transaction` with `Serializable` isolation level to prevent double-booking race conditions.
+- **Payment & Slip Verification**: Integrated with PromptPay QR and Thunder Slip Verify API, featuring local `jsQR` verification to save API quotas.
+- **Promo Code Management**: Admin panel to create and manage alphanumeric promo codes with strict date restrictions.
+- **Admin Dashboard**: Comprehensive dashboard for managing bookings, courts, users, and system configurations.
+- **PIN Code Generation**: Generates a 6-digit PIN upon successful booking for integration with the TennisLock Kiosk system.
+
+## 🛠️ Technologies Used
+
+- **Framework**: Next.js (App Router)
+- **Database**: PostgreSQL
+- **ORM**: Prisma
+- **Styling**: Vanilla CSS (Custom styling, Dark mode, Glassmorphism)
+- **Authentication**: JWT, bcryptjs, Google OAuth
+- **Email**: Nodemailer
+
+## 📦 Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- PostgreSQL database
+- `npm` or `yarn`
+
+### Installation
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Copy `.env.example` to `.env` and fill in your variables:
+   ```bash
+   cp .env.example .env
+   ```
+   *Make sure to set `DATABASE_URL`, `JWT_SECRET`, `SLIP_API_KEY`, etc.*
+
+3. Push the Prisma schema to your database:
+   ```bash
+   npx prisma db push
+   ```
+
+4. Seed the database with initial data (admin/user accounts):
+   ```bash
+   npx prisma db seed
+   ```
+
+5. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+## 🔐 Security Considerations
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **Booking Concurrency**: All booking insertions use strict database locks.
+- **Validation**: Strict validation prevents negative duration bugs and ensures past dates cannot be selected.
+- **Admin Authentication**: All `/api/admin/*` routes require proper JWT authentication and role validation.
 
-## Learn More
+## 🔗 Integration with Kiosk System
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This web app generates the 6-digit PIN code which the user then inputs into the `TennisLockApp` kiosk system located at the courts. The two systems remain loosely coupled through this generated PIN.

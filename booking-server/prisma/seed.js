@@ -55,8 +55,8 @@ async function main() {
   console.log('Seeding default users...');
   const salt = await bcrypt.genSalt(10);
   const playerPass = await bcrypt.hash('player123', salt);
-  const modPass = await bcrypt.hash('mod1234A', salt);
-  const adminPass = await bcrypt.hash('admin123', salt);
+  const modPass = await bcrypt.hash('@minitennis_mod123', salt);
+  const adminPass = await bcrypt.hash('@minitennis_admin123', salt);
 
   const defaultUsers = [
     {
@@ -66,14 +66,14 @@ async function main() {
       role: 'user'
     },
     {
-      username: 'staff1',
-      email: 'staff1@tennis.com',
+      username: 'Minitennis_Mod',
+      email: 'minitennis_mod@tennis.com',
       passwordHash: modPass,
       role: 'mod'
     },
     {
-      username: 'admin',
-      email: 'admin@tennis.com',
+      username: 'Minitennis_Admin',
+      email: 'minitennis_admin@tennis.com',
       passwordHash: adminPass,
       role: 'admin'
     }
