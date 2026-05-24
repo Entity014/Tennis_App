@@ -59,8 +59,8 @@ export async function POST(req, { params }) {
     const { bookingId } = await params;
     const bId = parseInt(bookingId);
 
-    if (!payment_method) {
-      return NextResponse.json({ message: 'Payment method is required' }, { status: 400 });
+    if (payment_method !== 'PromptPay QR') {
+      return NextResponse.json({ message: 'Only PromptPay QR payment is supported.' }, { status: 400 });
     }
 
     await cleanupExpiredBookings();
@@ -160,18 +160,19 @@ export async function POST(req, { params }) {
       }
 
       const apiKey = process.env.SLIP_API_KEY;
-      console.log('[Payment Route] SLIP_API_KEY present:', !!apiKey);
+      if (!apiKey) {
+        console.error('[Payment Route] Error: SLIP_API_KEY is not configured on the server.');
+        return NextResponse.json({ message: 'Server configuration error: Slip API Key is missing.' }, { status: 500 });
+      }
 
-      // In production mode (when SLIP API Key is present), strictly require a readable QR code
-      if (apiKey && !localQRData) {
-        console.log('[Payment Route] Error: No QR code found in the uploaded image (Production Mode)');
+      if (!localQRData) {
+        console.log('[Payment Route] Error: No QR code found in the uploaded image');
         await saveFailedSlip(imageHash, null, null, bId);
         return NextResponse.json({ message: 'No valid QR code detected in the uploaded image. Please ensure you upload a clear bank transfer slip.' }, { status: 400 });
       }
 
-      if (apiKey) {
-        try {
-          console.log('[Payment Route] Calling Slip2Go API...');
+      try {
+        console.log('[Payment Route] Calling Slip2Go API...');
 
           const base64Data = slip_image.replace(/^data:image\/\w+;base64,/, '');
           const imageBuffer = Buffer.from(base64Data, 'base64');
@@ -282,43 +283,6 @@ export async function POST(req, { params }) {
           await saveFailedSlip(imageHash, null, localQRData, bId);
           return NextResponse.json({ message: 'Error verifying slip with Slip2Go API: ' + fetchErr.message }, { status: 500 });
         }
-      } else {
-        // Simulation Fallback Mode
-        console.log('[Simulation Mode] Verifying uploaded slip (Fallback)...');
-        await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate delay
-
-        const mockTransRef = `SIM-${Date.now()}`;
-        const qrPayload = localQRData || `SIM-PAYLOAD-${Date.now()}`;
-        
-        await prisma.verifiedSlip.create({
-          data: {
-            imageHash,
-            transRef: mockTransRef,
-            qrPayload,
-            bookingId: bId
-          }
-        });
-        
-        await prisma.booking.update({
-          where: { id: bId },
-          data: {
-            status: 'paid',
-            paymentStatus: 'completed',
-            paymentMethod: 'PromptPay QR (Simulated)'
-          }
-        });
-        console.log('[Simulation Mode] Slip verified and approved.');
-      }
-    } else {
-      // Fallback for Credit Card
-      await prisma.booking.update({
-        where: { id: bId },
-        data: {
-          status: 'paid',
-          paymentStatus: 'completed',
-          paymentMethod: payment_method
-        }
-      });
     }
 
     const updatedBooking = await prisma.booking.findUnique({
