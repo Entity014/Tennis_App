@@ -18,7 +18,7 @@ export default function RootLayout({ children }) {
         {/* Flatpickr CSS */}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-theme" />
-        <link rel="stylesheet" href="/style.css" />
+        <link rel="stylesheet" href="/style.css?v=3" />
         {/* Flatpickr JS */}
         <script src="https://cdn.jsdelivr.net/npm/flatpickr" defer></script>
         {/* JsBarcode JS */}
@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
         <div id="fb-root"></div>
         {children}
         {/* Load frontend JS script */}
-        <script src="/app.js?v=2" defer></script>
+        <script src="/app.js?v=3" defer></script>
       </body>
     </html>
   );
