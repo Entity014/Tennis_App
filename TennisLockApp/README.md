@@ -9,7 +9,7 @@ This is the Android Kiosk application for the AcePoint Tennis Court system. It i
 - **Device Owner Mode**: Integrates with Android's Device Policy Manager (DPM) to enforce hardware-level Lock Task Mode.
 - **PIN Unlock & Countdown Timer**: Users input a 6-digit PIN obtained from the AcePoint Web App. Upon success, a countdown timer starts, unlocking the screen for the duration of the booking.
 - **Tablet Optimization**: Fully optimized UI layouts for larger screens and tablets (`sw600dp`).
-- **Auto-Launch External App**: Automatically launches a specified target application (e.g., YouTube) immediately upon successful PIN entry.
+- **Auto-Launch External App**: Automatically launches a specified target application (e.g., PusunTennis) immediately upon successful PIN entry.
 - **Persistent Heartbeat**: A foreground service continuously sends a heartbeat (every 15 seconds) to the Kiosk Server, reporting battery level and current state (LOCKED/IN_USE).
 - **Remote Force Control**: Can receive remote "LOCK" or "UNLOCK" commands from the admin server via the heartbeat response.
 

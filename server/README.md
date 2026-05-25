@@ -8,7 +8,7 @@ This is the backend API server for the TennisLock Kiosk system. It acts as the l
 - **PIN Verification**: Validates the 6-digit PINs entered on the Android Kiosk against the generated list.
 - **Auto-Expiration**: Unused PINs expire automatically after 10 minutes to maintain security.
 - **Remote Force Controls**: Sends commands (e.g., `LOCK` or `UNLOCK`) to connected devices during their heartbeat sync.
-- **Admin Dashboard**: A local Tailwind CSS-based web dashboard to monitor devices, manage sessions, generate new PINs, and configure target auto-launch apps (e.g., YouTube) for the Kiosk.
+- **Admin Dashboard**: A local Tailwind CSS-based web dashboard to monitor devices, manage sessions, generate new PINs, and configure target auto-launch apps (e.g., PusunTennis) for the Kiosk.
 - **Secure Admin API**: All admin endpoints are protected by an authentication middleware requiring a `Bearer <KIOSK_SYNC_SECRET>`.
 
 ## 🛠️ Tech Stack

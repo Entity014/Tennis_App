@@ -326,7 +326,7 @@ sequenceDiagram
 - **Accessibility Service Guard** — บล็อกการเข้า Settings, Package Installer และการลากแถบ Notification Shade / Quick Settings
 - **Persistent Foreground Service** — นับถอยหลังเวลาใช้งาน (Countdown Timer) และส่ง Heartbeat ไปยังเซิร์ฟเวอร์ทุก **15 วินาที**
 - **Device Owner Integration** — รองรับสิทธิ์สูงสุด (Device Owner) สำหรับ Lock Task Mode ระดับฮาร์ดแวร์
-- **App Auto-Launch** — เปิดแอปพลิเคชันเป้าหมาย (เช่น YouTube) อัตโนมัติทันทีที่กรอก PIN ปลดล็อกสำเร็จ
+- **App Auto-Launch** — เปิดแอปพลิเคชันเป้าหมาย (เช่น PusunTennis) อัตโนมัติทันทีที่กรอก PIN ปลดล็อกสำเร็จ
 - **Remote Command** — รับคำสั่ง Force Lock / Force Unlock จากเซิร์ฟเวอร์ผ่าน Heartbeat response
 
 ### Kiosk Backend Server (`server/`)
@@ -334,7 +334,7 @@ sequenceDiagram
 - **PIN Generator** — สร้าง PIN 6 หลักพร้อมกำหนดเวลาหมดอายุ
 - **Auto-Expiration** — PIN ที่ไม่ได้ใช้ใน **10 นาที** จะ expire อัตโนมัติ
 - **Real-time Status** — ติดตามสถานะอุปกรณ์ (ONLINE/OFFLINE/IN_USE/LOCKED) และแบตเตอรี่
-- **Admin Dashboard** — หน้าจอควบคุม Tailwind CSS สำหรับ Admin พร้อมระบบตั้งค่า **Target App Package** (เช่น `com.google.android.youtube`) สำหรับแอปหน้า Kiosk
+- **Admin Dashboard** — หน้าจอควบคุม Tailwind CSS สำหรับ Admin พร้อมระบบตั้งค่า **Target App Package** (เช่น `com.pusun.pusuntennis`) สำหรับแอปหน้า Kiosk
 
 ## 🛠️ Tech Stack
 

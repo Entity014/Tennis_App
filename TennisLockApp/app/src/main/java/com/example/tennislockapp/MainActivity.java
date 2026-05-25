@@ -323,7 +323,7 @@ public class MainActivity extends AppCompatActivity {
         // Load SharedPreferences to Admin Panel Inputs
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         etServerUrl.setText(prefs.getString("server_url", "http://192.168.1.100:3000"));
-        etKioskPackageName.setText(prefs.getString("kiosk_package_name", "com.google.android.youtube"));
+        etKioskPackageName.setText(prefs.getString("kiosk_package_name", "com.pusun.pusuntennis"));
     }
 
     // ==================== STATE TRANSITIONS ====================
@@ -417,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Launch target app if requested and package name is configured
         if (shouldLaunchApp) {
-            String targetPackage = prefs.getString("kiosk_package_name", "com.google.android.youtube").trim();
+            String targetPackage = prefs.getString("kiosk_package_name", "com.pusun.pusuntennis").trim();
             if (!targetPackage.isEmpty()) {
                 try {
                     Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPackage);
@@ -870,7 +870,7 @@ public class MainActivity extends AppCompatActivity {
             boolean isOwner = dpm.isDeviceOwnerApp(getPackageName());
             if (isOwner) {
                 SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-                String targetPackage = prefs.getString("kiosk_package_name", "com.google.android.youtube").trim();
+                String targetPackage = prefs.getString("kiosk_package_name", "com.pusun.pusuntennis").trim();
                 
                 String[] packages;
                 if (!targetPackage.isEmpty()) {

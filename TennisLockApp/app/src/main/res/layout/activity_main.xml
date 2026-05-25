@@ -473,7 +473,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Launch App Package (e.g. com.google.android.youtube)"
+                android:hint="Launch App Package (e.g. com.pusun.pusuntennis)"
                 android:textColorHint="@color/text_muted"
                 app:hintTextColor="@color/neon_green"
                 app:boxStrokeColor="@color/neon_green"

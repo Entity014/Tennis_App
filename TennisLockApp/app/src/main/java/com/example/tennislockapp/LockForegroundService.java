@@ -574,7 +574,7 @@ public class LockForegroundService extends Service {
                                         if ("home".equals(currentButtonState)) {
                                             // Launch the target app again
                                             SharedPreferences prefs1 = getSharedPreferences("LockAppPrefs", MODE_PRIVATE);
-                                            String targetPkg = prefs1.getString("kiosk_package_name", "com.google.android.youtube").trim();
+                                            String targetPkg = prefs1.getString("kiosk_package_name", "com.pusun.pusuntennis").trim();
                                             if (!targetPkg.isEmpty()) {
                                                 Intent launchIntent = getPackageManager().getLaunchIntentForPackage(targetPkg);
                                                 if (launchIntent != null) {
