@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>自選球路</item>
+        <item>實戰組合1</item>
+        <item>實戰組合2</item>
+        <item>實戰組合3</item>
+        <item>實戰組合4</item>
+        <item>實戰組合5</item>
+        <item>實戰組合6</item>
+        <item>練習組合1</item>
+        <item>練習組合2</item>
+        <item>練習組合3</item>
+        <item>練習組合4</item>
+        <item>練習組合5</item>
+        <item>練習組合6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>0.25 倍</item>
+        <item>0.5 倍</item>
+        <item>0.75 倍</item>
+        <item>正常</item>
+        <item>1.25 倍</item>
+        <item>1.5 倍</item>
+        <item>2 倍</item>
+    </array>
+    <array name="point_vari">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+</resources>

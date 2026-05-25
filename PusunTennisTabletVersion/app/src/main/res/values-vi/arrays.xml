@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>Lộ trình tự do</item>
+        <item>Bài tập phong cách 1</item>
+        <item>Bài tập phong cách 2</item>
+        <item>Bài tập phong cách 3</item>
+        <item>Bài tập phong cách 4</item>
+        <item>Bài tập phong cách 5</item>
+        <item>Bài tập phong cách 6</item>
+        <item>Bài tập thực hành 1</item>
+        <item>Bài tập thực hành 2</item>
+        <item>Bài tập thực hành 3</item>
+        <item>Bài tập thực hành 4</item>
+        <item>Bài tập thực hành 5</item>
+        <item>Bài tập thực hành 6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>0,25x</item>
+        <item>0,5x</item>
+        <item>0,75x</item>
+        <item>Bình thường</item>
+        <item>1,25x</item>
+        <item>1,5x</item>
+        <item>2x</item>
+    </array>
+    <array name="point_vari">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+</resources>

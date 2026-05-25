@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>自选球路</item>
+        <item>实战组合1</item>
+        <item>实战组合2</item>
+        <item>实战组合3</item>
+        <item>实战组合4</item>
+        <item>实战组合5</item>
+        <item>实战组合6</item>
+        <item>练习组合1</item>
+        <item>练习组合2</item>
+        <item>练习组合3</item>
+        <item>练习组合4</item>
+        <item>练习组合5</item>
+        <item>练习组合6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>0.25x</item>
+        <item>0.5x</item>
+        <item>0.75x</item>
+        <item>正常</item>
+        <item>1.25x</item>
+        <item>1.5x</item>
+        <item>2x</item>
+    </array>
+</resources>

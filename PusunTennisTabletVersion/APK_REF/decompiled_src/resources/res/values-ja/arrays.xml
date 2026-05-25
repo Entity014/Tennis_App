@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>フリーパス</item>
+        <item>プレイヤースタイルドリル1</item>
+        <item>プレイヤースタイルドリル2</item>
+        <item>プレイヤースタイルドリル3</item>
+        <item>プレイヤースタイルドリル4</item>
+        <item>プレイヤースタイルドリル5</item>
+        <item>プレイヤースタイルドリル6</item>
+        <item>エクササイズドリル1</item>
+        <item>エクササイズドリル2</item>
+        <item>エクササイズドリル3</item>
+        <item>エクササイズドリル4</item>
+        <item>エクササイズドリル5</item>
+        <item>エクササイズドリル6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>0.25x</item>
+        <item>0.5x</item>
+        <item>0.75x</item>
+        <item>標準</item>
+        <item>1.25x</item>
+        <item>1.5x</item>
+        <item>2x</item>
+    </array>
+    <array name="point_vari">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+</resources>

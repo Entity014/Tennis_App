@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>Parcours libre</item>
+        <item>Exercices style joueur 1</item>
+        <item>Exercices style joueur 2</item>
+        <item>Exercices style joueur 3</item>
+        <item>Exercices style joueur 4</item>
+        <item>Exercices style joueur 5</item>
+        <item>Exercices style joueur 6</item>
+        <item>Exercices d\'entraînement 1</item>
+        <item>Exercices d\'entraînement 2</item>
+        <item>Exercices d\'entraînement 3</item>
+        <item>Exercices d\'entraînement 4</item>
+        <item>Exercices d\'entraînement 5</item>
+        <item>Exercices d\'entraînement 6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>x 0,25</item>
+        <item>x 0,5</item>
+        <item>x 0,75</item>
+        <item>Normal</item>
+        <item>x 1,25</item>
+        <item>x 1,5</item>
+        <item>x 2</item>
+    </array>
+    <array name="point_vari">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+</resources>

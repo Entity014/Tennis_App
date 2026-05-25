@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="app_title_background_color">#38adff</color>
+    <color name="baseline_gray">#eeeeee</color>
+    <color name="black">#ff000000</color>
+    <color name="bottom_gray">#c8c7c7</color>
+    <color name="bottom_gray_cir">#eeeeee</color>
+    <color name="course_blue">#2e63da</color>
+    <color name="edit_hint_color">#bbbbbb</color>
+    <color name="icon_blue">#38adff</color>
+    <color name="icon_dark_orange">#c37908</color>
+    <color name="icon_gray">#7d7e7e</color>
+    <color name="icon_green">#00b115</color>
+    <color name="icon_orange">#ffba00</color>
+    <color name="icon_red">#d26b6b</color>
+    <color name="mode_blue">#589ff2</color>
+    <color name="promo_red">#a71d7c</color>
+    <color name="purple_200">#ffbb86fc</color>
+    <color name="purple_500">#ff6200ee</color>
+    <color name="purple_700">#ff3700b3</color>
+    <color name="search_blue">#20a9e6</color>
+    <color name="teal_200">#ff03dac5</color>
+    <color name="teal_700">#ff018786</color>
+    <color name="text_black">#1b2c38</color>
+    <color name="transparent">#00000000</color>
+    <color name="white">#ffffffff</color>
+</resources>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="catenames">
+        <item>Freier Pfad</item>
+        <item>Spielerstil-Übungen 1</item>
+        <item>Spielerstil-Übungen 2</item>
+        <item>Spielerstil-Übungen 3</item>
+        <item>Spielerstil-Übungen 4</item>
+        <item>Spielerstil-Übungen 5</item>
+        <item>Spielerstil-Übungen 6</item>
+        <item>Trainingsübungen 1</item>
+        <item>Trainingsübungen 2</item>
+        <item>Trainingsübungen 3</item>
+        <item>Trainingsübungen 4</item>
+        <item>Trainingsübungen 5</item>
+        <item>Trainingsübungen 6</item>
+    </array>
+    <array name="exo_controls_playback_speeds">
+        <item>0,25-fach</item>
+        <item>0,5-fach</item>
+        <item>0,75-fach</item>
+        <item>Standard</item>
+        <item>1,25-fach</item>
+        <item>1,5-fach</item>
+        <item>2-fach</item>
+    </array>
+    <array name="point_vari">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </array>
+</resources>

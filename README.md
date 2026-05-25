@@ -1,11 +1,12 @@
 # 🎾 AcePoint — Tennis Court Booking & Kiosk Lock System
 
-ระบบจองสนามเทนนิสออนไลน์และระบบล็อก Kiosk สำหรับอุปกรณ์ Android แบบครบวงจร ประกอบด้วย 2 ระบบหลักที่ทำงานประสานกัน:
+ระบบจองสนามเทนนิสออนไลน์, ระบบล็อก Kiosk และระบบควบคุมเครื่องยิงลูกเทนนิส ประกอบด้วย 3 ส่วนหลัก:
 
-| ระบบ                                | คำอธิบาย                                                |
-| ----------------------------------- | ------------------------------------------------------- |
-| **🌐 AcePoint Booking Web App**     | เว็บแอปจองคอร์ตสำหรับผู้ใช้งานทั่วไปและแผงควบคุม Admin  |
-| **📱 TennisLock Kiosk Android App** | แอป Android ล็อก Kiosk สำหรับหน้าจอติดตั้งที่สนามเทนนิส |
+| ระบบ                                  | คำอธิบาย                                                     |
+| ------------------------------------- | ------------------------------------------------------------ |
+| **🌐 AcePoint Booking Web App**       | เว็บแอปจองคอร์ตสำหรับผู้ใช้งานทั่วไปและแผงควบคุม Admin       |
+| **📱 TennisLock Kiosk Android App**   | แอป Android ล็อก Kiosk สำหรับหน้าจอติดตั้งที่สนามเทนนิส      |
+| **🤖 PusunTennis Tablet Android App** | แอป Android สำหรับแท็บเล็ตควบคุมเครื่องยิงลูกเทนนิสผ่าน BLE |
 
 ---
 
@@ -76,15 +77,26 @@ Tennis_App/
 │       ├── admin.js            # Admin endpoints (generate PIN, force lock)
 │       └── device.js           # Device endpoints (register, heartbeat, verify-pin)
 │
-└── TennisLockApp/              # ⭐ ระบบที่ 2: TennisLock Kiosk Android App
+├── TennisLockApp/              # ⭐ ระบบที่ 2: TennisLock Kiosk Android App
+│   └── app/src/main/
+│       ├── AndroidManifest.xml
+│       └── java/com/example/tennislockapp/
+│           ├── MainActivity.java             # หน้าจอ PIN lock หลัก
+│           ├── LockForegroundService.java    # Countdown timer + Heartbeat (15s)
+│           ├── LockAccessibilityService.java # บล็อก Settings, Notification Shade
+│           ├── LockDeviceAdminReceiver.java  # Device Owner / Reboot handler
+│           └── MyHttpClient.java             # HTTP client สำหรับ API calls
+│
+└── PusunTennisTabletVersion/   # ⭐ ระบบที่ 3: Pusun Tennis Tablet Control App
+    ├── README.md                   # เอกสารอธิบายระบบควบคุมเครื่องยิงเทนนิส BLE
     └── app/src/main/
-        ├── AndroidManifest.xml
-        └── java/com/example/tennislockapp/
-            ├── MainActivity.java             # หน้าจอ PIN lock หลัก
-            ├── LockForegroundService.java    # Countdown timer + Heartbeat (15s)
-            ├── LockAccessibilityService.java # บล็อก Settings, Notification Shade
-            ├── LockDeviceAdminReceiver.java  # Device Owner / Reboot handler
-            └── MyHttpClient.java             # HTTP client สำหรับ API calls
+        ├── AndroidManifest.xml     # กำหนดสิทธิ์และหน้าจอหลัก (ScanActivity)
+        └── java/com/pusun/pusuntennis/
+            ├── ScanActivity.java       # หน้าจอหลักทำหน้าที่สแกน BLE และเชื่อมต่อ
+            ├── MainActivityPM.java     # หน้าจอควบคุมหลักโมเดล PM
+            ├── MainActivityPMP.java    # หน้าจอควบคุมหลักโมเดล PMP
+            ├── VaryDrillActivity.java  # ระบบจัดการโปรแกรมฝึกซ้อมแบบยืดหยุ่น
+            └── AIDrillActivity.java    # ระบบควบคุมแบบอัจฉริยะด้วย AI
 ```
 
 ---
