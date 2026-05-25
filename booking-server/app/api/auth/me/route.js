@@ -2,11 +2,18 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req) {
   try {
     const userPayload = verifyAuthToken(req);
     if (!userPayload) {
-      return NextResponse.json({ message: 'Access token required' }, { status: 401 });
+      return NextResponse.json({ message: 'Access token required' }, {
+        status: 401,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate'
+        }
+      });
     }
 
     const user = await prisma.user.findUnique({
@@ -22,7 +29,12 @@ export async function GET(req) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: 'User not found' }, { status: 404 });
+      return NextResponse.json({ message: 'User not found' }, {
+        status: 404,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate'
+        }
+      });
     }
 
     // Map displayName back to display_name as expected by the frontend
@@ -35,8 +47,17 @@ export async function GET(req) {
       display_name: user.displayName
     };
 
-    return NextResponse.json(mappedUser);
+    return NextResponse.json(mappedUser, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   } catch (err) {
-    return NextResponse.json({ message: 'Server error', error: err.message }, { status: 500 });
+    return NextResponse.json({ message: 'Server error', error: err.message }, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   }
 }

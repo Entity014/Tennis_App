@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 async function cleanupExpiredBookings() {
   try {
     await prisma.$executeRaw`
@@ -25,7 +27,11 @@ export async function GET(req) {
         price_per_hour: c.pricePerHour,
         description: c.description,
         image_name: c.imageName
-      })));
+      })), {
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate'
+        }
+      });
     }
 
     await cleanupExpiredBookings();
@@ -60,8 +66,17 @@ export async function GET(req) {
       };
     });
 
-    return NextResponse.json(courtList);
+    return NextResponse.json(courtList, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   } catch (err) {
-    return NextResponse.json({ message: 'Server error fetching courts', error: err.message }, { status: 500 });
+    return NextResponse.json({ message: 'Server error fetching courts', error: err.message }, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   }
 }

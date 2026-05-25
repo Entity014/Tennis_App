@@ -61,7 +61,8 @@ export async function POST(req) {
     });
 
     if (!user) {
-      return NextResponse.json({ message: 'Email address not found in the system.' }, { status: 404 });
+      // Prevent user enumeration by returning the same success response
+      return NextResponse.json({ message: 'A password reset PIN has been sent to your email.' });
     }
 
     const resetToken = Math.floor(100000 + Math.random() * 900000).toString();

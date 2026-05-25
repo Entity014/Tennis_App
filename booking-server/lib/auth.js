@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'tennis_secret_key_123';
+export function getJwtSecret() {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is missing.');
+  }
+  return secret;
+}
 
 export function verifyAuthToken(req) {
   const authHeader = req.headers.get('authorization');
@@ -11,7 +17,8 @@ export function verifyAuthToken(req) {
   }
 
   try {
-    return jwt.verify(token, JWT_SECRET);
+    const secret = getJwtSecret();
+    return jwt.verify(token, secret);
   } catch (err) {
     return null;
   }

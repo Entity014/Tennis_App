@@ -1,13 +1,7 @@
 const { PrismaClient } = require('@prisma/client');
-const { PrismaPg } = require('@prisma/adapter-pg');
-const pg = require('pg');
 const bcrypt = require('bcryptjs');
 
-const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-const adapter = new PrismaPg(pool);
-const prisma = new PrismaClient({ adapter });
+const prisma = new PrismaClient();
 
 async function main() {
   console.log('Seeding initial courts...');
@@ -91,6 +85,18 @@ async function main() {
       }
     });
   }
+
+  console.log('Seeding default promo codes...');
+  await prisma.promoCode.upsert({
+    where: { code: 'ACE10' },
+    update: {},
+    create: {
+      code: 'ACE10',
+      discountAmount: 10,
+      discountType: 'percent',
+      isActive: true
+    }
+  });
 
   console.log('Database seeding completed successfully.');
 }

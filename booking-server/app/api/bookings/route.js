@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 import { broadcastEvent } from '@/lib/sse';
+import { validateAndApplyPromo } from '@/lib/promo';
 
 async function cleanupExpiredBookings() {
   try {
@@ -61,9 +62,14 @@ export async function POST(req) {
 
     let price = court.pricePerHour * duration;
 
-    // Apply Promo Code validation on the server
-    if (promo_code === 'ACE10') {
-      price = price * 0.90; // 10% discount
+    // Apply Promo Code validation on the server using database
+    if (promo_code) {
+      const promoResult = await validateAndApplyPromo(promo_code, price);
+      if (promoResult.isValid) {
+        price = promoResult.price;
+      } else {
+        return NextResponse.json({ message: promoResult.message }, { status: 400 });
+      }
     }
 
     const pin_code = Math.floor(100000 + Math.random() * 900000).toString();

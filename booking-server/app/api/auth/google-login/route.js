@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { getJwtSecret } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-
-const JWT_SECRET = process.env.JWT_SECRET || 'tennis_secret_key_123';
 
 export async function POST(req) {
   try {
@@ -67,7 +66,7 @@ export async function POST(req) {
 
     const token = jwt.sign(
       { id: user.id, username: user.username, role: user.role },
-      JWT_SECRET,
+      getJwtSecret(),
       { expiresIn: '24h' }
     );
 

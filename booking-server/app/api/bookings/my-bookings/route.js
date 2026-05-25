@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 async function cleanupExpiredBookings() {
   try {
     await prisma.$executeRaw`
@@ -17,7 +19,12 @@ export async function GET(req) {
   try {
     const userPayload = verifyAuthToken(req);
     if (!userPayload) {
-      return NextResponse.json({ message: 'Access token required' }, { status: 401 });
+      return NextResponse.json({ message: 'Access token required' }, {
+        status: 401,
+        headers: {
+          'Cache-Control': 'no-store, max-age=0, must-revalidate'
+        }
+      });
     }
 
     await cleanupExpiredBookings();
@@ -52,8 +59,17 @@ export async function GET(req) {
       image_name: b.court.imageName
     }));
 
-    return NextResponse.json(formattedBookings);
+    return NextResponse.json(formattedBookings, {
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   } catch (err) {
-    return NextResponse.json({ message: 'Server error fetching user bookings', error: err.message }, { status: 500 });
+    return NextResponse.json({ message: 'Server error fetching user bookings', error: err.message }, {
+      status: 500,
+      headers: {
+        'Cache-Control': 'no-store, max-age=0, must-revalidate'
+      }
+    });
   }
 }

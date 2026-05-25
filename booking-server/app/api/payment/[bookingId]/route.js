@@ -5,6 +5,7 @@ import jsQR from 'jsqr';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 import { broadcastEvent } from '@/lib/sse';
+import { validateAndApplyPromo } from '@/lib/promo';
 
 async function cleanupExpiredBookings() {
   try {
@@ -82,7 +83,7 @@ export async function POST(req, { params }) {
 
     let finalPrice = booking.price;
     // Apply Promo Code if valid and update price in DB
-    if (promo_code === 'ACE10') {
+    if (promo_code) {
       const court = await prisma.court.findUnique({
         where: { id: booking.courtId }
       });
@@ -90,12 +91,18 @@ export async function POST(req, { params }) {
         const startHour = parseInt(booking.startTime.split(':')[0]);
         const endHour = parseInt(booking.endTime.split(':')[0]);
         const duration = endHour - startHour;
-        finalPrice = court.pricePerHour * duration * 0.90;
+        const basePrice = court.pricePerHour * duration;
         
-        await prisma.booking.update({
-          where: { id: bId },
-          data: { price: finalPrice }
-        });
+        const promoResult = await validateAndApplyPromo(promo_code, basePrice);
+        if (promoResult.isValid) {
+          finalPrice = promoResult.price;
+          await prisma.booking.update({
+            where: { id: bId },
+            data: { price: finalPrice }
+          });
+        } else {
+          return NextResponse.json({ message: promoResult.message }, { status: 400 });
+        }
       }
     }
 
@@ -278,6 +285,17 @@ export async function POST(req, { params }) {
               paymentMethod: refString
             }
           });
+
+          // Increment promo code uses if applicable
+          if (promo_code) {
+            const cleanCode = promo_code.trim().toUpperCase();
+            await prisma.promoCode.update({
+              where: { code: cleanCode },
+              data: { currentUses: { increment: 1 } }
+            }).catch((err) => {
+              console.error('[Payment Route] Failed to increment promo code usage:', err.message);
+            });
+          }
         } catch (fetchErr) {
           console.error('[Payment Route] Slip2Go API verification error catch:', fetchErr.message);
           await saveFailedSlip(imageHash, null, localQRData, bId);
