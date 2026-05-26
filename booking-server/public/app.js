@@ -838,22 +838,15 @@ function applyTheme(themeName) {
   STATE.theme = themeName;
   const body = document.body;
   const toggleBtn = document.getElementById('theme-toggle-btn');
-  const toggleIcon = toggleBtn ? toggleBtn.querySelector('i') : null;
 
   if (themeName === 'light') {
     body.classList.remove('dark-theme');
     body.classList.add('light-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'false');
-    if (toggleIcon) {
-      toggleIcon.className = 'fa-regular fa-sun';
-    }
   } else {
     body.classList.remove('light-theme');
     body.classList.add('dark-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'true');
-    if (toggleIcon) {
-      toggleIcon.className = 'fa-solid fa-moon';
-    }
   }
 
   // Update Flatpickr theme Link element
