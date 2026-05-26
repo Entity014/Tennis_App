@@ -46,6 +46,208 @@ async function encryptPayload(payloadObj) {
   }
 }
 
+// --- Internationalization (i18n) ---
+const TRANSLATIONS = {
+  en: {
+    // Navbar
+    'nav-home': 'Home',
+    'nav-book': 'Book Court',
+    'nav-my-bookings': 'My Bookings',
+    'nav-admin': 'Admin Panel',
+    'nav-signin': 'Sign In',
+    'nav-logout': 'Logout',
+    
+    // Hero
+    'hero-title': 'Serve, Volley & <span class="text-neon">Book Instantly</span>',
+    'hero-subtitle': 'Experience championship-grade tennis courts equipped with automated smart-lock access systems. Select your timeslot and get on the court in seconds.',
+    'btn-book-now': 'Book A Court Now',
+    'btn-explore': 'Explore Courts',
+    
+    // Features Section
+    'section-title': 'Our Premium Courts',
+    'section-subtitle': 'Professional surfaces designed to match your play style.',
+    'court-desc-A': 'Premium hard court with professional lighting and spectator seating.',
+    'court-desc-B': 'Traditional clay court offering excellent bounce and slide play.',
+    'court-desc-C': 'Fast grass court simulating professional tournament play style.',
+    'court-desc-D': 'Modern synthetic turf court suitable for all weather conditions.',
+    
+    // Search View
+    'search-title': 'Find Available Timeslots',
+    'search-date-label': 'Date',
+    'btn-search': 'Search Available Slots',
+    'btn-back-search': 'Back to Search',
+    
+    // Timeslot View
+    'timeslot-title': 'Select Court & Timeslots',
+    'legend-select-slots': 'Select Time Slots',
+    'legend-hourly-info': 'Bookings must be hourly. Select consecutive blocks.',
+    'legend-available': 'Available',
+    'legend-booked': 'Booked',
+    'legend-selected': 'Selected',
+    'legend-expired': 'Expired',
+    'lbl-duration': 'Duration',
+    'btn-clear': 'Clear Selection',
+    'btn-book-selected': 'Confirm & Book',
+    
+    // Confirmation / Review View
+    'review-title': 'Review Your Booking',
+    'review-subtitle': 'Please double-check details before proceeding to payment.',
+    'lbl-court': 'Selected Court',
+    'lbl-date': 'Booking Date',
+    'lbl-time': 'Selected Time',
+    'lbl-rate': 'Rate per Hour',
+    'lbl-total': 'Total Amount',
+    'btn-cancel-back': 'Cancel & Back',
+    'btn-payment': 'Proceed to Payment',
+    'btn-confirm-free': 'Confirm Booking',
+    'promo-placeholder': 'Promo / Discount Code',
+    'btn-apply-promo': 'Apply',
+    
+    // Payment View
+    'checkout-title': 'Secure Checkout',
+    'checkout-subtitle': 'Scan this PromptPay QR Code with any banking app to pay',
+    'checkout-subtitle-free': 'Your booking is completely free! Click "Confirm Booking" below to complete.',
+    'payment-method': 'Payment Method',
+    'method-promptpay': 'PromptPay QR',
+    'method-card': 'Credit Card',
+    'upload-slip-title': 'Upload Payment Slip',
+    'upload-slip-desc': 'Drag & drop your payment slip here or click to browse',
+    'amount-due': 'Amount Due',
+    'btn-pay-now': 'Pay Now',
+    'qr-timer-expires': 'QR Code expires in',
+    
+    // Confirmation / E-Ticket View
+    'confirm-title': 'Booking Confirmed!',
+    'confirm-subtitle': 'Show this E-ticket at the court entrance.',
+    'ticket-title': 'Booking E-Ticket',
+    'ticket-pin': 'COURT ACCESS PIN CODE',
+    'ticket-pin-info': 'Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.',
+    'btn-go-dashboard': 'Go to My Bookings',
+    'btn-go-home': 'Return Home'
+  },
+  th: {
+    // Navbar
+    'nav-home': 'หน้าแรก',
+    'nav-book': 'จองสนาม',
+    'nav-my-bookings': 'การจองของฉัน',
+    'nav-admin': 'แผงควบคุม',
+    'nav-signin': 'เข้าสู่ระบบ',
+    'nav-logout': 'ออกจากระบบ',
+    
+    // Hero
+    'hero-title': 'เสิร์ฟ หวด & <span class="text-neon">จองสนามได้ทันที</span>',
+    'hero-subtitle': 'สัมผัสสนามเทนนิสระดับแชมป์เปี้ยนชิพ พร้อมระบบล็อกประตูอัจฉริยะแบบอัตโนมัติ เลือกเวลาของคุณและลงสนามได้ในไม่กี่วินาที',
+    'btn-book-now': 'จองสนามเลย',
+    'btn-explore': 'สำรวจสนาม',
+    
+    // Features Section
+    'section-title': 'สนามระดับพรีเมียมของเรา',
+    'section-subtitle': 'พื้นผิวสนามระดับมืออาชีพที่ออกแบบมาให้เข้ากับสไตล์การเล่นของคุณ',
+    'court-desc-A': 'สนามฮาร์ดคอร์ทพรีเมียมพร้อมไฟส่องสว่างระดับอาชีพและที่นั่งผู้ชม',
+    'court-desc-B': 'สนามดินเหนียวดั้งเดิมที่ให้แรงกระดอนและการเลื่อนไถลที่ยอดเยี่ยม',
+    'court-desc-C': 'สนามหญ้าความเร็วสูงที่จำลองสไตล์การเล่นแบบทัวร์นาเมนต์ระดับอาชีพ',
+    'court-desc-D': 'สนามหญ้าเทียมทันสมัยที่เหมาะกับทุกสภาพอากาศ',
+    
+    // Search View
+    'search-title': 'ค้นหาช่วงเวลาที่ว่าง',
+    'search-date-label': 'วันที่',
+    'btn-search': 'ค้นหาเวลาว่าง',
+    'btn-back-search': 'ย้อนกลับเพื่อค้นหา',
+    
+    // Timeslot View
+    'timeslot-title': 'เลือกสนาม & ช่วงเวลา',
+    'legend-select-slots': 'เลือกช่วงเวลา',
+    'legend-hourly-info': 'การจองต้องเป็นแบบรายชั่วโมง กรุณาเลือกช่วงเวลาที่ต่อเนื่องกัน',
+    'legend-available': 'ว่าง',
+    'legend-booked': 'จองแล้ว',
+    'legend-selected': 'เลือกอยู่',
+    'legend-expired': 'หมดเวลา',
+    'lbl-duration': 'ระยะเวลา',
+    'btn-clear': 'ล้างการเลือก',
+    'btn-book-selected': 'ยืนยัน & จองสนาม',
+    
+    // Confirmation / Review View
+    'review-title': 'ตรวจสอบการจองของคุณ',
+    'review-subtitle': 'กรุณาตรวจสอบรายละเอียดความถูกต้องก่อนดำเนินการชำระเงิน',
+    'lbl-court': 'สนามที่เลือก',
+    'lbl-date': 'วันที่จอง',
+    'lbl-time': 'เวลาที่เลือก',
+    'lbl-rate': 'อัตราต่อชั่วโมง',
+    'lbl-total': 'ยอดรวมทั้งหมด',
+    'btn-cancel-back': 'ยกเลิก & กลับ',
+    'btn-payment': 'ดำเนินการชำระเงิน',
+    'btn-confirm-free': 'ยืนยันการจอง',
+    'promo-placeholder': 'รหัสโปรโมชั่น / ส่วนลด',
+    'btn-apply-promo': 'ใช้ส่วนลด',
+    
+    // Payment View
+    'checkout-title': 'ชำระเงินอย่างปลอดภัย',
+    'checkout-subtitle': 'สแกน PromptPay QR Code นี้ด้วยแอปธนาคารใดก็ได้เพื่อชำระเงิน',
+    'checkout-subtitle-free': 'การจองของคุณฟรี! คลิก "ยืนยันการจอง" ด้านล่างเพื่อเสร็จสิ้นขั้นตอน',
+    'payment-method': 'ช่องทางชำระเงิน',
+    'method-promptpay': 'PromptPay QR',
+    'method-card': 'บัตรเครดิต',
+    'upload-slip-title': 'อัปโหลดสลิปชำระเงิน (รูปภาพ)',
+    'upload-slip-desc': 'แตะเพื่อเลือกไฟล์ หรือลากและวางสลิปที่นี่',
+    'amount-due': 'ยอดชำระ',
+    'btn-pay-now': 'ชำระเงินตอนนี้',
+    'qr-timer-expires': 'รหัส QR จะหมดอายุใน',
+    
+    // Confirmation / E-Ticket View
+    'confirm-title': 'ยืนยันการจองเรียบร้อย!',
+    'confirm-subtitle': 'กรุณาแสดง E-ticket นี้ที่ประตูทางเข้าสนาม',
+    'ticket-title': 'E-Ticket การจองสนาม',
+    'ticket-pin': 'รหัสผ่านประตูสนาม',
+    'ticket-pin-info': 'กรุณาพิมพ์รหัส PIN 6 หลักนี้บนหน้าจอตู้คีออสหน้าสนามเพื่อปลดล็อกระบบและไฟสนาม',
+    'btn-go-dashboard': 'ไปที่การจองของฉัน',
+    'btn-go-home': 'กลับหน้าแรก'
+  }
+};
+
+let currentLang = localStorage.getItem('lang') || 'en';
+
+function applyLanguage(lang) {
+  currentLang = lang;
+  localStorage.setItem('lang', lang);
+  
+  const label = document.getElementById('lang-label');
+  if (label) {
+    label.textContent = lang === 'en' ? 'EN' : 'TH';
+  }
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      const hasIcon = el.querySelector('i');
+      if (hasIcon) {
+        const iconHTML = hasIcon.outerHTML;
+        el.innerHTML = `${iconHTML} ${TRANSLATIONS[lang][key]}`;
+      } else {
+        el.innerHTML = TRANSLATIONS[lang][key];
+      }
+    }
+  });
+
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+      el.setAttribute('placeholder', TRANSLATIONS[lang][key]);
+    }
+  });
+
+  // Re-load courts with the new language descriptions
+  if (typeof STATE !== 'undefined' && STATE.courts && STATE.courts.length > 0) {
+    renderFeaturedCourts(STATE.courts);
+    const modalGrid = document.getElementById('modal-courts-grid');
+    if (modalGrid) renderModalCourts(STATE.courts, modalGrid);
+  }
+}
+
+function toggleLanguage() {
+  const nextLang = currentLang === 'en' ? 'th' : 'en';
+  applyLanguage(nextLang);
+}
+
 // Application State
 const STATE = {
   token: getCookie('token') || localStorage.getItem('token') || null,
@@ -102,6 +304,7 @@ function initializeApp() {
   isAppInitialized = true;
 
   initTheme();
+  applyLanguage(currentLang);
   
   // Set default search date
   STATE.selectedDate = getDefaultDate();
@@ -1366,43 +1569,144 @@ function loadFeaturedCourts() {
   .then(res => res.json())
   .then(courts => {
     STATE.courts = courts;
-    const grid = document.getElementById('featured-courts-grid');
-    grid.innerHTML = '';
-
-    courts.forEach(court => {
-      const card = document.createElement('div');
-      card.className = 'court-card';
-      
-      const imageClass = court.image_name || 'court_indoor_a';
-      card.innerHTML = `
-        <div class="court-img-container">
-          <i class="fa-solid fa-baseball court-img-svg"></i>
-          <div class="court-img-bg-shape"></div>
-        </div>
-        <div class="court-card-body">
-          <h3 class="court-card-title">${court.name}</h3>
-          <p class="court-card-desc">${court.description}</p>
-          <div class="court-card-footer">
-            <div class="court-card-price">
-              <span class="price">฿${court.price_per_hour}</span>
-              <span class="label">per hour</span>
-            </div>
-            <button class="btn btn-primary btn-sm btn-book" data-id="${court.id}">Book Now</button>
-          </div>
-        </div>
-      `;
-      
-      card.style.cursor = 'pointer';
-      card.addEventListener('click', () => {
-        STATE.activeCourtId = court.id;
-        navigateTo('timeslot');
-      });
-
-      grid.appendChild(card);
-    });
+    renderFeaturedCourts(courts);
   })
   .catch(() => {
-    document.getElementById('featured-courts-grid').innerHTML = '<p class="text-center w-100 text-muted">Unable to load courts. Please check server connection.</p>';
+    const grid = document.getElementById('featured-courts-grid');
+    if (grid) {
+      grid.innerHTML = '<p class="text-center w-100 text-muted">Unable to load courts. Please check server connection.</p>';
+    }
+  });
+}
+
+function renderFeaturedCourts(courts) {
+  const grid = document.getElementById('featured-courts-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+
+  courts.forEach(court => {
+    const card = document.createElement('div');
+    card.className = 'court-card';
+    
+    let desc = court.description;
+    if (currentLang === 'th') {
+      if (court.name.includes('Court A')) {
+        desc = TRANSLATIONS.th['court-desc-A'];
+      } else if (court.name.includes('Court B')) {
+        desc = TRANSLATIONS.th['court-desc-B'];
+      } else if (court.name.includes('Arena C')) {
+        desc = TRANSLATIONS.th['court-desc-C'];
+      } else if (court.name.includes('Court D')) {
+        desc = TRANSLATIONS.th['court-desc-D'];
+      }
+    }
+    
+    card.innerHTML = `
+      <div class="court-img-container">
+        <i class="fa-solid fa-baseball court-img-svg"></i>
+        <div class="court-img-bg-shape"></div>
+      </div>
+      <div class="court-card-body">
+        <h3 class="court-card-title">${court.name}</h3>
+        <p class="court-card-desc">${desc}</p>
+        <div class="court-card-footer">
+          <div class="court-card-price">
+            <span class="price">฿${court.price_per_hour}</span>
+            <span class="label">${currentLang === 'en' ? 'per hour' : 'ต่อชั่วโมง'}</span>
+          </div>
+          <button class="btn btn-primary btn-sm btn-book" data-id="${court.id}">${currentLang === 'en' ? 'Book Now' : 'จองตอนนี้'}</button>
+        </div>
+      </div>
+    `;
+    
+    card.style.cursor = 'pointer';
+    card.addEventListener('click', () => {
+      STATE.activeCourtId = court.id;
+      navigateTo('timeslot');
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+function openExploreCourtsModal() {
+  const modal = document.getElementById('explore-courts-modal');
+  if (modal) {
+    modal.style.display = 'flex';
+    populateModalCourts();
+  }
+}
+
+function closeExploreCourtsModal() {
+  const modal = document.getElementById('explore-courts-modal');
+  if (modal) {
+    modal.style.display = 'none';
+  }
+}
+
+function populateModalCourts() {
+  const grid = document.getElementById('modal-courts-grid');
+  if (!grid) return;
+  grid.innerHTML = '<p class="text-center w-100 text-muted">Loading courts...</p>';
+  
+  if (!STATE.courts || STATE.courts.length === 0) {
+    fetch(`/api/courts?date=${getDefaultDate()}`)
+    .then(res => res.json())
+    .then(courts => {
+      STATE.courts = courts;
+      renderModalCourts(courts, grid);
+    })
+    .catch(() => {
+      grid.innerHTML = '<p class="text-center w-100 text-muted">Unable to load courts.</p>';
+    });
+  } else {
+    renderModalCourts(STATE.courts, grid);
+  }
+}
+
+function renderModalCourts(courts, grid) {
+  grid.innerHTML = '';
+  courts.forEach(court => {
+    const card = document.createElement('div');
+    card.className = 'court-card';
+    card.style.cursor = 'pointer';
+    
+    let desc = court.description;
+    if (currentLang === 'th') {
+      if (court.name.includes('Court A')) {
+        desc = TRANSLATIONS.th['court-desc-A'];
+      } else if (court.name.includes('Court B')) {
+        desc = TRANSLATIONS.th['court-desc-B'];
+      } else if (court.name.includes('Arena C')) {
+        desc = TRANSLATIONS.th['court-desc-C'];
+      } else if (court.name.includes('Court D')) {
+        desc = TRANSLATIONS.th['court-desc-D'];
+      }
+    }
+
+    card.innerHTML = `
+      <div class="court-img-container">
+        <i class="fa-solid fa-baseball court-img-svg"></i>
+        <div class="court-img-bg-shape"></div>
+      </div>
+      <div class="court-card-body">
+        <h3 class="court-card-title">${court.name}</h3>
+        <p class="court-card-desc">${desc}</p>
+        <div class="court-card-footer">
+          <div class="court-card-price">
+            <span class="price">฿${court.price_per_hour}</span>
+            <span class="label">${currentLang === 'en' ? 'per hour' : 'ต่อชั่วโมง'}</span>
+          </div>
+          <button class="btn btn-primary btn-sm btn-book" data-id="${court.id}">${currentLang === 'en' ? 'Book Now' : 'จองตอนนี้'}</button>
+        </div>
+      </div>
+    `;
+    card.addEventListener('click', () => {
+      closeExploreCourtsModal();
+      STATE.activeCourtId = court.id;
+      navigateTo('timeslot');
+    });
+    grid.appendChild(card);
   });
 }
 
@@ -1584,7 +1888,20 @@ function loadCourtsAvailability() {
     const activeCourt = courts.find(c => c.id === STATE.activeCourtId);
     if (activeCourt) {
       document.getElementById('detail-court-name').textContent = activeCourt.name;
-      document.getElementById('detail-court-desc').textContent = activeCourt.description;
+      
+      let desc = activeCourt.description;
+      if (currentLang === 'th') {
+        if (activeCourt.name.includes('Court A')) {
+          desc = TRANSLATIONS.th['court-desc-A'];
+        } else if (activeCourt.name.includes('Court B')) {
+          desc = TRANSLATIONS.th['court-desc-B'];
+        } else if (activeCourt.name.includes('Arena C')) {
+          desc = TRANSLATIONS.th['court-desc-C'];
+        } else if (activeCourt.name.includes('Court D')) {
+          desc = TRANSLATIONS.th['court-desc-D'];
+        }
+      }
+      document.getElementById('detail-court-desc').textContent = desc;
       document.getElementById('detail-court-price').textContent = `฿${activeCourt.price_per_hour}`;
     }
 
@@ -1605,10 +1922,10 @@ function refreshTimeGridSelection() {
     const isSelected = STATE.selectedSlots.includes(startHourStr);
     if (isSelected) {
       slotDiv.classList.add('selected');
-      slotDiv.querySelector('.status-lbl').textContent = 'Selected';
+      slotDiv.querySelector('.status-lbl').textContent = currentLang === 'en' ? 'Selected' : 'เลือกอยู่';
     } else {
       slotDiv.classList.remove('selected');
-      slotDiv.querySelector('.status-lbl').textContent = 'Available';
+      slotDiv.querySelector('.status-lbl').textContent = currentLang === 'en' ? 'Available' : 'ว่าง';
     }
   });
 }
@@ -1647,13 +1964,13 @@ function renderTimeGrid(court) {
       slotDiv.className = `time-slot ${isSelected ? 'selected' : ''}`;
     }
 
-    let statusText = 'Available';
+    let statusText = currentLang === 'en' ? 'Available' : 'ว่าง';
     if (isBooked) {
-      statusText = 'Unavailable';
+      statusText = currentLang === 'en' ? 'Unavailable' : 'ไม่ว่าง';
     } else if (isExpired) {
-      statusText = 'Expired';
+      statusText = currentLang === 'en' ? 'Expired' : 'หมดเวลา';
     } else if (isSelected) {
-      statusText = 'Selected';
+      statusText = currentLang === 'en' ? 'Selected' : 'เลือกอยู่';
     }
 
     slotDiv.innerHTML = `
@@ -1802,8 +2119,12 @@ function updateSelectionSummary() {
   const total = activeCourt.price_per_hour * duration;
 
   document.getElementById('sum-date').textContent = formatDateDMY(STATE.selectedDate);
-  document.getElementById('sum-time').textContent = `${startHour}:00 to ${endHour}:00`;
-  document.getElementById('sum-duration').textContent = `${duration} hour${duration > 1 ? 's' : ''}`;
+  document.getElementById('sum-time').textContent = currentLang === 'en'
+    ? `${startHour}:00 to ${endHour}:00`
+    : `${startHour}:00 ถึง ${endHour}:00`;
+  document.getElementById('sum-duration').textContent = currentLang === 'en'
+    ? `${duration} hour${duration > 1 ? 's' : ''}`
+    : `${duration} ชั่วโมง`;
   document.getElementById('sum-total-price').textContent = `฿${total.toLocaleString()}`;
 }
 
@@ -1958,6 +2279,11 @@ function initPromoHandlers() {
       }
     }
 
+    if (finalPrice === 0) {
+      submitBookingToDatabase();
+      return;
+    }
+
     // Update payment displays
     document.getElementById('payment-amount-display').textContent = `฿${finalPrice.toLocaleString()}`;
 
@@ -1972,8 +2298,12 @@ function updateReviewDetails() {
 
   document.getElementById('rev-court-name').textContent = b.court_name;
   document.getElementById('rev-date').textContent = formatDateDMY(b.date);
-  document.getElementById('rev-time').textContent = `${b.start_time} - ${b.end_time} (${b.duration} hrs)`;
-  document.getElementById('rev-rate').textContent = `฿${b.rate}/hr`;
+  document.getElementById('rev-time').textContent = currentLang === 'en'
+    ? `${b.start_time} - ${b.end_time} (${b.duration} hrs)`
+    : `${b.start_time} - ${b.end_time} (${b.duration} ชม.)`;
+  document.getElementById('rev-rate').textContent = currentLang === 'en'
+    ? `฿${b.rate}/hr`
+    : `฿${b.rate}/ชม.`;
 
   let finalPrice = b.price;
   if (STATE.appliedPromo) {
@@ -1984,6 +2314,19 @@ function updateReviewDetails() {
     }
   }
   document.getElementById('rev-total').textContent = `฿${finalPrice.toLocaleString()}`;
+
+  const proceedBtn = document.getElementById('proceed-to-payment-btn');
+  if (proceedBtn) {
+    if (finalPrice === 0) {
+      proceedBtn.innerHTML = currentLang === 'en'
+        ? 'Confirm Booking <i class="fa-solid fa-circle-check ml-1"></i>'
+        : 'ยืนยันการจอง <i class="fa-solid fa-circle-check ml-1"></i>';
+    } else {
+      proceedBtn.innerHTML = currentLang === 'en'
+        ? 'Proceed to Payment <i class="fa-solid fa-credit-card ml-1"></i>'
+        : 'ดำเนินการชำระเงิน <i class="fa-solid fa-credit-card ml-1"></i>';
+    }
+  }
 }
 
 // Intercept review navigation to update values on entry
@@ -2343,7 +2686,7 @@ function submitBookingToDatabase() {
   }
 
   // Show loading state
-  const payBtn = document.getElementById('pay-submit-btn');
+  const payBtn = (STATE.currentView === 'review-view') ? document.getElementById('proceed-to-payment-btn') : document.getElementById('pay-submit-btn');
   const originalBtnHTML = payBtn.innerHTML;
   payBtn.disabled = true;
   payBtn.innerHTML = finalPrice > 0 
@@ -3170,6 +3513,7 @@ function editAdminPromoCode(id) {
   document.getElementById('promo-code-input').value = promo.code;
   document.getElementById('promo-discount-amount').value = promo.discountAmount;
   document.getElementById('promo-discount-type').value = promo.discountType;
+  handlePromoTypeChange();
   document.getElementById('promo-max-uses').value = promo.maxUses || '';
   
   const promoDateEl = document.getElementById('promo-valid-until');
@@ -3202,6 +3546,7 @@ function editAdminPromoCode(id) {
 function cancelPromoEdit() {
   STATE.editingPromoId = null;
   document.getElementById('admin-add-promocode-form').reset();
+  handlePromoTypeChange();
   
   const promoDateEl = document.getElementById('promo-valid-until');
   if (promoDateEl && promoDateEl._flatpickr) {
@@ -3217,6 +3562,16 @@ function cancelPromoEdit() {
   const cancelBtn = document.getElementById('promo-cancel-edit-btn');
   if (cancelBtn) {
     cancelBtn.remove();
+  }
+}
+
+function handlePromoTypeChange() {
+  const type = document.getElementById('promo-discount-type').value;
+  const amountInput = document.getElementById('promo-discount-amount');
+  if (type === 'percent') {
+    amountInput.setAttribute('max', '100');
+  } else {
+    amountInput.removeAttribute('max');
   }
 }
 

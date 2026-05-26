@@ -42,12 +42,16 @@
         <span class="logo-text">Ace<span class="text-neon">Point</span></span>
       </a>
       <nav class="nav-links">
-        <a href="#home" class="nav-link active" data-target="home-view">Home</a>
-        <a href="#search" class="nav-link" data-target="search-view">Book Court</a>
-        <a href="#dashboard" class="nav-link auth-required" data-target="dashboard-view" style="display: none;">My Bookings</a>
-        <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;">Admin Panel</a>
+        <a href="#home" class="nav-link active" data-target="home-view" data-i18n="nav-home">Home</a>
+        <a href="#search" class="nav-link" data-target="search-view" data-i18n="nav-book">Book Court</a>
+        <a href="#dashboard" class="nav-link auth-required" data-target="dashboard-view" style="display: none;" data-i18n="nav-my-bookings">My Bookings</a>
+        <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;" data-i18n="nav-admin">Admin Panel</a>
       </nav>
       <div class="auth-buttons">
+        <button id="lang-toggle-btn" class="btn btn-outline btn-sm mr-2" onclick="toggleLanguage()" style="display: inline-flex; align-items: center; gap: 5px; height: 38px;">
+          <i class="fa-solid fa-globe"></i>
+          <span id="lang-label">EN</span>
+        </button>
         <button id="theme-toggle-btn" class="theme-toggle-switch" aria-label="Toggle Theme" role="switch" aria-checked="true">
           <div class="toggle-track">
             <div class="toggle-thumb"></div>
@@ -62,9 +66,9 @@
         <span id="user-display" class="user-profile-display" style="display: none;">
           <i class="fa-solid fa-user-circle"></i>
           <span id="username-span">Player</span>
-          <button id="logout-btn" class="btn btn-outline btn-sm ml-1">Logout</button>
+          <button id="logout-btn" class="btn btn-outline btn-sm ml-1" data-i18n="nav-logout">Logout</button>
         </span>
-        <button id="login-nav-btn" class="btn btn-outline" onclick="navigateTo('auth-view')">Sign In</button>
+        <button id="login-nav-btn" class="btn btn-outline" onclick="navigateTo('auth-view')" data-i18n="nav-signin">Sign In</button>
       </div>
       <button class="mobile-menu-btn" id="mobile-menu-toggle">
         <i class="fa-solid fa-bars"></i>
@@ -83,21 +87,21 @@
       <div class="hero-section">
         <div class="hero-overlay"></div>
         <div class="container hero-content">
-          <h1 class="hero-title animate-fade-in">Serve, Volley & <span class="text-neon">Book Instantly</span></h1>
-          <p class="hero-subtitle animate-fade-in">Experience championship-grade tennis courts equipped with automated smart-lock access systems. Select your timeslot and get on the court in seconds.</p>
+          <h1 class="hero-title animate-fade-in" data-i18n="hero-title">Serve, Volley & <span class="text-neon">Book Instantly</span></h1>
+          <p class="hero-subtitle animate-fade-in" data-i18n="hero-subtitle">Experience championship-grade tennis courts equipped with automated smart-lock access systems. Select your timeslot and get on the court in seconds.</p>
           <div class="hero-cta animate-fade-in">
-            <button class="btn btn-primary btn-lg" onclick="navigateTo('search-view')">
+            <button class="btn btn-primary btn-lg" onclick="navigateTo('search-view')" data-i18n="btn-book-now">
               <i class="fa-solid fa-calendar-days mr-2"></i> Book A Court Now
             </button>
-            <a href="#features" class="btn btn-outline btn-lg ml-3">Explore Courts</a>
+            <button class="btn btn-outline btn-lg ml-3" onclick="openExploreCourtsModal()" data-i18n="btn-explore">Explore Courts</button>
           </div>
         </div>
       </div>
 
       <!-- Court Features Section -->
       <div id="features" class="features-section container">
-        <h2 class="section-title text-center">Our Premium Courts</h2>
-        <p class="section-subtitle text-center">Professional surfaces designed to match your play style.</p>
+        <h2 class="section-title text-center" data-i18n="section-title">Our Premium Courts</h2>
+        <p class="section-subtitle text-center" data-i18n="section-subtitle">Professional surfaces designed to match your play style.</p>
         
         <div class="courts-grid" id="featured-courts-grid">
           <!-- Dynamically generated court cards -->
@@ -112,10 +116,10 @@
     <section id="search-view" class="view">
       <div class="container container-sm">
         <div class="search-box glassmorphism">
-          <h2 class="form-title text-center"><i class="fa-solid fa-magnifying-glass text-neon mr-2"></i> Find Available Timeslots</h2>
+          <h2 class="form-title text-center" data-i18n="search-title"><i class="fa-solid fa-magnifying-glass text-neon mr-2"></i> Find Available Timeslots</h2>
           <form id="search-form" class="search-form">
             <div class="form-group text-center">
-              <label class="form-label-custom"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date</label>
+              <label class="form-label-custom" data-i18n="search-date-label"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date</label>
               <div class="search-date-display-wrapper">
                 <button type="button" class="btn-date-arrow-large" onclick="changeSearchDateByOffset(-1)" title="Previous Day">
                   <i class="fa-solid fa-chevron-left"></i>
@@ -133,7 +137,7 @@
               <input type="text" id="booking-date" style="display: none;" required>
             </div>
             
-            <button type="submit" class="btn btn-primary btn-block mt-4" id="search-submit-btn">
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="search-submit-btn" data-i18n="btn-search">
               <i class="fa-solid fa-search mr-2"></i> Search Availability
             </button>
           </form>
@@ -145,17 +149,17 @@
     <section id="timeslot-view" class="view">
       <div class="container">
         <div class="view-header">
-          <button class="btn btn-link text-neon mb-3" onclick="navigateTo('search-view')">
+          <button class="btn btn-link text-neon mb-3" onclick="navigateTo('search-view')" data-i18n="btn-back-search">
             <i class="fa-solid fa-arrow-left mr-1"></i> Back to Search
           </button>
           <div class="timeslot-header-flex">
-            <h2 class="view-title">Select Court & Timeslots</h2>
+            <h2 class="view-title" data-i18n="timeslot-title">Select Court & Timeslots</h2>
             <div class="timeslot-date-header-wrapper">
               <button class="btn-date-arrow" onclick="changeDateByOffset(-1)" title="Previous Day">
                 <i class="fa-solid fa-chevron-left"></i>
               </button>
               <div class="timeslot-date-header-row">
-                <label for="timeslot-date-picker"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date:</label>
+                <label for="timeslot-date-picker" data-i18n="search-date-label"><i class="fa-regular fa-calendar text-neon mr-1"></i> Date:</label>
                 <input type="date" id="timeslot-date-picker" class="form-control timeslot-date-input-inline">
               </div>
               <button class="btn-date-arrow" onclick="changeDateByOffset(1)" title="Next Day">
@@ -175,7 +179,7 @@
                   <h3 id="detail-court-name">Court Name</h3>
                   <p class="court-desc mt-2" id="detail-court-desc">Description of the court goes here...</p>
                   <div class="court-price-box">
-                    <span class="price-label">Price per Hour</span>
+                    <span class="price-label" data-i18n="lbl-rate">Price per Hour</span>
                     <span class="price-amount" id="detail-court-price">฿0</span>
                   </div>
                 </div>
@@ -191,8 +195,8 @@
 
             <div class="timeslot-grid-card glassmorphism">
               <div class="grid-header">
-                <h3>Select Time Slots</h3>
-                <span class="info-text"><i class="fa-solid fa-info-circle text-neon mr-1"></i> Bookings must be hourly. Select consecutive blocks.</span>
+                <h3 data-i18n="legend-select-slots">Select Time Slots</h3>
+                <span class="info-text" data-i18n="legend-hourly-info"><i class="fa-solid fa-info-circle text-neon mr-1"></i> Bookings must be hourly. Select consecutive blocks.</span>
               </div>
 
               <!-- Time grid -->
@@ -204,28 +208,28 @@
               <div class="selection-summary-panel" id="selection-summary" style="display: none;">
                 <div class="summary-details">
                   <div class="summary-item">
-                    <span class="label">Date:</span>
+                    <span class="label" data-i18n="search-date-label">Date:</span>
                     <span class="val" id="sum-date">2026-05-20</span>
                   </div>
                   <div class="summary-item">
-                    <span class="label">Time:</span>
+                    <span class="label" data-i18n="lbl-time">Time:</span>
                     <span class="val" id="sum-time">--:-- to --:--</span>
                   </div>
                   <div class="summary-item">
-                    <span class="label">Duration:</span>
+                    <span class="label" data-i18n="lbl-duration">Duration:</span>
                     <span class="val" id="sum-duration">0 hours</span>
                   </div>
                 </div>
                 <div class="summary-pricing">
                   <div class="price-row">
-                    <span class="total-label">Total Price:</span>
+                    <span class="total-label" data-i18n="lbl-total">Total Price:</span>
                     <span class="total-amount" id="sum-total-price">฿0</span>
                   </div>
                   <div class="summary-actions">
-                    <button class="btn btn-outline" id="clear-selection-btn">
+                    <button class="btn btn-outline" id="clear-selection-btn" data-i18n="btn-clear">
                       Clear Selection
                     </button>
-                    <button class="btn btn-primary" id="confirm-selection-btn">
+                    <button class="btn btn-primary" id="confirm-selection-btn" data-i18n="btn-book-selected">
                       Confirm & Book <i class="fa-solid fa-arrow-right ml-1"></i>
                     </button>
                   </div>
@@ -402,42 +406,42 @@
       <div class="container container-sm">
         <div class="review-card glassmorphism">
           <div class="view-header text-center">
-            <h2 class="view-title"><i class="fa-solid fa-clipboard-check text-neon mr-2"></i> Review Your Booking</h2>
-            <p class="view-subtitle text-muted">Please double-check details before proceeding to payment.</p>
+            <h2 class="view-title" data-i18n="review-title"><i class="fa-solid fa-clipboard-check text-neon mr-2"></i> Review Your Booking</h2>
+            <p class="view-subtitle text-muted" data-i18n="review-subtitle">Please double-check details before proceeding to payment.</p>
           </div>
 
           <div class="review-table mt-4">
             <div class="review-row">
-              <div class="review-cell label">Selected Court</div>
+              <div class="review-cell label" data-i18n="lbl-court">Selected Court</div>
               <div class="review-cell val text-neon font-weight-bold" id="rev-court-name">Court Name</div>
             </div>
             <div class="review-row">
-              <div class="review-cell label">Booking Date</div>
+              <div class="review-cell label" data-i18n="lbl-date">Booking Date</div>
               <div class="review-cell val" id="rev-date">2026-05-20</div>
             </div>
             <div class="review-row">
-              <div class="review-cell label">Selected Time</div>
+              <div class="review-cell label" data-i18n="lbl-time">Selected Time</div>
               <div class="review-cell val text-white" id="rev-time">10:00 - 12:00 (2 hrs)</div>
             </div>
             <div class="review-row">
-              <div class="review-cell label">Rate per Hour</div>
+              <div class="review-cell label" data-i18n="lbl-rate">Rate per Hour</div>
               <div class="review-cell val" id="rev-rate">฿600.00</div>
             </div>
             <div class="review-row total-row">
-              <div class="review-cell label">Total Amount</div>
+              <div class="review-cell label" data-i18n="lbl-total">Total Amount</div>
               <div class="review-cell val text-neon price-highlight" id="rev-total">฿1,200.00</div>
             </div>
           </div>
 
           <!-- Promo Code Box -->
           <div class="promo-box mt-4">
-            <input type="text" id="promo-input" class="form-control" placeholder="Promo / Discount Code">
-            <button class="btn btn-outline" id="promo-apply-btn">Apply</button>
+            <input type="text" id="promo-input" class="form-control" placeholder="Promo / Discount Code" data-i18n-placeholder="promo-placeholder">
+            <button class="btn btn-outline" id="promo-apply-btn" data-i18n="btn-apply-promo">Apply</button>
           </div>
 
           <div class="action-buttons mt-5">
-            <button class="btn btn-outline" id="review-cancel-btn">Cancel & Back</button>
-            <button class="btn btn-primary" id="proceed-to-payment-btn">
+            <button class="btn btn-outline" id="review-cancel-btn" data-i18n="btn-cancel-back">Cancel & Back</button>
+            <button class="btn btn-primary" id="proceed-to-payment-btn" data-i18n="btn-payment">
               Proceed to Payment <i class="fa-solid fa-credit-card ml-1"></i>
             </button>
           </div>
@@ -450,8 +454,8 @@
       <div class="container container-sm">
         <div class="payment-card glassmorphism">
           <div class="view-header text-center">
-            <h2 class="view-title"><i class="fa-solid fa-shield-halved text-neon mr-2"></i> Secure Checkout</h2>
-            <p class="qr-info-text text-muted mt-2">Scan this PromptPay QR Code with any banking app to pay</p>
+            <h2 class="view-title" data-i18n="checkout-title"><i class="fa-solid fa-shield-halved text-neon mr-2"></i> Secure Checkout</h2>
+            <p class="qr-info-text text-muted mt-2" data-i18n="checkout-subtitle">Scan this PromptPay QR Code with any banking app to pay</p>
           </div>
 
           <div class="payment-methods mt-4" style="display: none !important;">
@@ -521,15 +525,15 @@
             </div>
 
             <div class="qr-timer mt-3 text-neon">
-              <i class="fa-solid fa-clock-rotate-left mr-1"></i> QR Code expires in <span id="qr-countdown">04:59</span>
+              <i class="fa-solid fa-clock-rotate-left mr-1"></i> <span data-i18n="qr-timer-expires">QR Code expires in</span> <span id="qr-countdown">04:59</span>
             </div>
 
             <!-- Slip Upload Box -->
             <div class="slip-upload-container mt-4">
               <label for="slip-file-input" id="slip-upload-label" class="slip-upload-box glassmorphism">
                 <i class="fa-solid fa-cloud-arrow-up text-neon upload-icon"></i>
-                <span class="upload-text">Upload Payment Slip (Image)</span>
-                <span class="file-info text-muted">Tap to select or drag & drop slip image</span>
+                <span class="upload-text" data-i18n="upload-slip-title">Upload Payment Slip (Image)</span>
+                <span class="file-info text-muted" data-i18n="upload-slip-desc">Tap to select or drag & drop slip image</span>
                 <input type="file" id="slip-file-input" accept="image/*" style="display: none;">
               </label>
               
@@ -544,11 +548,11 @@
 
 
           <div class="payment-summary-box mt-4">
-            <span>Amount Due:</span>
+            <span data-i18n="amount-due">Amount Due:</span>
             <span class="amount text-neon" id="payment-amount-display">฿1,200.00</span>
           </div>
 
-          <button class="btn btn-primary btn-block mt-4 btn-lg" id="pay-submit-btn">
+          <button class="btn btn-primary btn-block mt-4 btn-lg" id="pay-submit-btn" data-i18n="btn-pay-now">
             Pay Now
           </button>
         </div>
@@ -562,8 +566,8 @@
           <div class="success-animation">
             <i class="fa-solid fa-circle-check text-neon animate-bounce"></i>
           </div>
-          <h2 class="view-title text-neon mt-3">Booking Confirmed!</h2>
-          <p class="view-subtitle text-muted">Your payment was processed successfully. Here is your E-Ticket.</p>
+          <h2 class="view-title text-neon mt-3" data-i18n="confirm-title">Booking Confirmed!</h2>
+          <p class="view-subtitle text-muted" data-i18n="confirm-subtitle">Your payment was processed successfully. Here is your E-Ticket.</p>
 
           <!-- Ticket Design -->
           <div class="ticket glassmorphism mt-4">
@@ -578,18 +582,18 @@
             <div class="ticket-body">
               <div class="ticket-row">
                 <div class="ticket-col">
-                  <span class="lbl">Court</span>
+                  <span class="lbl" data-i18n="lbl-court">Court</span>
                   <span class="val text-neon" id="ticket-court">Grand Slam Court A</span>
                 </div>
               </div>
 
               <div class="ticket-row">
                 <div class="ticket-col">
-                  <span class="lbl">Date</span>
+                  <span class="lbl" data-i18n="lbl-date">Date</span>
                   <span class="val" id="ticket-date">2026-05-20</span>
                 </div>
                 <div class="ticket-col text-right">
-                  <span class="lbl">Timeslot</span>
+                  <span class="lbl" data-i18n="lbl-time">Timeslot</span>
                   <span class="val" id="ticket-time">10:00 - 12:00</span>
                 </div>
               </div>
@@ -601,9 +605,9 @@
 
               <!-- Kiosk PIN code -->
               <div class="ticket-pin-section">
-                <span class="pin-lbl">COURT ACCESS PIN CODE</span>
+                <span class="pin-lbl" data-i18n="ticket-pin">COURT ACCESS PIN CODE</span>
                 <span class="pin-code text-neon" id="ticket-pin">829 104</span>
-                <p class="pin-instruction"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.</p>
+                <p class="pin-instruction" data-i18n="ticket-pin-info"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.</p>
               </div>
             </div>
 
@@ -614,10 +618,10 @@
           </div>
 
           <div class="action-buttons mt-4">
-            <button class="btn btn-outline" onclick="navigateTo('dashboard-view')">
+            <button class="btn btn-outline" onclick="navigateTo('dashboard-view')" data-i18n="btn-go-dashboard">
               <i class="fa-solid fa-list mr-1"></i> Go to My Bookings
             </button>
-            <button class="btn btn-primary" onclick="navigateTo('home-view')">
+            <button class="btn btn-primary" onclick="navigateTo('home-view')" data-i18n="btn-go-home">
               <i class="fa-solid fa-house mr-1"></i> Return Home
             </button>
           </div>
@@ -863,11 +867,11 @@
                 <div class="form-row mb-3" style="display: flex; gap: 10px;">
                   <div class="form-group" style="flex: 1;">
                     <label for="promo-discount-amount">Amount</label>
-                    <input type="number" id="promo-discount-amount" class="form-control" placeholder="e.g. 20" min="0" required>
+                    <input type="number" id="promo-discount-amount" class="form-control" placeholder="e.g. 20" min="0" max="100" required>
                   </div>
                   <div class="form-group" style="flex: 1;">
                     <label for="promo-discount-type">Type</label>
-                    <select id="promo-discount-type" class="form-control">
+                    <select id="promo-discount-type" class="form-control" onchange="handlePromoTypeChange()">
                       <option value="percent">% Percent</option>
                       <option value="fixed">฿ Fixed</option>
                     </select>
@@ -928,6 +932,21 @@
       </div>
       <div class="social-modal-body" id="policy-modal-body" style="max-height: 400px; overflow-y: auto; text-align: left; padding-right: 8px;">
         <!-- Dynamically populated content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Explore Courts Modal -->
+  <div id="explore-courts-modal" class="social-modal-overlay" style="display: none;" onclick="if(event.target === this) closeExploreCourtsModal()">
+    <div class="social-modal glassmorphism" style="max-width: 960px; width: 95%;">
+      <div class="social-modal-header">
+        <span style="font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700;"><i class="fa-solid fa-baseball text-neon mr-2"></i> Our Premium Courts</span>
+        <button onclick="closeExploreCourtsModal()" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="social-modal-body" style="max-height: 70vh; overflow-y: auto; padding-right: 8px;">
+        <div class="courts-grid" id="modal-courts-grid">
+          <!-- Dynamically populated court cards -->
+        </div>
       </div>
     </div>
   </div>
