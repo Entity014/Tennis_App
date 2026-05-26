@@ -225,7 +225,18 @@ const TRANSLATIONS = {
     'admin-action-edit': 'Edit',
     'admin-action-delete': 'Delete',
     'admin-save-court-update': 'Update Court',
-    'admin-save-promo-update': 'Update Promo Code'
+    'admin-save-promo-update': 'Update Promo Code',
+    'footer-privacy': 'Privacy Policy',
+    'footer-terms': 'Terms of Service',
+    'footer-support': 'Help Support',
+    'dashboard-title': 'Player Dashboard',
+    'dashboard-subtitle': 'Manage your bookings, access codes, and profile.',
+    'dashboard-new-booking': 'New Booking',
+    'dashboard-stat-upcoming': 'Upcoming Bookings',
+    'dashboard-stat-total': 'Total Bookings',
+    'dashboard-section-title': 'Your Bookings',
+    'dashboard-empty-txt': "You don't have any bookings yet.",
+    'dashboard-empty-btn': 'Book Your First Court'
   },
   th: {
     // Navbar
@@ -460,7 +471,65 @@ const TRANSLATIONS = {
     'Are you sure you want to delete this court? This might affect existing bookings!': 'คุณแน่ใจหรือไม่ว่าต้องการลบคอร์ทนี้? การดำเนินการนี้อาจส่งผลกระทบต่อรายการจองที่มีอยู่!',
     'Are you sure you want to delete this promo code?': 'คุณแน่ใจหรือไม่ว่าต้องการลบรหัสโปรโมชั่นนี้?',
     'admin-save-court-update': 'อัปเดตข้อมูลสนาม',
-    'admin-save-promo-update': 'อัปเดตรหัสโปรโมชั่น'
+    'admin-save-promo-update': 'อัปเดตรหัสโปรโมชั่น',
+    'footer-privacy': 'นโยบายความเป็นส่วนตัว',
+    'footer-terms': 'ข้อตกลงการให้บริการ',
+    'footer-support': 'ช่วยเหลือและสนับสนุน',
+    'dashboard-title': 'แผงควบคุมผู้เล่น',
+    'dashboard-subtitle': 'จัดการการจอง รหัสเข้าสนาม และโปรไฟล์ของคุณ',
+    'dashboard-new-booking': 'จองสนามใหม่',
+    'dashboard-stat-upcoming': 'การจองที่กำลังมาถึง',
+    'dashboard-stat-total': 'การจองทั้งหมด',
+    'dashboard-section-title': 'การจองของคุณ',
+    'dashboard-empty-txt': 'คุณยังไม่มีรายการจองใดๆ',
+    'dashboard-empty-btn': 'จองสนามแรกของคุณ',
+    'Cannot select a past date': 'ไม่สามารถเลือกวันที่ในอดีตได้',
+    'Can only book up to 3 months in advance': 'สามารถจองล่วงหน้าได้ไม่เกิน 3 เดือน',
+    'Access denied.': 'ปฏิเสธการเข้าถึง',
+    'Error loading admin stats': 'เกิดข้อผิดพลาดในการโหลดข้อมูลสถิติผู้ดูแลระบบ',
+    'Error loading bookings': 'เกิดข้อผิดพลาดในการโหลดข้อมูลการจอง',
+    'Error loading courts list': 'เกิดข้อผิดพลาดในการโหลดรายการสนาม',
+    'Error saving court details': 'เกิดข้อผิดพลาดในการบันทึกรายละเอียดสนาม',
+    'Error deleting booking': 'เกิดข้อผิดพลาดในการลบการจอง',
+    'Error deleting court': 'เกิดข้อผิดพลาดในการลบสนาม',
+    'Error loading users': 'เกิดข้อผิดพลาดในการโหลดข้อมูลผู้ใช้',
+    'Failed to update role': 'ล้มเหลวในการอัปเดตบทบาท',
+    'Error updating role': 'เกิดข้อผิดพลาดในการอัปเดตบทบาท',
+    'Error loading promo codes': 'เกิดข้อผิดพลาดในการโหลดรหัสโปรโมชั่น',
+    'Discount amount must be a positive number': 'จำนวนส่วนลดต้องเป็นตัวเลขที่มากกว่า 0',
+    'Percentage discount cannot exceed 100%': 'ส่วนลดเป็นเปอร์เซ็นต์ต้องไม่เกิน 100%',
+    'Error saving promo code': 'เกิดข้อผิดพลาดในการบันทึกรหัสโปรโมชั่น',
+    'Promo code deleted': 'ลบรหัสโปรโมชั่นสำเร็จแล้ว',
+    'Error deleting promo code': 'เกิดข้อผิดพลาดในการลบรหัสโปรโมชั่น',
+    'Username is required.': 'กรุณากรอกชื่อผู้ใช้',
+    'Password is required.': 'กรุณากรอกรหัสผ่าน',
+    'Incorrect username or password. Please try again.': 'ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง',
+    'Email address is required.': 'กรุณากรอกอีเมล',
+    'Please enter a valid email address.': 'กรุณากรอกอีเมลที่ถูกต้อง',
+    'Email is required.': 'กรุณากรอกอีเมล',
+    'Reset PIN is required.': 'กรุณากรอกรหัส PIN สำหรับรีเซ็ต',
+    'New password is required.': 'กรุณากรอกรหัสผ่านใหม่',
+    '3 to 20 characters long': 'ความยาว 3 ถึง 20 ตัวอักษร',
+    'Letters, numbers, and underscores only': 'ตัวอักษร ตัวเลข และเครื่องหมายขีดล่าง (_) เท่านั้น',
+    'At least 8 characters long': 'ความยาวอย่างน้อย 8 ตัวอักษร',
+    'At least one uppercase letter (A-Z)': 'มีตัวอักษรพิมพ์ใหญ่ภาษาอังกฤษอย่างน้อย 1 ตัว (A-Z)',
+    'At least one lowercase letter (a-z)': 'มีตัวอักษรพิมพ์เล็กภาษาอังกฤษอย่างน้อย 1 ตัว (a-z)',
+    'At least one number (0-9)': 'มีตัวเลขอย่างน้อย 1 ตัว (0-9)',
+    'Sending...': 'กำลังส่ง...',
+    'A password reset PIN has been sent to your email. Please check your inbox.': 'ส่งรหัส PIN สำหรับรีเซ็ตรหัสผ่านไปยังอีเมลของคุณเรียบร้อยแล้ว กรุณาตรวจสอบกล่องจดหมาย',
+    'Password updated successfully. You can now login.': 'อัปเดตรหัสผ่านสำเร็จแล้ว คุณสามารถเข้าสู่ระบบได้ทันที',
+    'Username already exists': 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว',
+    'Username already exists.': 'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว',
+    'Email already exists': 'อีเมลนี้ถูกใช้งานแล้ว',
+    'Email already exists.': 'อีเมลนี้ถูกใช้งานแล้ว',
+    'User not found.': 'ไม่พบผู้ใช้งานนี้',
+    'Invalid or expired token.': 'รหัส PIN ไม่ถูกต้องหรือหมดอายุแล้ว',
+    'Registration successful! Please login.': 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ',
+    'Securing timeslot...': 'กำลังบล็อกช่วงเวลา...',
+    'Cancelling...': 'กำลังยกเลิก...',
+    'Booking...': 'กำลังจองสนาม...',
+    'Verifying Payment...': 'กำลังตรวจสอบการชำระเงิน...',
+    'Confirming Booking...': 'กำลังยืนยันการจอง...'
   }
 };
 
@@ -747,6 +816,47 @@ function updateCustomSearchDateDisplay(dateObj) {
 
 function initFlatpickr() {
   const isDark = STATE.theme === 'dark';
+
+  if (typeof flatpickr !== 'undefined') {
+    if (currentLang === 'th' && flatpickr.l10ns && flatpickr.l10ns.th) {
+      flatpickr.localize(flatpickr.l10ns.th);
+    } else {
+      flatpickr.localize({
+        weekdays: {
+          shorthand: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+          longhand: [
+            "Sunday",
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday",
+            "Saturday"
+          ]
+        },
+        months: {
+          shorthand: [
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+          ],
+          longhand: [
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
+          ]
+        },
+        firstDayOfWeek: 0,
+        rangeSeparator: " to ",
+        weekAbbreviation: "Wk",
+        scrollTitle: "Scroll to increment",
+        toggleTitle: "Click to toggle",
+        amPM: ["AM", "PM"],
+        yearAriaLabel: "Year",
+        hourAriaLabel: "Hour",
+        minuteAriaLabel: "Minute",
+        time_24hr: false
+      });
+    }
+  }
   
   if (bookingDatePicker) bookingDatePicker.destroy();
   if (timeslotDatePicker) timeslotDatePicker.destroy();
@@ -765,12 +875,14 @@ function initFlatpickr() {
     finalTriggerEl = newTrigger;
   }
 
+  const activeLocale = currentLang === 'th' ? (typeof flatpickr !== 'undefined' && flatpickr.l10ns ? flatpickr.l10ns.th : 'th') : undefined;
+
   bookingDatePicker = flatpickr("#booking-date", {
     altInput: false,
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
-    locale: currentLang === 'th' ? 'th' : 'default',
+    locale: activeLocale,
     minDate: minDate,
     maxDate: maxDate,
     disableMobile: true,
@@ -805,7 +917,7 @@ function initFlatpickr() {
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
-    locale: currentLang === 'th' ? 'th' : 'default',
+    locale: activeLocale,
     minDate: minDate,
     maxDate: maxDate,
     disableMobile: true,
@@ -837,7 +949,7 @@ function initFlatpickr() {
       altFormat: "d/m/Y",
       dateFormat: "Y-m-d",
       theme: isDark ? "dark" : "light",
-      locale: currentLang === 'th' ? 'th' : 'default',
+      locale: activeLocale,
       minDate: "today",
       disableMobile: true
     });
@@ -1214,13 +1326,13 @@ function initAuthForms() {
     let isValid = true;
 
     if (!username) {
-      loginUsernameError.textContent = 'Username is required.';
+      loginUsernameError.textContent = t('Username is required.');
       loginUsernameError.style.display = 'block';
       isValid = false;
     }
 
     if (!password) {
-      loginPasswordError.textContent = 'Password is required.';
+      loginPasswordError.textContent = t('Password is required.');
       loginPasswordError.style.display = 'block';
       isValid = false;
     }
@@ -1243,12 +1355,12 @@ function initAuthForms() {
           handleAuthSuccess(data);
           showNotification('Welcome back!', 'success');
         } else {
-          loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
+          loginPasswordError.textContent = t('Incorrect username or password. Please try again.');
           loginPasswordError.style.display = 'block';
         }
       })
       .catch(() => {
-        loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
+        loginPasswordError.textContent = t('Incorrect username or password. Please try again.');
         loginPasswordError.style.display = 'block';
       });
     });
@@ -1314,16 +1426,16 @@ function initAuthForms() {
     const val = registerUsernameInput.value;
     
     if (val === '') {
-      resetReqItem(reqUsernameLength, '3 to 20 characters long');
-      resetReqItem(reqUsernameChars, 'Letters, numbers, and underscores only');
+      resetReqItem(reqUsernameLength, t('3 to 20 characters long'));
+      resetReqItem(reqUsernameChars, t('Letters, numbers, and underscores only'));
       return;
     }
 
     const hasValidLength = val.length >= 3 && val.length <= 20;
     const hasValidChars = /^[a-zA-Z0-9_]*$/.test(val);
 
-    updateReqItem(reqUsernameLength, hasValidLength, '3 to 20 characters long');
-    updateReqItem(reqUsernameChars, hasValidChars, 'Letters, numbers, and underscores only');
+    updateReqItem(reqUsernameLength, hasValidLength, t('3 to 20 characters long'));
+    updateReqItem(reqUsernameChars, hasValidChars, t('Letters, numbers, and underscores only'));
   });
 
   registerEmailInput.addEventListener('input', () => registerEmailError.style.display = 'none');
@@ -1335,10 +1447,10 @@ function initAuthForms() {
     const val = registerPasswordInput.value;
 
     if (val === '') {
-      resetReqItem(reqPassLength, 'At least 8 characters long');
-      resetReqItem(reqPassUpper, 'At least one uppercase letter (A-Z)');
-      resetReqItem(reqPassLower, 'At least one lowercase letter (a-z)');
-      resetReqItem(reqPassNumber, 'At least one number (0-9)');
+      resetReqItem(reqPassLength, t('At least 8 characters long'));
+      resetReqItem(reqPassUpper, t('At least one uppercase letter (A-Z)'));
+      resetReqItem(reqPassLower, t('At least one lowercase letter (a-z)'));
+      resetReqItem(reqPassNumber, t('At least one number (0-9)'));
       return;
     }
 
@@ -1347,10 +1459,10 @@ function initAuthForms() {
     const hasLower = /[a-z]/.test(val);
     const hasNumber = /\d/.test(val);
 
-    updateReqItem(reqPassLength, hasLength, 'At least 8 characters long');
-    updateReqItem(reqPassUpper, hasUpper, 'At least one uppercase letter (A-Z)');
-    updateReqItem(reqPassLower, hasLower, 'At least one lowercase letter (a-z)');
-    updateReqItem(reqPassNumber, hasNumber, 'At least one number (0-9)');
+    updateReqItem(reqPassLength, hasLength, t('At least 8 characters long'));
+    updateReqItem(reqPassUpper, hasUpper, t('At least one uppercase letter (A-Z)'));
+    updateReqItem(reqPassLower, hasLower, t('At least one lowercase letter (a-z)'));
+    updateReqItem(reqPassNumber, hasNumber, t('At least one number (0-9)'));
   });
 
   // Submit Register
@@ -1365,7 +1477,7 @@ function initAuthForms() {
 
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     if (!username) {
-      registerUsernameError.textContent = 'Username is required.';
+      registerUsernameError.textContent = t('Username is required.');
       registerUsernameError.style.display = 'block';
       isValid = false;
     } else if (!usernameRegex.test(username)) {
@@ -1376,18 +1488,18 @@ function initAuthForms() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!email) {
-      registerEmailError.textContent = 'Email address is required.';
+      registerEmailError.textContent = t('Email address is required.');
       registerEmailError.style.display = 'block';
       isValid = false;
     } else if (!emailRegex.test(email)) {
-      registerEmailError.textContent = 'Please enter a valid email address.';
+      registerEmailError.textContent = t('Please enter a valid email address.');
       registerEmailError.style.display = 'block';
       isValid = false;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!password) {
-      registerPasswordError.textContent = 'Password is required.';
+      registerPasswordError.textContent = t('Password is required.');
       registerPasswordError.style.display = 'block';
       isValid = false;
     } else if (!passwordRegex.test(password)) {
@@ -1417,13 +1529,13 @@ function initAuthForms() {
     .catch((err) => {
       const errMsg = err.message.toLowerCase();
       if (errMsg.includes('username')) {
-        registerUsernameError.textContent = err.message;
+        registerUsernameError.textContent = t(err.message);
         registerUsernameError.style.display = 'block';
       } else if (errMsg.includes('email')) {
-        registerEmailError.textContent = err.message;
+        registerEmailError.textContent = t(err.message);
         registerEmailError.style.display = 'block';
       } else {
-        showNotification(err.message || 'Connection error during registration', 'error');
+        showNotification(err.message ? t(err.message) : t('Connection error during registration'), 'error');
       }
     });
   });
@@ -1441,14 +1553,14 @@ function initAuthForms() {
     e.preventDefault();
     const email = forgotEmailInput.value.trim();
     if (!email) {
-      forgotEmailError.textContent = 'Email is required.';
+      forgotEmailError.textContent = t('Email is required.');
       forgotEmailError.style.display = 'block';
       return;
     }
 
     if (forgotSubmitBtn) {
       forgotSubmitBtn.disabled = true;
-      forgotSubmitBtn.innerHTML = 'Sending... <i class="fa-solid fa-spinner fa-spin ml-1"></i>';
+      forgotSubmitBtn.innerHTML = `${t('Sending...')} <i class="fa-solid fa-spinner fa-spin ml-1"></i>`;
     }
 
     fetch('/api/auth/forgot-password', {
@@ -1459,7 +1571,7 @@ function initAuthForms() {
     .then(res => res.json().then(data => ({ ok: res.ok, data })))
     .then(({ ok, data }) => {
       if (!ok) {
-        forgotEmailError.textContent = data.message || 'Error sending PIN';
+        forgotEmailError.textContent = data.message ? t(data.message) : t('Error sending PIN');
         forgotEmailError.style.display = 'block';
         if (forgotSubmitBtn) {
           forgotSubmitBtn.disabled = false;
@@ -1514,23 +1626,23 @@ function initAuthForms() {
     let isValid = true;
 
     if (!token) {
-      resetTokenError.textContent = 'Reset PIN is required.';
+      resetTokenError.textContent = t('Reset PIN is required.');
       resetTokenError.style.display = 'block';
       isValid = false;
     }
 
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
     if (!newPassword) {
-      resetPasswordError.textContent = 'New password is required.';
+      resetPasswordError.textContent = t('New password is required.');
       resetPasswordError.style.display = 'block';
       isValid = false;
     } else if (!passwordRegex.test(newPassword)) {
       resetPasswordError.innerHTML = `
         <ul style="margin: 0; padding-left: 1.2rem; text-align: left;">
-          <li>At least 8 characters long</li>
-          <li>At least one uppercase letter (A-Z)</li>
-          <li>At least one lowercase letter (a-z)</li>
-          <li>At least one number (0-9)</li>
+          <li>${t('At least 8 characters long')}</li>
+          <li>${t('At least one uppercase letter (A-Z)')}</li>
+          <li>${t('At least one lowercase letter (a-z)')}</li>
+          <li>${t('At least one number (0-9)')}</li>
         </ul>
       `;
       resetPasswordError.style.display = 'block';
@@ -1547,7 +1659,7 @@ function initAuthForms() {
     .then(res => res.json().then(data => ({ ok: res.ok, data })))
     .then(({ ok, data }) => {
       if (!ok) {
-        resetTokenError.textContent = data.message || 'Error resetting password';
+        resetTokenError.textContent = data.message ? t(data.message) : t('Error resetting password');
         resetTokenError.style.display = 'block';
         return;
       }
@@ -1767,70 +1879,140 @@ function showPolicy(type) {
   if (!modal || !title || !body) return;
   
   let contentHtml = '';
+  const isThai = currentLang === 'th';
   
   if (type === 'privacy') {
-    title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> Privacy Policy (นโยบายความเป็นส่วนตัว)';
-    contentHtml = `
-      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-        <p class="mb-3">พวกเราที่ <strong>AcePoint</strong> ให้ความสำคัญต่อความเป็นส่วนตัวของคุณเป็นอันดับแรก นโยบายนี้ระบุหลักเกณฑ์การเก็บรวบรวมข้อมูลส่วนบุคคลของท่าน</p>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
-        <ul style="padding-left: 20px;" class="mb-3">
-          <li><strong>ข้อมูลลงทะเบียน:</strong> ชื่อ-นามสกุล, อีเมล, เบอร์โทรศัพท์ และรหัสผ่านที่ผ่านการเข้ารหัส</li>
-          <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และแฮชประวัติของรูปภาพสลิปที่ใช้ชำระเงิน</li>
-          <li><strong>Social Login:</strong> รูปโปรไฟล์ และอีเมลที่ได้รับจากระบบ Google OAuth</li>
-        </ul>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. การนำข้อมูลไปใช้</h5>
-        <p class="mb-3">ข้อมูลของท่านจะถูกใช้เฉพาะการบริหารจัดการการจองสนาม, ตรวจสอบยอดชำระเงินโดยอัตโนมัติผ่านทาง API ตรวจสอบสลิป, นำส่ง PIN 6 หลักเพื่อปลดล็อกใช้งานสนาม, และติดต่อช่วยเหลือผู้ใช้</p>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. ความปลอดภัยของข้อมูล</h5>
-        <p class="mb-3">ข้อมูลทั้งหมดจะได้รับการจัดเก็บในระบบ PostgreSQL ที่ปลอดภัย รหัสผ่านได้รับการเข้าแฮชผ่านกระบวนการ Cryptographic (bcrypt) เสมอ ข้อมูลรูปภาพสลิปจะไม่มีการส่งต่อไปที่ใดนอกเหนือจาก API ตรวจสอบสลิปอย่างปลอดภัย</p>
-      </div>
-    `;
+    if (isThai) {
+      title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> นโยบายความเป็นส่วนตัว (Privacy Policy)';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">พวกเราที่ <strong>AcePoint</strong> ให้ความสำคัญต่อความเป็นส่วนตัวของคุณเป็นอันดับแรก นโยบายนี้ระบุหลักเกณฑ์การเก็บรวบรวมข้อมูลส่วนบุคคลของท่าน</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
+          <ul style="padding-left: 20px;" class="mb-3">
+            <li><strong>ข้อมูลลงทะเบียน:</strong> ชื่อ-นามสกุล, อีเมล, เบอร์โทรศัพท์ และรหัสผ่านที่ผ่านการเข้ารหัส</li>
+            <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และแฮชประวัติของรูปภาพสลิปที่ใช้ชำระเงิน</li>
+            <li><strong>Social Login:</strong> รูปโปรไฟล์ และอีเมลที่ได้รับจากระบบ Google OAuth</li>
+          </ul>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. การนำข้อมูลไปใช้</h5>
+          <p class="mb-3">ข้อมูลของท่านจะถูกใช้เฉพาะการบริหารจัดการการจองสนาม, ตรวจสอบยอดชำระเงินโดยอัตโนมัติผ่านทาง API ตรวจสอบสลิป, นำส่ง PIN 6 หลักเพื่อปลดล็อกใช้งานสนาม, และติดต่อช่วยเหลือผู้ใช้</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. ความปลอดภัยของข้อมูล</h5>
+          <p class="mb-3">ข้อมูลทั้งหมดจะได้รับการจัดเก็บในระบบ PostgreSQL ที่ปลอดภัย รหัสผ่านได้รับการเข้าแฮชผ่านกระบวนการ Cryptographic (bcrypt) เสมอ ข้อมูลรูปภาพสลิปจะไม่มีการส่งต่อไปที่ใดนอกเหนือจาก API ตรวจสอบสลิปอย่างปลอดภัย</p>
+        </div>
+      `;
+    } else {
+      title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> Privacy Policy';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">At <strong>AcePoint</strong>, your privacy is our top priority. This policy outlines how we collect and use your personal information.</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. Information We Collect</h5>
+          <ul style="padding-left: 20px;" class="mb-3">
+            <li><strong>Registration Details:</strong> First and last name, email address, phone number, and encrypted password.</li>
+            <li><strong>Transaction Details:</strong> Booking history, dates and times, fee totals, and hash history of uploaded payment slips.</li>
+            <li><strong>Social Login:</strong> Profile image and email retrieved from Google OAuth.</li>
+          </ul>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. How We Use Information</h5>
+          <p class="mb-3">Your information is used solely for managing court bookings, automatically verifying payments via our slip verification API, generating and sending the 6-digit access PIN, and providing customer support.</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. Data Security</h5>
+          <p class="mb-3">All data is securely stored in a PostgreSQL database. Passwords are encrypted using a cryptographic hashing algorithm (bcrypt). Slip images are never shared outside our secure verification API.</p>
+        </div>
+      `;
+    }
   } else if (type === 'terms') {
-    title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> Terms of Service (ข้อตกลงการให้บริการ)';
-    contentHtml = `
-      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-        <p class="mb-3">การเข้าใช้งานระบบ <strong>AcePoint</strong> ถือว่าท่านยอมรับข้อตกลงและเงื่อนไขการใช้บริการดังต่อไปนี้:</p>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. กติกาการจองและใช้สนาม</h5>
-        <ul style="padding-left: 20px;" class="mb-3">
-          <li>ผู้ใช้งานจะต้องเลือกช่วงเวลาที่ว่างและลงทะเบียนจองพร้อมโอนเงินชำระค่าบริการให้ถูกต้องเต็มจำนวนตามใบจอง</li>
-          <li>เมื่อการชำระเงินและตรวจสอบสลิปเสร็จสมบูรณ์ ท่านจะได้รับรหัส PIN 6 หลักทางหน้าเว็บและประวัติการจอง</li>
-          <li>รหัส PIN จะเปิดใช้งานได้เฉพาะคอร์ทและช่วงเวลาที่ท่านได้ระบุจองไว้เท่านั้น และจะสิ้นสุดลงทันทีเมื่อหมดรอบการจอง</li>
-        </ul>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. การปฏิเสธและคืนเงิน</h5>
-        <p class="mb-3">รายการจองที่ได้รับการอนุมัติและออกรหัส PIN แล้ว **ไม่สามารถยกเลิกหรือขอคืนเงินได้** หากท่านต้องการเลื่อนเวลา กรุณาประสานงานแอดมินล่วงหน้าอย่างน้อย 24 ชั่วโมงก่อนเริ่มเวลาการจอง</p>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. มาตรการป้องกันการทุจริตสลิป</h5>
-        <p class="mb-3">ระบบของเราติดตั้งระบบดักจับสลิปซ้ำและสลิปปลอมอัตโนมัติ หากผู้ใช้พยายามอัปโหลดสลิปที่ผ่านการตรวจแล้ว สลิปปลอม หรือสลิปที่แก้ไขตัวเลข ระบบจะทำการระงับบัญชีผู้ใช้งานทันที</p>
-      </div>
-    `;
+    if (isThai) {
+      title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> ข้อตกลงการให้บริการ (Terms of Service)';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">การเข้าใช้งานระบบ <strong>AcePoint</strong> ถือว่าท่านยอมรับข้อตกลงและเงื่อนไขการใช้บริการดังต่อไปนี้:</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. กติกาการจองและใช้สนาม</h5>
+          <ul style="padding-left: 20px;" class="mb-3">
+            <li>ผู้ใช้งานจะต้องเลือกช่วงเวลาที่ว่างและลงทะเบียนจองพร้อมโอนเงินชำระค่าบริการให้ถูกต้องเต็มจำนวนตามใบจอง</li>
+            <li>เมื่อการชำระเงินและตรวจสอบสลิปเสร็จสมบูรณ์ ท่านจะได้รับรหัส PIN 6 หลักทางหน้าเว็บและประวัติการจอง</li>
+            <li>รหัส PIN จะเปิดใช้งานได้เฉพาะคอร์ทและช่วงเวลาที่ท่านได้ระบุจองไว้เท่านั้น และจะสิ้นสุดลงทันทีเมื่อหมดรอบการจอง</li>
+          </ul>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. การปฏิเสธและคืนเงิน</h5>
+          <p class="mb-3">รายการจองที่ได้รับการอนุมัติและออกรหัส PIN แล้ว **ไม่สามารถยกเลิกหรือขอคืนเงินได้** หากท่านต้องการเลื่อนเวลา กรุณาประสานงานแอดมินล่วงหน้าอย่างน้อย 24 ชั่วโมงก่อนเริ่มเวลาการจอง</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. มาตรการป้องกันการทุจริตสลิป</h5>
+          <p class="mb-3">ระบบของเราติดตั้งระบบดักจับสลิปซ้ำและสลิปปลอมอัตโนมัติ หากผู้ใช้พยายามอัปโหลดสลิปที่ผ่านการตรวจแล้ว สลิปปลอม หรือสลิปที่แก้ไขตัวเลข ระบบจะทำการระงับบัญชีผู้ใช้งานทันที</p>
+        </div>
+      `;
+    } else {
+      title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> Terms of Service';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">By using <strong>AcePoint</strong>, you agree to the following terms and conditions:</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. Booking & Court Rules</h5>
+          <ul style="padding-left: 20px;" class="mb-3">
+            <li>Users must select an available timeslot, register their booking, and pay the full balance shown on the booking details.</li>
+            <li>Once payment verification is complete, a 6-digit PIN will be displayed on-screen and added to your booking history.</li>
+            <li>The PIN is valid only for the specific court and timeslot selected, expiring automatically at the end of the booking session.</li>
+          </ul>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. Cancellations & Refunds</h5>
+          <p class="mb-3">Bookings that have been approved and assigned a PIN **cannot be cancelled or refunded**. For rescheduling requests, please contact the admin team at least 24 hours prior to the booking start time.</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. Anti-Fraud Measures</h5>
+          <p class="mb-3">Our system automatically detects duplicate or forged slips. Attempting to upload a previously processed slip, a fake slip, or modified transaction documents will result in an immediate and permanent account suspension.</p>
+        </div>
+      `;
+    }
   } else if (type === 'support') {
-    title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> Help Support (ช่วยเหลือและสนับสนุน)';
-    contentHtml = `
-      <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-        <p class="mb-3">ยินดีต้อนรับสู่ศูนย์ช่วยเหลือของ <strong>AcePoint Tennis Court</strong> หากท่านมีข้อสงสัยหรือพบปัญหาในการจอง/ใช้งานสนาม สามารถศึกษาคำแนะนำหรือติดต่อทีมงานด้านล่างนี้:</p>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> ขั้นตอนการเข้าสนาม</h5>
-        <ol style="padding-left: 20px;" class="mb-3">
-          <li>หลังจากทำการจองและอัปโหลดรูปภาพสลิปชำระเงินสำเร็จแล้ว ให้คัดลอกหรือแคปหน้าจอ **PIN 6 หลัก**</li>
-          <li>เดินทางมายังหน้าสนามเทนนิส และนำรหัส PIN ไปป้อนลงที่หน้าจออุปกรณ์ Android Kiosk ด้านหน้าประตู</li>
-          <li>เมื่อรหัสผ่านถูกต้อง ระบบ Kiosk จะปลดล็อกประตูและเปิดไฟฟ้าสนามให้ทำงานทันที</li>
-        </ol>
-        
-        <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> ช่องทางติดต่อทีมงานแอดมิน</h5>
-        <ul style="padding-left: 20px; list-style: none;" class="mb-3">
-          <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> 02-123-4567</li>
-          <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@acepoint.com</li>
-          <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
-        </ul>
-        
-        <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">เปิดทำการและให้บริการช่วยเหลือลูกค้าเวลา 08:00 น. - 22:00 น. ทุกวัน</p>
-      </div>
-    `;
+    if (isThai) {
+      title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> ช่วยเหลือและสนับสนุน (Help Support)';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">ยินดีต้อนรับสู่ศูนย์ช่วยเหลือของ <strong>AcePoint Tennis Court</strong> หากท่านมีข้อสงสัยหรือพบปัญหาในการจอง/ใช้งานสนาม สามารถศึกษาคำแนะนำหรือติดต่อทีมงานด้านล่างนี้:</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> ขั้นตอนการเข้าสนาม</h5>
+          <ol style="padding-left: 20px;" class="mb-3">
+            <li>หลังจากทำการจองและอัปโหลดรูปภาพสลิปชำระเงินสำเร็จแล้ว ให้คัดลอกหรือแคปหน้าจอ **PIN 6 หลัก**</li>
+            <li>เดินทางมายังหน้าสนามเทนนิส และนำรหัส PIN ไปป้อนลงที่หน้าจออุปกรณ์ Android Kiosk ด้านหน้าประตู</li>
+            <li>เมื่อรหัสผ่านถูกต้อง ระบบ Kiosk จะปลดล็อกประตูและเปิดไฟฟ้าสนามให้ทำงานทันที</li>
+          </ol>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> ช่องทางติดต่อทีมงานแอดมิน</h5>
+          <ul style="padding-left: 20px; list-style: none;" class="mb-3">
+            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> 02-123-4567</li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@acepoint.com</li>
+            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
+          </ul>
+          
+          <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">เปิดทำการและให้บริการช่วยเหลือลูกค้าเวลา 08:00 น. - 22:00 น. ทุกวัน</p>
+        </div>
+      `;
+    } else {
+      title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> Help Support';
+      contentHtml = `
+        <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
+          <p class="mb-3">Welcome to the <strong>AcePoint Tennis Court</strong> Help Center. If you have questions or encounter issues while booking or accessing the courts, please read the guide below or contact our team:</p>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> Accessing the Court</h5>
+          <ol style="padding-left: 20px;" class="mb-3">
+            <li>After successful booking and uploading your payment slip, copy or screenshot your **6-digit PIN**.</li>
+            <li>Go to your designated tennis court and enter this PIN on the Android Kiosk device next to the gate.</li>
+            <li>Once the correct PIN is entered, the kiosk will unlock the gate and activate the court floodlights automatically.</li>
+          </ol>
+          
+          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> Contact Support Team</h5>
+          <ul style="padding-left: 20px; list-style: none;" class="mb-3">
+            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>Hotline:</strong> 02-123-4567</li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>Support Email:</strong> support@acepoint.com</li>
+            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
+          </ul>
+          
+          <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">Support hours: 08:00 AM - 10:00 PM daily</p>
+        </div>
+      `;
+    }
   }
   
   body.innerHTML = contentHtml;
@@ -1863,7 +2045,7 @@ function submitSimulatedSocialLogin(provider, account) {
       const token = getCookie('token');
       if (token) {
         handleAuthSuccess(data);
-        showNotification(`Logged in as ${account.name} (Simulated)`, 'success');
+        showNotification(currentLang === 'th' ? `เข้าสู่ระบบเป็น ${account.name} (จำลอง)` : `Logged in as ${account.name} (Simulated)`, 'success');
       } else {
         showNotification('Social login failed', 'error');
       }
@@ -2111,7 +2293,7 @@ function createPendingBooking() {
   const confirmBtn = document.getElementById('confirm-selection-btn');
   const originalHTML = confirmBtn.innerHTML;
   confirmBtn.disabled = true;
-  confirmBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Securing timeslot...';
+  confirmBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> ${t('Securing timeslot...')}`;
 
   fetch('/api/bookings', {
     method: 'POST',
@@ -2507,7 +2689,7 @@ function initPromoHandlers() {
       if (STATE.activeBooking && STATE.activeBooking.id) {
         const cancelId = STATE.activeBooking.id;
         reviewCancelBtn.disabled = true;
-        reviewCancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
+        reviewCancelBtn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> ${t('Cancelling...')}`;
         
         fetch(`/api/bookings/${cancelId}/cancel`, {
           method: 'POST',
@@ -2521,7 +2703,7 @@ function initPromoHandlers() {
           loadCourtsAvailability();
           navigateTo('timeslot');
           reviewCancelBtn.disabled = false;
-          reviewCancelBtn.innerHTML = 'Cancel & Back';
+          reviewCancelBtn.innerHTML = t('btn-cancel-back');
         })
         .catch(err => {
           console.error('Error cancelling pending booking:', err);
@@ -2529,7 +2711,7 @@ function initPromoHandlers() {
           STATE.inBookingFlow = false;
           navigateTo('timeslot');
           reviewCancelBtn.disabled = false;
-          reviewCancelBtn.innerHTML = 'Cancel & Back';
+          reviewCancelBtn.innerHTML = t('btn-cancel-back');
         });
       } else {
         navigateTo('timeslot');
@@ -2547,7 +2729,7 @@ function initPromoHandlers() {
       const btn = document.getElementById('proceed-to-payment-btn');
       const origHTML = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Booking...';
+      btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> ${t('Booking...')}`;
 
       const b = STATE.activeBooking;
       fetch('/api/bookings', {
@@ -3005,8 +3187,8 @@ function submitBookingToDatabase() {
   const originalBtnHTML = payBtn.innerHTML;
   payBtn.disabled = true;
   payBtn.innerHTML = finalPrice > 0 
-    ? '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Payment...' 
-    : '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Confirming Booking...';
+    ? `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> ${t('Verifying Payment...')}` 
+    : `<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> ${t('Confirming Booking...')}`;
 
   // Perform Payment processing on that Booking
   showNotification(finalPrice > 0 ? 'Verifying payment details...' : 'Confirming booking details...', 'info');
@@ -3083,12 +3265,16 @@ function renderETicket(booking) {
     if (isExpired) {
       pinEl.style.color = '#64748b';
       pinEl.style.textDecoration = 'line-through';
-      document.querySelector('.pin-instruction').innerHTML = `<i class="fa-solid fa-circle-xmark mr-1 text-muted"></i> This booking is completed. The PIN has expired.`;
+      document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
+        ? `<i class="fa-solid fa-circle-xmark mr-1 text-muted"></i> การจองนี้เสร็จสิ้นแล้ว รหัส PIN นี้หมดอายุแล้ว`
+        : `<i class="fa-solid fa-circle-xmark mr-1 text-muted"></i> This booking is completed. The PIN has expired.`;
       if (barcodeEl) barcodeEl.style.display = 'none';
     } else {
       pinEl.style.color = '';
       pinEl.style.textDecoration = '';
-      document.querySelector('.pin-instruction').innerHTML = `<i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.`;
+      document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
+        ? `<i class="fa-solid fa-circle-info mr-1 text-neon"></i> กรุณาพิมพ์รหัส PIN 6 หลักนี้บนหน้าจอตู้คีออสหน้าสนามเพื่อปลดล็อกระบบและไฟสนาม`
+        : `<i class="fa-solid fa-circle-info mr-1 text-neon"></i> Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.`;
       
       // Generate barcode from PIN
       if (typeof JsBarcode !== 'undefined' && barcodeEl) {
@@ -3108,7 +3294,7 @@ function renderETicket(booking) {
       }
     }
   } else {
-    pinEl.textContent = 'PENDING PAYMENT';
+    pinEl.textContent = currentLang === 'th' ? 'รอการชำระเงิน' : 'PENDING PAYMENT';
     pinEl.style.fontSize = '1.4rem';
     pinEl.style.letterSpacing = '1px';
     document.querySelector('.pin-instruction').style.display = 'none';
@@ -3144,8 +3330,8 @@ function loadUserBookings() {
       bookingsList.innerHTML = `
         <div class="empty-state text-center py-5">
           <i class="fa-solid fa-calendar-minus text-muted mb-3 size-xl"></i>
-          <p>You don't have any bookings yet.</p>
-          <button class="btn btn-outline mt-3" onclick="navigateTo('search-view')">Book Your First Court</button>
+          <p data-i18n="dashboard-empty-txt">${currentLang === 'th' ? 'คุณยังไม่มีรายการจองใดๆ' : "You don't have any bookings yet."}</p>
+          <button class="btn btn-outline mt-3" onclick="navigateTo('search-view')" data-i18n="dashboard-empty-btn">${currentLang === 'th' ? 'จองสนามแรกของคุณ' : 'Book Your First Court'}</button>
         </div>
       `;
       return;
@@ -3158,7 +3344,7 @@ function loadUserBookings() {
       
       const isPaid = b.payment_status === 'completed';
       const pin = b.pin_code;
-      const formattedPin = isPaid && pin !== 'PENDING' ? `${pin.substring(0,3)} ${pin.substring(3,6)}` : 'Pending';
+      const formattedPin = isPaid && pin !== 'PENDING' ? `${pin.substring(0,3)} ${pin.substring(3,6)}` : (currentLang === 'th' ? 'รอตรวจสอบ' : 'Pending');
 
       // Check if booking has expired (end_time passed or marked completed/expired on server)
       const bookingEndStr = `${b.date}T${b.end_time}:00+07:00`;
@@ -3194,11 +3380,11 @@ function loadUserBookings() {
                   : ''
                 )
           }">
-            ${isPaid ? (isExpired ? 'Completed' : 'Paid') : 'PENDING'}
+            ${isPaid ? (isExpired ? (currentLang === 'th' ? 'เสร็จสิ้น' : 'Completed') : (currentLang === 'th' ? 'ชำระเงินแล้ว' : 'Paid')) : (currentLang === 'th' ? 'รอดำเนินการ' : 'PENDING')}
           </span>
           ${isPaid 
-            ? `<button class="btn btn-outline btn-sm btn-ticket-view">View Ticket</button>` 
-            : `<button class="btn btn-danger btn-sm btn-cancel-booking" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">Cancel</button>`
+            ? `<button class="btn btn-outline btn-sm btn-ticket-view">${currentLang === 'th' ? 'ดูตั๋วการจอง' : 'View Ticket'}</button>` 
+            : `<button class="btn btn-danger btn-sm btn-cancel-booking" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">${currentLang === 'th' ? 'ยกเลิก' : 'Cancel'}</button>`
           }
         </div>
       `;
@@ -3235,7 +3421,7 @@ function loadUserBookings() {
           e.stopPropagation();
           if (confirm(translateConfirm('Are you sure you want to cancel this pending booking?'))) {
             cancelBtn.disabled = true;
-            cancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
+            cancelBtn.innerHTML = currentLang === 'th' ? '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> กำลังยกเลิก...' : '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
             
             fetch(`/api/bookings/${b.id}/cancel`, {
               method: 'POST',
@@ -3245,18 +3431,18 @@ function loadUserBookings() {
             })
             .then(res => {
               if (res.ok) {
-                showNotification('Booking cancelled successfully.', 'success');
+                showNotification(currentLang === 'th' ? 'ยกเลิกรายการจองสำเร็จแล้ว' : 'Booking cancelled successfully.', 'success');
                 loadUserBookings();
               } else {
-                showNotification('Failed to cancel booking. Please try again.', 'error');
+                showNotification(currentLang === 'th' ? 'ล้มเหลวในการยกเลิกการจอง กรุณาลองใหม่อีกครั้ง' : 'Failed to cancel booking. Please try again.', 'error');
                 cancelBtn.disabled = false;
-                cancelBtn.innerHTML = 'Cancel';
+                cancelBtn.innerHTML = currentLang === 'th' ? 'ยกเลิก' : 'Cancel';
               }
             })
             .catch(() => {
-              showNotification('Error cancelling booking.', 'error');
+              showNotification(currentLang === 'th' ? 'เกิดข้อผิดพลาดในการยกเลิกการจอง' : 'Error cancelling booking.', 'error');
               cancelBtn.disabled = false;
-              cancelBtn.innerHTML = 'Cancel';
+              cancelBtn.innerHTML = currentLang === 'th' ? 'ยกเลิก' : 'Cancel';
             });
           }
         });
@@ -3265,7 +3451,7 @@ function loadUserBookings() {
       bookingsList.appendChild(row);
     });
   })
-  .catch(() => showNotification('Error loading dashboard bookings.', 'error'));
+  .catch(() => showNotification(currentLang === 'th' ? 'เกิดข้อผิดพลาดในการโหลดรายการจอง' : 'Error loading dashboard bookings.', 'error'));
 }
 
 // --- Date Formatter Helper (d/m/Y) ---

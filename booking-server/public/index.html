@@ -625,10 +625,10 @@
       <div class="container">
         <div class="dashboard-header d-flex justify-content-between align-items-center mb-4">
           <div>
-            <h2 class="view-title">Player Dashboard</h2>
-            <p class="view-subtitle text-muted">Manage your bookings, access codes, and profile.</p>
+            <h2 class="view-title" data-i18n="dashboard-title">Player Dashboard</h2>
+            <p class="view-subtitle text-muted" data-i18n="dashboard-subtitle">Manage your bookings, access codes, and profile.</p>
           </div>
-          <button class="btn btn-primary" onclick="navigateTo('search-view')">
+          <button class="btn btn-primary" onclick="navigateTo('search-view')" data-i18n="dashboard-new-booking">
             <i class="fa-solid fa-plus mr-1"></i> New Booking
           </button>
         </div>
@@ -638,25 +638,25 @@
             <div class="stat-icon bg-neon-alpha"><i class="fa-solid fa-calendar-check text-neon"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="stat-upcoming-count">0</span>
-              <span class="stat-label">Upcoming Bookings</span>
+              <span class="stat-label" data-i18n="dashboard-stat-upcoming">Upcoming Bookings</span>
             </div>
           </div>
           <div class="stat-card glassmorphism">
             <div class="stat-icon bg-blue-alpha"><i class="fa-solid fa-history text-blue"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="stat-total-count">0</span>
-              <span class="stat-label">Total Bookings</span>
+              <span class="stat-label" data-i18n="dashboard-stat-total">Total Bookings</span>
             </div>
           </div>
         </div>
 
         <div class="dashboard-content-box glassmorphism">
-          <h3 class="mb-4">Your Bookings</h3>
+          <h3 class="mb-4" data-i18n="dashboard-section-title">Your Bookings</h3>
           <div class="booking-list" id="dashboard-bookings-list">
             <div class="empty-state text-center py-5">
               <i class="fa-solid fa-calendar-minus text-muted mb-3 size-xl"></i>
-              <p>You don't have any bookings yet.</p>
-              <button class="btn btn-outline mt-3" onclick="navigateTo('search-view')">Book Your First Court</button>
+              <p data-i18n="dashboard-empty-txt">You don't have any bookings yet.</p>
+              <button class="btn btn-outline mt-3" onclick="navigateTo('search-view')" data-i18n="dashboard-empty-btn">Book Your First Court</button>
             </div>
           </div>
         </div>
@@ -947,9 +947,9 @@
     <div class="container footer-content text-center text-muted">
       <p>&copy; 2026 AcePoint Tennis Court Booking. All rights reserved.</p>
       <div class="footer-links mt-2">
-        <a href="javascript:void(0)" onclick="showPolicy('privacy')">Privacy Policy</a> &bull; 
-        <a href="javascript:void(0)" onclick="showPolicy('terms')">Terms of Service</a> &bull; 
-        <a href="javascript:void(0)" onclick="showPolicy('support')">Help Support</a>
+        <a href="javascript:void(0)" onclick="showPolicy('privacy')" data-i18n="footer-privacy">Privacy Policy</a> &bull; 
+        <a href="javascript:void(0)" onclick="showPolicy('terms')" data-i18n="footer-terms">Terms of Service</a> &bull; 
+        <a href="javascript:void(0)" onclick="showPolicy('support')" data-i18n="footer-support">Help Support</a>
       </div>
     </div>
   </footer>

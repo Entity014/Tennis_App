@@ -663,6 +663,12 @@ body.light-theme .form-control:focus {
 }
 
 /* Step 1: Home View */
+#home-view.active-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
 .hero-section {
   position: relative;
   min-height: 480px;
@@ -671,9 +677,9 @@ body.light-theme .form-control:focus {
   background: radial-gradient(circle at 80% 20%, rgba(207, 254, 28, 0.08) 0%, transparent 50%),
               linear-gradient(135deg, #090d16 0%, #111827 100%);
   padding: 60px 0;
-  border-bottom: 1px solid var(--border-color);
   margin-top: -40px;
-  margin-bottom: 40px;
+  margin-bottom: -40px;
+  flex: 1;
   transition: background var(--transition-speed);
 }
 
@@ -3229,4 +3235,48 @@ body.light-theme .table-responsive::-webkit-scrollbar-thumb:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Custom Scrollbars for Social/Explore Modals */
+.social-modal-body {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(163, 230, 53, 0.3) rgba(255, 255, 255, 0.02) !important;
+}
+
+body.light-theme .social-modal-body {
+  scrollbar-color: rgba(101, 163, 13, 0.3) rgba(0, 0, 0, 0.03) !important;
+}
+
+.social-modal-body::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+.social-modal-body::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-radius: 3px !important;
+}
+
+.social-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(163, 230, 53, 0.3) !important; /* Neon green alpha */
+  border-radius: 3px !important;
+  transition: background 0.2s ease !important;
+}
+
+.social-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--neon-green) !important;
+}
+
+/* Light Theme support for social modal scrollbars */
+body.light-theme .social-modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-theme .social-modal-body::-webkit-scrollbar-thumb {
+  background: rgba(101, 163, 13, 0.3) !important;
+}
+
+body.light-theme .social-modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgb(101, 163, 13) !important;
+}
+
 
