@@ -845,7 +845,7 @@ function applyTheme(themeName) {
     body.classList.add('light-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'false');
     if (toggleIcon) {
-      toggleIcon.className = 'fa-solid fa-sun';
+      toggleIcon.className = 'fa-regular fa-sun';
     }
   } else {
     body.classList.remove('light-theme');
