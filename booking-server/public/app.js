@@ -61,6 +61,8 @@ const STATE = {
   slipImage: null,
   inBookingFlow: false,
   editingCourtId: null,
+  editingPromoId: null,
+  promos: [],
   isResumedPayment: false
 };
 
@@ -3049,6 +3051,7 @@ function loadAdminPromoCodes() {
   })
   .then(res => res.json())
   .then(promos => {
+    STATE.promos = promos;
     const tbody = document.getElementById('admin-promocodes-table-body');
     if (!tbody) return;
     tbody.innerHTML = '';
@@ -3060,8 +3063,24 @@ function loadAdminPromoCodes() {
 
     promos.forEach(p => {
       const tr = document.createElement('tr');
-      const statusClass = p.isActive ? 'badge-neon' : 'badge-danger';
-      const statusText = p.isActive ? 'Active' : 'Inactive';
+      
+      // Calculate realistic status
+      const isExpired = p.validUntil && new Date() > new Date(p.validUntil);
+      const isLimitReached = p.maxUses !== null && p.currentUses >= p.maxUses;
+      
+      let statusClass = 'badge-danger';
+      let statusText = 'Inactive';
+      if (p.isActive) {
+        if (isExpired) {
+          statusText = 'Expired';
+        } else if (isLimitReached) {
+          statusText = 'Limit Reached';
+        } else {
+          statusClass = 'badge-neon';
+          statusText = 'Active';
+        }
+      }
+
       const validUntilStr = p.validUntil ? formatDateDMY(p.validUntil.substring(0, 10)) : 'Never';
       const discountText = p.discountType === 'percent' ? `${p.discountAmount}%` : `฿${p.discountAmount}`;
 
@@ -3073,6 +3092,9 @@ function loadAdminPromoCodes() {
         <td>${p.currentUses} / ${p.maxUses || '∞'}</td>
         <td><span class="badge ${statusClass}">${statusText}</span></td>
         <td>
+          <button class="btn btn-outline btn-sm text-neon mr-1" onclick="editAdminPromoCode(${p.id})">
+            <i class="fa-solid fa-pen"></i>
+          </button>
           <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminPromoCode(${p.id})">
             <i class="fa-solid fa-trash"></i>
           </button>
@@ -3084,6 +3106,66 @@ function loadAdminPromoCodes() {
   .catch(() => showNotification('Error loading promo codes', 'error'));
 }
 
+function editAdminPromoCode(id) {
+  const promo = STATE.promos.find(p => p.id === id);
+  if (!promo) return;
+
+  STATE.editingPromoId = id;
+  
+  // Set form values
+  document.getElementById('promo-code-input').value = promo.code;
+  document.getElementById('promo-discount-amount').value = promo.discountAmount;
+  document.getElementById('promo-discount-type').value = promo.discountType;
+  document.getElementById('promo-max-uses').value = promo.maxUses || '';
+  
+  const promoDateEl = document.getElementById('promo-valid-until');
+  if (promoDateEl && promoDateEl._flatpickr) {
+    promoDateEl._flatpickr.setDate(promo.validUntil ? promo.validUntil.substring(0, 10) : '');
+  }
+
+  // Show status active checkbox
+  document.getElementById('promo-active-group').style.display = 'flex';
+  document.getElementById('promo-is-active').checked = promo.isActive;
+
+  // Change headers / button texts
+  document.getElementById('promo-form-title').textContent = 'Edit Promo Code';
+  const submitBtn = document.querySelector('#admin-add-promocode-form button[type="submit"]');
+  submitBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Promo Code';
+
+  // Show Cancel Button if not already there
+  let cancelBtn = document.getElementById('promo-cancel-edit-btn');
+  if (!cancelBtn) {
+    cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
+    cancelBtn.id = 'promo-cancel-edit-btn';
+    cancelBtn.className = 'btn btn-outline w-100 mt-2';
+    cancelBtn.textContent = 'Cancel Edit';
+    cancelBtn.addEventListener('click', cancelPromoEdit);
+    document.getElementById('admin-add-promocode-form').appendChild(cancelBtn);
+  }
+}
+
+function cancelPromoEdit() {
+  STATE.editingPromoId = null;
+  document.getElementById('admin-add-promocode-form').reset();
+  
+  const promoDateEl = document.getElementById('promo-valid-until');
+  if (promoDateEl && promoDateEl._flatpickr) {
+    promoDateEl._flatpickr.setDate('');
+  }
+
+  document.getElementById('promo-active-group').style.display = 'none';
+  document.getElementById('promo-form-title').textContent = 'Add Promo Code';
+  
+  const submitBtn = document.querySelector('#admin-add-promocode-form button[type="submit"]');
+  submitBtn.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Save Promo Code';
+
+  const cancelBtn = document.getElementById('promo-cancel-edit-btn');
+  if (cancelBtn) {
+    cancelBtn.remove();
+  }
+}
+
 function handleAdminAddPromoCode(event) {
   event.preventDefault();
   
@@ -3092,9 +3174,14 @@ function handleAdminAddPromoCode(event) {
   const type = document.getElementById('promo-discount-type').value;
   const validUntil = document.getElementById('promo-valid-until').value;
   const maxUses = document.getElementById('promo-max-uses').value;
+  const isActive = document.getElementById('promo-is-active').checked;
 
-  fetch('/api/admin/promo-codes', {
-    method: 'POST',
+  const isEdit = STATE.editingPromoId !== null;
+  const url = isEdit ? `/api/admin/promo-codes/${STATE.editingPromoId}` : '/api/admin/promo-codes';
+  const method = isEdit ? 'PATCH' : 'POST';
+
+  fetch(url, {
+    method: method,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${STATE.token}`
@@ -3104,7 +3191,8 @@ function handleAdminAddPromoCode(event) {
       discountAmount: amount,
       discountType: type,
       validUntil: validUntil || null,
-      maxUses: maxUses || null
+      maxUses: maxUses || null,
+      isActive: isEdit ? isActive : true
     })
   })
   .then(async res => {
@@ -3113,8 +3201,8 @@ function handleAdminAddPromoCode(event) {
     return data;
   })
   .then(() => {
-    showNotification('Promo code added successfully', 'success');
-    document.getElementById('admin-add-promocode-form').reset();
+    showNotification(isEdit ? 'Promo code updated successfully' : 'Promo code added successfully', 'success');
+    cancelPromoEdit();
     loadAdminPromoCodes();
   })
   .catch(err => showNotification(err.message || 'Error saving promo code', 'error'));

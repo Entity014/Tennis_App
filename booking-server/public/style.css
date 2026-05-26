@@ -2207,12 +2207,38 @@ body.light-theme .notification {
   }
 }
 
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.5rem;
+@media (max-width: 1024px) {
+  .mobile-menu-btn {
+    display: block;
+    margin-left: 15px;
+    z-index: 101;
   }
   .nav-links {
     display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    width: 100%;
+    background: rgba(9, 13, 22, 0.98);
+    border-bottom: 1px solid var(--border-color);
+    padding: 20px 30px;
+    gap: 15px;
+    transform: none;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.3);
+    z-index: 99;
+  }
+  body.light-theme .nav-links {
+    background: rgba(248, 250, 252, 0.98);
+  }
+  .nav-links.active {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
   }
   .form-row {
     flex-direction: column;
