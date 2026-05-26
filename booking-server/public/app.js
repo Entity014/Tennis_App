@@ -1812,13 +1812,54 @@ function initPromoHandlers() {
     const code = document.getElementById('promo-input').value.trim().toUpperCase();
     if (!code) return;
 
-    if (code === 'ACE10') {
-      STATE.appliedPromo = { code: 'ACE10', discount: 0.10 };
-      showNotification('Promo card applied successfully! 10% Discount.', 'success');
-      updateReviewDetails();
-    } else {
-      showNotification('Invalid coupon or promo code.', 'error');
+    const b = STATE.activeBooking;
+    if (!b) {
+      showNotification('No active booking to apply promo to.', 'error');
+      return;
     }
+
+    const applyBtn = document.getElementById('promo-apply-btn');
+    const origText = applyBtn.textContent;
+    applyBtn.disabled = true;
+    applyBtn.textContent = 'Applying...';
+
+    fetch('/api/promo/validate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ code, price: b.price })
+    })
+    .then(res => {
+      if (!res.ok) {
+        return res.json().then(err => { throw new Error(err.message || 'Invalid coupon or promo code.'); });
+      }
+      return res.json();
+    })
+    .then(data => {
+      applyBtn.disabled = false;
+      applyBtn.textContent = origText;
+
+      if (data.isValid) {
+        // Calculate dynamic discount ratio for compatibility
+        const discountFraction = b.price > 0 ? (b.price - data.price) / b.price : 0;
+
+        STATE.appliedPromo = {
+          code: code,
+          price: data.price,
+          discount: discountFraction
+        };
+        showNotification(data.message || 'Promo code applied successfully!', 'success');
+        updateReviewDetails();
+      } else {
+        showNotification(data.message || 'Invalid coupon or promo code.', 'error');
+      }
+    })
+    .catch(err => {
+      applyBtn.disabled = false;
+      applyBtn.textContent = origText;
+      showNotification(err.message || 'Invalid coupon or promo code.', 'error');
+    });
   });
 
   // Cancel and Back button on Review page
@@ -1908,7 +1949,11 @@ function initPromoHandlers() {
     // Regular user → go to payment page
     let finalPrice = STATE.activeBooking.price;
     if (STATE.appliedPromo) {
-      finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+      if (STATE.appliedPromo.price !== undefined) {
+        finalPrice = STATE.appliedPromo.price;
+      } else {
+        finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+      }
     }
 
     // Update payment displays
@@ -1930,7 +1975,11 @@ function updateReviewDetails() {
 
   let finalPrice = b.price;
   if (STATE.appliedPromo) {
-    finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+    if (STATE.appliedPromo.price !== undefined) {
+      finalPrice = STATE.appliedPromo.price;
+    } else {
+      finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+    }
   }
   document.getElementById('rev-total').textContent = `฿${finalPrice.toLocaleString()}`;
 }

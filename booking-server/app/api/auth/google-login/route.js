@@ -78,14 +78,7 @@ export async function POST(req) {
     );
 
     const response = NextResponse.json({
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-        display_name: user.displayName
-      }
+      message: 'Google login successful'
     });
 
     response.cookies.set('token', token, {

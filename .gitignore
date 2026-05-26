@@ -25,6 +25,7 @@
 # AI Agent directories
 **/.agents/
 **/.codegraph/
+**/xero-skills/
 **/Xero-skills/
 
 # SQLite Database & Local Data
