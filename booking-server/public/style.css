@@ -1,10 +1,10 @@
 :root {
   /* Default Theme: Dark Forest Theme Variables */
-  --bg-dark: #0d110d;
-  --bg-card: rgba(23, 31, 23, 0.75);
+  --bg-dark: #090d16;
+  --bg-card: rgba(17, 25, 40, 0.65);
   --border-color: rgba(255, 255, 255, 0.08);
-  --text-main: #f4f6f3;
-  --text-muted: #8fa08e;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
   --neon-green: #a9c54b;
   --neon-green-hover: #98b53c;
   --neon-green-alpha: rgba(169, 197, 75, 0.15);
@@ -169,7 +169,7 @@ body.light-theme .glassmorphism {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(13, 17, 13, 0.85);
+  background: rgba(9, 13, 22, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   height: 70px;
@@ -675,7 +675,7 @@ body.light-theme .form-control:focus {
   display: flex;
   align-items: center;
   background: radial-gradient(circle at 80% 20%, rgba(169, 197, 75, 0.08) 0%, transparent 50%),
-              linear-gradient(135deg, #0d110d 0%, #151c15 100%);
+              linear-gradient(135deg, #090d16 0%, #111827 100%);
   padding: 60px 0;
   margin-top: -40px;
   margin-bottom: -40px;
@@ -740,7 +740,7 @@ body.light-theme .court-card:hover {
 
 .court-img-container {
   height: 200px;
-  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   position: relative;
   display: flex;
   align-items: center;
@@ -1017,7 +1017,7 @@ body.light-theme input[type="date"]::-webkit-calendar-picker-indicator {
 
 .court-detail-img-placeholder {
   height: 180px;
-  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2140,7 +2140,7 @@ body.light-theme .booking-item:hover {
   width: 50px;
   height: 50px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
+  background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2229,7 +2229,7 @@ body.light-theme .empty-state i {
 .app-footer {
   border-top: 1px solid var(--border-color);
   padding: 30px 0;
-  background: #0d120c;
+  background: #06090f;
   margin-top: auto;
   transition: background-color var(--transition-speed);
 }
