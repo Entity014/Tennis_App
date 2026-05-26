@@ -629,6 +629,50 @@ function applyLanguage(lang) {
       else if (activeTab === 'users' && typeof loadAdminUsers === 'function') loadAdminUsers();
       else if (activeTab === 'promos' && typeof loadAdminPromoCodes === 'function') loadAdminPromoCodes();
     }
+
+    // Always refresh active timeslots view and details if courts are loaded
+    if (STATE.courts && STATE.courts.length > 0) {
+      // 1. Re-render court selector tabs
+      const tabsContainer = document.getElementById('court-selector-tabs');
+      if (tabsContainer) {
+        tabsContainer.innerHTML = '';
+        STATE.courts.forEach(court => {
+          const tab = document.createElement('button');
+          tab.className = `court-tab-btn ${court.id === STATE.activeCourtId ? 'active' : ''}`;
+          tab.textContent = translateCourtName(court);
+          tab.addEventListener('click', () => {
+            STATE.activeCourtId = court.id;
+            STATE.selectedSlots = [];
+            loadCourtsAvailability();
+          });
+          tabsContainer.appendChild(tab);
+        });
+      }
+
+      // 2. Re-render Active Court Info Sidebar
+      const activeCourt = STATE.courts.find(c => c.id === STATE.activeCourtId);
+      if (activeCourt) {
+        const nameEl = document.getElementById('detail-court-name');
+        const descEl = document.getElementById('detail-court-desc');
+        if (nameEl) nameEl.textContent = translateCourtName(activeCourt);
+        if (descEl) descEl.textContent = translateCourtDesc(activeCourt);
+      }
+
+      // 3. Re-render Timeslot Grid
+      if (document.getElementById('time-grid-slots')) {
+        renderTimeGrid(activeCourt);
+      }
+
+      // 4. Update Selection Summary
+      if (typeof updateSelectionSummary === 'function') {
+        updateSelectionSummary();
+      }
+    }
+
+    // Update active booking details on review screen
+    if (STATE.activeBooking && typeof updateReviewDetails === 'function') {
+      updateReviewDetails();
+    }
   }
 }
 
