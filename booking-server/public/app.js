@@ -889,45 +889,98 @@ function updateCustomSearchDateDisplay(dateObj) {
 function initFlatpickr() {
   const isDark = STATE.theme === 'dark';
 
+  const THAI_FLATPICKR_LOCALE = {
+    weekdays: {
+      shorthand: ["อา", "จ", "อ", "พ", "พฤ", "ศ", "ส"],
+      longhand: [
+        "อาทิตย์",
+        "จันทร์",
+        "อังคาร",
+        "พุธ",
+        "พฤหัสบดี",
+        "ศุกร์",
+        "เสาร์"
+      ]
+    },
+    months: {
+      shorthand: [
+        "ม.ค.",
+        "ก.พ.",
+        "มี.ค.",
+        "เม.ย.",
+        "พ.ค.",
+        "มิ.ย.",
+        "ก.ค.",
+        "ส.ค.",
+        "ก.ย.",
+        "ต.ค.",
+        "พ.ย.",
+        "ธ.ค."
+      ],
+      longhand: [
+        "มกราคม",
+        "กุมภาพันธ์",
+        "มีนาคม",
+        "เมษายน",
+        "พฤษภาคม",
+        "มิถุนายน",
+        "กรกฎาคม",
+        "สิงหาคม",
+        "กันยายน",
+        "ตุลาคม",
+        "พฤศจิกายน",
+        "ธันวาคม"
+      ]
+    },
+    firstDayOfWeek: 1,
+    rangeSeparator: " ถึง ",
+    weekAbbreviation: "สัปดาห์",
+    scrollTitle: "เลื่อนเพื่อเพิ่มหรือลด",
+    toggleTitle: "คลิกเพื่อเปลี่ยน",
+    amPM: ["ก่อนเที่ยง", "หลังเที่ยง"],
+    yearAriaLabel: "ปี",
+    hourAriaLabel: "ชั่วโมง",
+    minuteAriaLabel: "นาที",
+    time_24hr: true
+  };
+
+  const ENGLISH_FLATPICKR_LOCALE = {
+    weekdays: {
+      shorthand: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+      longhand: [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ]
+    },
+    months: {
+      shorthand: [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ],
+      longhand: [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ]
+    },
+    firstDayOfWeek: 0,
+    rangeSeparator: " to ",
+    weekAbbreviation: "Wk",
+    scrollTitle: "Scroll to increment",
+    toggleTitle: "Click to toggle",
+    amPM: ["AM", "PM"],
+    yearAriaLabel: "Year",
+    hourAriaLabel: "Hour",
+    minuteAriaLabel: "Minute",
+    time_24hr: false
+  };
+
   if (typeof flatpickr !== 'undefined') {
-    if (currentLang === 'th' && flatpickr.l10ns && flatpickr.l10ns.th) {
-      flatpickr.localize(flatpickr.l10ns.th);
-    } else {
-      flatpickr.localize({
-        weekdays: {
-          shorthand: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-          longhand: [
-            "Sunday",
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday"
-          ]
-        },
-        months: {
-          shorthand: [
-            "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-          ],
-          longhand: [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-          ]
-        },
-        firstDayOfWeek: 0,
-        rangeSeparator: " to ",
-        weekAbbreviation: "Wk",
-        scrollTitle: "Scroll to increment",
-        toggleTitle: "Click to toggle",
-        amPM: ["AM", "PM"],
-        yearAriaLabel: "Year",
-        hourAriaLabel: "Hour",
-        minuteAriaLabel: "Minute",
-        time_24hr: false
-      });
-    }
+    flatpickr.localize(currentLang === 'th' ? THAI_FLATPICKR_LOCALE : ENGLISH_FLATPICKR_LOCALE);
   }
   
   if (bookingDatePicker) bookingDatePicker.destroy();
@@ -947,7 +1000,7 @@ function initFlatpickr() {
     finalTriggerEl = newTrigger;
   }
 
-  const activeLocale = currentLang === 'th' ? (typeof flatpickr !== 'undefined' && flatpickr.l10ns ? flatpickr.l10ns.th : 'th') : undefined;
+  const activeLocale = currentLang === 'th' ? THAI_FLATPICKR_LOCALE : ENGLISH_FLATPICKR_LOCALE;
 
   bookingDatePicker = flatpickr("#booking-date", {
     altInput: false,
@@ -1958,7 +2011,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> นโยบายความเป็นส่วนตัว (Privacy Policy)';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">พวกเราที่ <strong>AcePoint</strong> ให้ความสำคัญต่อความเป็นส่วนตัวของคุณเป็นอันดับแรก นโยบายนี้ระบุหลักเกณฑ์การเก็บรวบรวมข้อมูลส่วนบุคคลของท่าน</p>
+          <p class="mb-3">พวกเราที่ <strong>Mini Tennis</strong> ให้ความสำคัญต่อความเป็นส่วนตัวของคุณเป็นอันดับแรก นโยบายนี้ระบุหลักเกณฑ์การเก็บรวบรวมข้อมูลส่วนบุคคลของท่าน</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
           <ul style="padding-left: 20px;" class="mb-3">
@@ -1978,7 +2031,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-shield-halved mr-2 text-neon"></i> Privacy Policy';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">At <strong>AcePoint</strong>, your privacy is our top priority. This policy outlines how we collect and use your personal information.</p>
+          <p class="mb-3">At <strong>Mini Tennis</strong>, your privacy is our top priority. This policy outlines how we collect and use your personal information.</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. Information We Collect</h5>
           <ul style="padding-left: 20px;" class="mb-3">
@@ -2000,7 +2053,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> ข้อตกลงการให้บริการ (Terms of Service)';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">การเข้าใช้งานระบบ <strong>AcePoint</strong> ถือว่าท่านยอมรับข้อตกลงและเงื่อนไขการใช้บริการดังต่อไปนี้:</p>
+          <p class="mb-3">การเข้าใช้งานระบบ <strong>Mini Tennis</strong> ถือว่าท่านยอมรับข้อตกลงและเงื่อนไขการใช้บริการดังต่อไปนี้:</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. กติกาการจองและใช้สนาม</h5>
           <ul style="padding-left: 20px;" class="mb-3">
@@ -2020,7 +2073,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-file-contract mr-2 text-neon"></i> Terms of Service';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">By using <strong>AcePoint</strong>, you agree to the following terms and conditions:</p>
+          <p class="mb-3">By using <strong>Mini Tennis</strong>, you agree to the following terms and conditions:</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. Booking & Court Rules</h5>
           <ul style="padding-left: 20px;" class="mb-3">
@@ -2042,7 +2095,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> ช่วยเหลือและสนับสนุน (Help Support)';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">ยินดีต้อนรับสู่ศูนย์ช่วยเหลือของ <strong>AcePoint Tennis Court</strong> หากท่านมีข้อสงสัยหรือพบปัญหาในการจอง/ใช้งานสนาม สามารถศึกษาคำแนะนำหรือติดต่อทีมงานด้านล่างนี้:</p>
+          <p class="mb-3">ยินดีต้อนรับสู่ศูนย์ช่วยเหลือของ <strong>Mini Tennis Court</strong> หากท่านมีข้อสงสัยหรือพบปัญหาในการจอง/ใช้งานสนาม สามารถศึกษาคำแนะนำหรือติดต่อทีมงานด้านล่างนี้:</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> ขั้นตอนการเข้าสนาม</h5>
           <ol style="padding-left: 20px;" class="mb-3">
@@ -2054,8 +2107,8 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> ช่องทางติดต่อทีมงานแอดมิน</h5>
           <ul style="padding-left: 20px; list-style: none;" class="mb-3">
             <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> 02-123-4567</li>
-            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@acepoint.com</li>
-            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@minitennis.com</li>
+            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @MiniTennis</li>
           </ul>
           
           <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">เปิดทำการและให้บริการช่วยเหลือลูกค้าเวลา 08:00 น. - 22:00 น. ทุกวัน</p>
@@ -2065,7 +2118,7 @@ function showPolicy(type) {
       title.innerHTML = '<i class="fa-solid fa-circle-question mr-2 text-neon"></i> Help Support';
       contentHtml = `
         <div style="font-family: var(--font-body); font-size: 0.95rem; line-height: 1.6; color: var(--text-main);">
-          <p class="mb-3">Welcome to the <strong>AcePoint Tennis Court</strong> Help Center. If you have questions or encounter issues while booking or accessing the courts, please read the guide below or contact our team:</p>
+          <p class="mb-3">Welcome to the <strong>Mini Tennis Court</strong> Help Center. If you have questions or encounter issues while booking or accessing the courts, please read the guide below or contact our team:</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> Accessing the Court</h5>
           <ol style="padding-left: 20px;" class="mb-3">
@@ -2077,8 +2130,8 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> Contact Support Team</h5>
           <ul style="padding-left: 20px; list-style: none;" class="mb-3">
             <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>Hotline:</strong> 02-123-4567</li>
-            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>Support Email:</strong> support@acepoint.com</li>
-            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @AcePointSupport</li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>Support Email:</strong> support@minitennis.com</li>
+            <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @MiniTennis</li>
           </ul>
           
           <p style="font-size: 0.85rem; color: var(--text-muted);" class="mt-4 text-center">Support hours: 08:00 AM - 10:00 PM daily</p>

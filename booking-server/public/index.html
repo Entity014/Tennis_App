@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Book premium tennis courts online. Instant booking, secure payments, and smart digital access PIN codes.">
-  <title>AcePoint - Premium Tennis Court Booking</title>
+  <title>Mini Tennis - Premium Tennis Court Booking</title>
   <!-- Google Fonts: Outfit for heading, Inter for body -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,9 +38,17 @@
   <!-- Header & Navigation -->
   <header class="app-header">
     <div class="container navbar">
-      <a href="/" class="logo" id="nav-logo">
-        <i class="fa-solid fa-baseball logo-icon text-neon"></i>
-        <span class="logo-text">Ace<span class="text-neon">Point</span></span>
+      <a href="/" class="logo" id="nav-logo" style="display: flex; align-items: center; gap: 8px;">
+        <svg class="logo-icon-svg" viewBox="0 0 100 100" width="34" height="34" xmlns="http://www.w3.org/2000/svg" style="color: var(--text-main);">
+          <!-- Outer circle border -->
+          <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <!-- Stylized court/lines inside -->
+          <line x1="15" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <line x1="50" y1="50" x2="50" y2="85" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+          <!-- Accent tennis seam curve -->
+          <path d="M 30,24 A 18,18 0 0,1 50,38" fill="none" stroke="var(--neon-green)" stroke-width="6" stroke-linecap="round"/>
+        </svg>
+        <span class="logo-text" style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 22px; text-transform: lowercase;">mini <span class="text-neon" style="text-transform: uppercase; font-size: 14px; font-weight: 800; letter-spacing: 2px; margin-left: 2px;">tennis</span></span>
       </a>
       <nav class="nav-links">
         <a href="#home" class="nav-link active" data-target="home-view" data-i18n="nav-home">Home</a>
@@ -563,9 +571,17 @@
           <!-- Ticket Design -->
           <div class="ticket glassmorphism mt-4">
             <div class="ticket-header">
-              <div class="ticket-logo">
-                <i class="fa-solid fa-baseball logo-icon text-neon"></i>
-                <span class="logo-text text-white">Ace<span class="text-neon">Point</span></span>
+              <div class="ticket-logo" style="display: flex; align-items: center; gap: 8px;">
+                <svg class="logo-icon-svg" viewBox="0 0 100 100" width="28" height="28" xmlns="http://www.w3.org/2000/svg" style="color: var(--text-main);">
+                  <!-- Outer circle border -->
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                  <!-- Stylized court/lines inside -->
+                  <line x1="15" y1="50" x2="85" y2="50" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                  <line x1="50" y1="50" x2="50" y2="85" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                  <!-- Accent tennis seam curve -->
+                  <path d="M 30,24 A 18,18 0 0,1 50,38" fill="none" stroke="var(--neon-green)" stroke-width="6" stroke-linecap="round"/>
+                </svg>
+                <span class="logo-text text-white" style="font-family: 'Outfit', sans-serif; font-weight: 500; font-size: 18px; text-transform: lowercase;">mini <span class="text-neon" style="text-transform: uppercase; font-size: 12px; font-weight: 800; letter-spacing: 1.5px; margin-left: 2px;">tennis</span></span>
               </div>
               <span class="ticket-badge">E-TICKET</span>
             </div>
@@ -913,7 +929,7 @@
         <button onclick="closeSocialModal()" class="btn-close-modal">&times;</button>
       </div>
       <div class="social-modal-body">
-        <p class="text-muted mb-4">Choose an account to continue to <strong>AcePoint</strong></p>
+        <p class="text-muted mb-4">Choose an account to continue to <strong>Mini Tennis</strong></p>
         
         <div id="social-accounts-list" class="social-accounts-list">
           <!-- Dynamically populated simulated accounts -->
@@ -953,7 +969,7 @@
   <!-- Footer -->
   <footer class="app-footer">
     <div class="container footer-content text-center text-muted">
-      <p>&copy; 2026 AcePoint Tennis Court Booking. All rights reserved.</p>
+      <p>&copy; 2026 Mini Tennis Booking. All rights reserved.</p>
       <div class="footer-links mt-2">
         <a href="javascript:void(0)" onclick="showPolicy('privacy')" data-i18n="footer-privacy">Privacy Policy</a> &bull; 
         <a href="javascript:void(0)" onclick="showPolicy('terms')" data-i18n="footer-terms">Terms of Service</a> &bull; 

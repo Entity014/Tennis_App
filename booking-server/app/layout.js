@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "AcePoint - Premium Tennis Court Booking",
+  title: "Mini Tennis - Premium Tennis Court Booking",
   description: "Book premium tennis courts online. Instant booking, secure payments, and smart digital access PIN codes.",
 };
 
