@@ -5,6 +5,47 @@ function getCookie(name) {
   return null;
 }
 
+let cachedPublicKey = null;
+
+async function getPublicKey() {
+  if (cachedPublicKey) return cachedPublicKey;
+  const res = await fetch('/api/auth/public-key');
+  if (!res.ok) throw new Error('Failed to fetch public key');
+  const jwk = await res.json();
+  cachedPublicKey = await window.crypto.subtle.importKey(
+    'jwk',
+    jwk,
+    {
+      name: 'RSA-OAEP',
+      hash: 'SHA-256'
+    },
+    true,
+    ['encrypt']
+  );
+  return cachedPublicKey;
+}
+
+async function encryptPayload(payloadObj) {
+  try {
+    const publicKey = await getPublicKey();
+    const plainText = JSON.stringify(payloadObj);
+    const encoder = new TextEncoder();
+    const dataBuffer = encoder.encode(plainText);
+    const encryptedBuffer = await window.crypto.subtle.encrypt(
+      {
+        name: 'RSA-OAEP'
+      },
+      publicKey,
+      dataBuffer
+    );
+    const encryptedBase64 = btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)));
+    return { encryptedData: encryptedBase64 };
+  } catch (err) {
+    console.error('Encryption failed:', err);
+    return payloadObj;
+  }
+}
+
 // Application State
 const STATE = {
   token: getCookie('token') || localStorage.getItem('token') || null,
@@ -130,11 +171,11 @@ function applyTheme(themeName) {
   if (themeName === 'light') {
     body.classList.remove('dark-theme');
     body.classList.add('light-theme');
-    toggleBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+    if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'false');
   } else {
     body.classList.remove('light-theme');
     body.classList.add('dark-theme');
-    toggleBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+    if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'true');
   }
 
   // Update Flatpickr theme Link element
@@ -451,27 +492,29 @@ function renderGoogleNativeButtons() {
 
 // --- Live Social Sign-In Callbacks ---
 function handleGoogleLiveCredentialResponse(response) {
-  fetch('/api/auth/google-login', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ credential: response.credential })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error();
-    return res.json();
-  })
-  .then(data => {
-    const token = getCookie('token');
-    if (token) {
-      handleAuthSuccess(data);
-      showNotification('Successfully logged in with Google!', 'success');
-    } else {
-      showNotification('Google authentication failed', 'error');
-    }
-  })
-  .catch(err => {
-    console.error('Google Sign In Error:', err);
-    showNotification('Unable to connect to login server', 'error');
+  encryptPayload({ credential: response.credential }).then(encryptedBody => {
+    fetch('/api/auth/google-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(encryptedBody)
+    })
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(data => {
+      const token = getCookie('token');
+      if (token) {
+        handleAuthSuccess(data);
+        showNotification('Successfully logged in with Google!', 'success');
+      } else {
+        showNotification('Google authentication failed', 'error');
+      }
+    })
+    .catch(err => {
+      console.error('Google Sign In Error:', err);
+      showNotification('Unable to connect to login server', 'error');
+    });
   });
 }
 
@@ -669,28 +712,30 @@ function initAuthForms() {
 
     if (!isValid) return;
 
-    fetch('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
-    })
-    .then(async res => {
-      if (!res.ok) throw new Error();
-      return res.json();
-    })
-    .then(data => {
-      const token = getCookie('token');
-      if (token) {
-        handleAuthSuccess(data);
-        showNotification('Welcome back!', 'success');
-      } else {
+    encryptPayload({ username, password }).then(encryptedBody => {
+      fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(encryptedBody)
+      })
+      .then(async res => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(data => {
+        const token = getCookie('token');
+        if (token) {
+          handleAuthSuccess(data);
+          showNotification('Welcome back!', 'success');
+        } else {
+          loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
+          loginPasswordError.style.display = 'block';
+        }
+      })
+      .catch(() => {
         loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
         loginPasswordError.style.display = 'block';
-      }
-    })
-    .catch(() => {
-      loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
-      loginPasswordError.style.display = 'block';
+      });
     });
   });
 
@@ -1277,30 +1322,40 @@ function submitSimulatedSocialLogin(provider, account) {
   closeSocialModal();
   const endpoint = provider === 'google' ? '/api/auth/google-login' : '/api/auth/facebook-login';
   
-  fetch(endpoint, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      isSimulation: true,
-      email: account.email,
-      name: account.name,
-      id: account.id
+  const payload = {
+    isSimulation: true,
+    email: account.email,
+    name: account.name,
+    id: account.id
+  };
+
+  const sendRequest = (bodyObj) => {
+    fetch(endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(bodyObj)
     })
-  })
-  .then(res => {
-    if (!res.ok) throw new Error();
-    return res.json();
-  })
-  .then(data => {
-    const token = getCookie('token');
-    if (token) {
-      handleAuthSuccess(data);
-      showNotification(`Logged in as ${account.name} (Simulated)`, 'success');
-    } else {
-      showNotification('Social login failed', 'error');
-    }
-  })
-  .catch(() => showNotification('Connection error during social authentication', 'error'));
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(data => {
+      const token = getCookie('token');
+      if (token) {
+        handleAuthSuccess(data);
+        showNotification(`Logged in as ${account.name} (Simulated)`, 'success');
+      } else {
+        showNotification('Social login failed', 'error');
+      }
+    })
+    .catch(() => showNotification('Connection error during social authentication', 'error'));
+  };
+
+  if (provider === 'google') {
+    encryptPayload(payload).then(sendRequest);
+  } else {
+    sendRequest(payload);
+  }
 }
 
 // --- Home / Featured Courts Section ---

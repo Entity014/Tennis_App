@@ -48,8 +48,16 @@
         <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;">Admin Panel</a>
       </nav>
       <div class="auth-buttons">
-        <button id="theme-toggle-btn" class="btn btn-outline btn-sm theme-btn" aria-label="Toggle Theme">
-          <i class="fa-solid fa-sun"></i>
+        <button id="theme-toggle-btn" class="theme-toggle-switch" aria-label="Toggle Theme" role="switch" aria-checked="true">
+          <div class="toggle-track">
+            <div class="toggle-thumb"></div>
+            <div class="toggle-icon-wrapper sun-icon">
+              <i class="fa-solid fa-sun"></i>
+            </div>
+            <div class="toggle-icon-wrapper moon-icon">
+              <i class="fa-solid fa-moon"></i>
+            </div>
+          </div>
         </button>
         <span id="user-display" class="user-profile-display" style="display: none;">
           <i class="fa-solid fa-user-circle"></i>

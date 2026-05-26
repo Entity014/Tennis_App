@@ -3,10 +3,22 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptPayload } from '@/lib/rsa';
 
 export async function POST(req) {
   try {
-    const { username, password } = await req.json();
+    const body = await req.json();
+    let username, password;
+
+    if (body.encryptedData) {
+      const decrypted = decryptPayload(body.encryptedData);
+      const credentials = JSON.parse(decrypted);
+      username = credentials.username;
+      password = credentials.password;
+    } else {
+      username = body.username;
+      password = body.password;
+    }
 
     if (!username || !password) {
       return NextResponse.json({ message: 'Username and password are required' }, { status: 400 });

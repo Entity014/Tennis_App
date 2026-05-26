@@ -3,10 +3,17 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { getJwtSecret } from '@/lib/auth';
 import prisma from '@/lib/prisma';
+import { decryptPayload } from '@/lib/rsa';
 
 export async function POST(req) {
   try {
-    const body = await req.json();
+    let body = await req.json();
+
+    if (body.encryptedData) {
+      const decrypted = decryptPayload(body.encryptedData);
+      body = JSON.parse(decrypted);
+    }
+
     const { credential, isSimulation, email: simEmail, name: simName, id: simId } = body;
 
     let email, name, googleId;
