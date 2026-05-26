@@ -1,3 +1,31 @@
+// Intercept fetch calls to disable caching for API GET requests
+const originalFetch = window.fetch;
+window.fetch = function (url, options = {}) {
+  let finalUrl = url;
+  if (typeof url === 'string' && url.startsWith('/api/')) {
+    const method = (options.method || 'GET').toUpperCase();
+    if (method === 'GET') {
+      const separator = url.includes('?') ? '&' : '?';
+      finalUrl = `${url}${separator}_t=${Date.now()}`;
+      
+      if (!options.headers) {
+        options.headers = {};
+      }
+      if (options.headers instanceof Headers) {
+        options.headers.set('Cache-Control', 'no-cache');
+        options.headers.set('Pragma', 'no-cache');
+      } else if (Array.isArray(options.headers)) {
+        options.headers.push(['Cache-Control', 'no-cache']);
+        options.headers.push(['Pragma', 'no-cache']);
+      } else {
+        options.headers['Cache-Control'] = 'no-cache';
+        options.headers['Pragma'] = 'no-cache';
+      }
+    }
+  }
+  return originalFetch(finalUrl, options);
+};
+
 function getCookie(name) {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
