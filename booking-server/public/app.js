@@ -481,7 +481,11 @@ function applyLanguage(lang) {
       const hasIcon = el.querySelector('i');
       if (hasIcon) {
         const iconHTML = hasIcon.outerHTML;
-        el.innerHTML = `${iconHTML} ${TRANSLATIONS[lang][key]}`;
+        if (hasIcon.className.includes('ml-')) {
+          el.innerHTML = `${TRANSLATIONS[lang][key]} ${iconHTML}`;
+        } else {
+          el.innerHTML = `${iconHTML} ${TRANSLATIONS[lang][key]}`;
+        }
       } else {
         el.innerHTML = TRANSLATIONS[lang][key];
       }
