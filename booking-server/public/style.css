@@ -1,10 +1,10 @@
 :root {
   /* Default Theme: Dark Forest Theme Variables */
-  --bg-dark: #131912;
-  --bg-card: rgba(29, 39, 27, 0.7);
+  --bg-dark: #0d110d;
+  --bg-card: rgba(23, 31, 23, 0.75);
   --border-color: rgba(255, 255, 255, 0.08);
   --text-main: #f4f6f3;
-  --text-muted: #93a290;
+  --text-muted: #8fa08e;
   --neon-green: #a9c54b;
   --neon-green-hover: #98b53c;
   --neon-green-alpha: rgba(169, 197, 75, 0.15);
@@ -25,11 +25,11 @@
 
 /* Light Theme Variables Override (Warm Cream & Forest Green) */
 body.light-theme {
-  --bg-dark: #f8f5ee;
-  --bg-card: rgba(255, 255, 255, 0.9);
-  --border-color: rgba(60, 80, 54, 0.1);
-  --text-main: #2e3d2a;
-  --text-muted: #687964;
+  --bg-dark: #fbf9f5;
+  --bg-card: rgba(255, 255, 255, 0.92);
+  --border-color: rgba(60, 80, 54, 0.08);
+  --text-main: #232e20;
+  --text-muted: #6e7e6b;
   --neon-green: #9eba43;
   --neon-green-hover: #8ba536;
   --neon-green-alpha: rgba(158, 186, 67, 0.12);
@@ -169,7 +169,7 @@ body.light-theme .glassmorphism {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(9, 13, 22, 0.85);
+  background: rgba(13, 17, 13, 0.85);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-color);
   height: 70px;
@@ -177,7 +177,7 @@ body.light-theme .glassmorphism {
 }
 
 body.light-theme .app-header {
-  background: rgba(248, 250, 252, 0.85);
+  background: rgba(251, 249, 245, 0.85);
 }
 
 .navbar {
@@ -675,7 +675,7 @@ body.light-theme .form-control:focus {
   display: flex;
   align-items: center;
   background: radial-gradient(circle at 80% 20%, rgba(169, 197, 75, 0.08) 0%, transparent 50%),
-              linear-gradient(135deg, #131912 0%, #1c261b 100%);
+              linear-gradient(135deg, #0d110d 0%, #151c15 100%);
   padding: 60px 0;
   margin-top: -40px;
   margin-bottom: -40px;
@@ -685,7 +685,7 @@ body.light-theme .form-control:focus {
 
 body.light-theme .hero-section {
   background: radial-gradient(circle at 80% 20%, rgba(158, 186, 67, 0.08) 0%, transparent 50%),
-              linear-gradient(135deg, #f8f5ee 0%, #ede8dd 100%);
+              linear-gradient(135deg, #fbf9f5 0%, #f2ece0 100%);
 }
 
 .hero-content {
@@ -740,7 +740,7 @@ body.light-theme .court-card:hover {
 
 .court-img-container {
   height: 200px;
-  background: linear-gradient(135deg, #1d271b 0%, #131912 100%);
+  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
   position: relative;
   display: flex;
   align-items: center;
@@ -1017,7 +1017,7 @@ body.light-theme input[type="date"]::-webkit-calendar-picker-indicator {
 
 .court-detail-img-placeholder {
   height: 180px;
-  background: linear-gradient(135deg, #1d271b 0%, #131912 100%);
+  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2140,7 +2140,7 @@ body.light-theme .booking-item:hover {
   width: 50px;
   height: 50px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #1d271b 0%, #131912 100%);
+  background: linear-gradient(135deg, #151c15 0%, #0d110d 100%);
   display: flex;
   align-items: center;
   justify-content: center;

@@ -801,14 +801,14 @@ function applyTheme(themeName) {
     body.classList.add('light-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'false');
     if (toggleIcon) {
-      toggleIcon.className = 'fa-solid fa-moon';
+      toggleIcon.className = 'fa-solid fa-sun';
     }
   } else {
     body.classList.remove('light-theme');
     body.classList.add('dark-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'true');
     if (toggleIcon) {
-      toggleIcon.className = 'fa-solid fa-sun';
+      toggleIcon.className = 'fa-solid fa-moon';
     }
   }
 
