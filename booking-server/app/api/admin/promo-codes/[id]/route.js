@@ -49,6 +49,10 @@ export async function PUT(req, { params }) {
   }
 }
 
+export async function PATCH(req, { params }) {
+  return PUT(req, { params });
+}
+
 export async function DELETE(req, { params }) {
   try {
     const userPayload = verifyAuthToken(req);
