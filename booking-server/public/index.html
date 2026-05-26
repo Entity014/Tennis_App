@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css" id="flatpickr-theme">
   <!-- Flatpickr JS -->
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/th.js"></script>
   <!-- JsBarcode JS -->
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <!-- Official Google Identity Services SDK -->
@@ -48,26 +49,29 @@
         <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;" data-i18n="nav-admin">Admin Panel</a>
       </nav>
       <div class="auth-buttons">
-        <button id="lang-toggle-btn" class="btn btn-outline btn-sm mr-2" onclick="toggleLanguage()" style="display: inline-flex; align-items: center; gap: 5px; height: 38px;">
+        <button id="lang-toggle-btn" class="btn-lang-toggle" onclick="toggleLanguage()">
           <i class="fa-solid fa-globe"></i>
           <span id="lang-label">EN</span>
         </button>
-        <button id="theme-toggle-btn" class="theme-toggle-switch" aria-label="Toggle Theme" role="switch" aria-checked="true">
-          <div class="toggle-track">
-            <div class="toggle-thumb"></div>
-            <div class="toggle-icon-wrapper sun-icon">
-              <i class="fa-solid fa-sun"></i>
-            </div>
-            <div class="toggle-icon-wrapper moon-icon">
-              <i class="fa-solid fa-moon"></i>
-            </div>
-          </div>
+        <button id="theme-toggle-btn" class="btn-theme-toggle" aria-label="Toggle Theme" role="switch" aria-checked="true">
+          <i class="fa-solid fa-sun"></i>
         </button>
-        <span id="user-display" class="user-profile-display" style="display: none;">
-          <i class="fa-solid fa-user-circle"></i>
-          <span id="username-span">Player</span>
-          <button id="logout-btn" class="btn btn-outline btn-sm ml-1" data-i18n="nav-logout">Logout</button>
-        </span>
+        <div id="user-display" class="user-profile-dropdown" style="display: none;">
+          <button class="dropdown-trigger" id="user-profile-trigger" aria-label="User menu">
+            <i class="fa-solid fa-user-circle"></i>
+            <span id="username-span">Player</span>
+            <i class="fa-solid fa-chevron-down trigger-arrow"></i>
+          </button>
+          <div class="dropdown-menu" id="user-dropdown-menu">
+            <div class="dropdown-header">
+              <span class="user-name" id="dropdown-username">Player</span>
+            </div>
+            <button id="logout-btn" class="dropdown-item logout-btn">
+              <i class="fa-solid fa-right-from-bracket"></i>
+              <span data-i18n="nav-logout">Logout</span>
+            </button>
+          </div>
+        </div>
         <button id="login-nav-btn" class="btn btn-outline" onclick="navigateTo('auth-view')" data-i18n="nav-signin">Sign In</button>
       </div>
       <button class="mobile-menu-btn" id="mobile-menu-toggle">
@@ -95,19 +99,6 @@
             </button>
             <button class="btn btn-outline btn-lg ml-3" onclick="openExploreCourtsModal()" data-i18n="btn-explore">Explore Courts</button>
           </div>
-        </div>
-      </div>
-
-      <!-- Court Features Section -->
-      <div id="features" class="features-section container">
-        <h2 class="section-title text-center" data-i18n="section-title">Our Premium Courts</h2>
-        <p class="section-subtitle text-center" data-i18n="section-subtitle">Professional surfaces designed to match your play style.</p>
-        
-        <div class="courts-grid" id="featured-courts-grid">
-          <!-- Dynamically generated court cards -->
-          <div class="court-card card-loading"></div>
-          <div class="court-card card-loading"></div>
-          <div class="court-card card-loading"></div>
         </div>
       </div>
     </section>
@@ -247,37 +238,37 @@
         <div class="auth-card-container glassmorphism">
           <!-- Auth Toggle Tabs -->
           <div class="auth-tabs">
-            <button class="auth-tab active" id="tab-login" onclick="toggleAuthTab('login')">Sign In</button>
-            <button class="auth-tab" id="tab-register" onclick="toggleAuthTab('register')">Register</button>
+            <button class="auth-tab active" id="tab-login" onclick="toggleAuthTab('login')" data-i18n="auth-tab-login">Sign In</button>
+            <button class="auth-tab" id="tab-register" onclick="toggleAuthTab('register')" data-i18n="auth-tab-register">Register</button>
           </div>
 
           <!-- Login Form -->
           <form id="login-form" class="auth-form active-form" novalidate>
-            <h3 class="auth-form-title text-center">Welcome Back</h3>
+            <h3 class="auth-form-title text-center" data-i18n="auth-login-title">Welcome Back</h3>
             <div class="form-group">
-              <label for="login-username">Username</label>
+              <label for="login-username" data-i18n="auth-username-lbl">Username</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-user input-icon"></i>
-                <input type="text" id="login-username" class="form-control" placeholder="Enter username" required autocomplete="username">
+                <input type="text" id="login-username" class="form-control" placeholder="Enter username" data-i18n-placeholder="auth-username-placeholder" required autocomplete="username">
               </div>
               <div id="login-username-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
             <div class="form-group">
-              <label for="login-password">Password</label>
+              <label for="login-password" data-i18n="auth-password-lbl">Password</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="login-password" class="form-control" placeholder="Enter password" required autocomplete="current-password">
+                <input type="password" id="login-password" class="form-control" placeholder="Enter password" data-i18n-placeholder="auth-password-placeholder" required autocomplete="current-password">
               </div>
               <div id="login-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
               <div class="text-right mt-2">
-                <a href="#" onclick="toggleAuthTab('forgot'); return false;" class="forgot-password-link" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;">Forgot Password?</a>
+                <a href="#" onclick="toggleAuthTab('forgot'); return false;" class="forgot-password-link" style="color: var(--primary); font-size: 0.85rem; text-decoration: none;" data-i18n="auth-forgot-link">Forgot Password?</a>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block mt-4" id="login-submit-btn">
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="login-submit-btn" data-i18n="auth-login-btn">
               Sign In <i class="fa-solid fa-sign-in ml-1"></i>
             </button>
             
-            <div class="auth-divider google-auth-divider" style="display: none;"><span>OR</span></div>
+            <div class="auth-divider google-auth-divider" style="display: none;"><span data-i18n="auth-or-divider">OR</span></div>
             
             <div class="social-login-group">
               <!-- Live Google Native Container -->
@@ -287,56 +278,56 @@
             </div>
             
             <p class="auth-switch-text text-center mt-3">
-              Don't have an account? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('register')">Register here</span>
+              <span data-i18n="auth-no-account">Don't have an account?</span> <span class="text-neon cursor-pointer" onclick="toggleAuthTab('register')" data-i18n="auth-register-here">Register here</span>
             </p>
           </form>
 
           <!-- Register Form -->
           <form id="register-form" class="auth-form" novalidate>
-            <h3 class="auth-form-title text-center">Create Account</h3>
+            <h3 class="auth-form-title text-center" data-i18n="auth-register-title">Create Account</h3>
             <div class="form-group">
-              <label for="register-username">Username</label>
+              <label for="register-username" data-i18n="auth-username-lbl">Username</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-user input-icon"></i>
-                <input type="text" id="register-username" class="form-control" placeholder="Choose a username" required autocomplete="username">
+                <input type="text" id="register-username" class="form-control" placeholder="Choose a username" data-i18n-placeholder="auth-choose-username-placeholder" required autocomplete="username">
               </div>
               <div id="register-username-requirements" class="auth-requirements mt-2" style="display: none;">
                 <ul class="requirements-list">
-                  <li id="username-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> 3 to 20 characters long</li>
-                  <li id="username-req-chars" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> Letters, numbers, and underscores only</li>
+                  <li id="username-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-username-len">3 to 20 characters long</span></li>
+                  <li id="username-req-chars" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-username-chars">Letters, numbers, and underscores only</span></li>
                 </ul>
               </div>
               <div id="register-username-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
             <div class="form-group">
-              <label for="register-email">Email Address</label>
+              <label for="register-email" data-i18n="auth-email-lbl">Email Address</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-envelope input-icon"></i>
-                <input type="email" id="register-email" class="form-control" placeholder="Enter email" required autocomplete="email">
+                <input type="email" id="register-email" class="form-control" placeholder="Enter email" data-i18n-placeholder="auth-email-placeholder" required autocomplete="email">
               </div>
               <div id="register-email-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
             <div class="form-group">
-              <label for="register-password">Password</label>
+              <label for="register-password" data-i18n="auth-password-lbl">Password</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="register-password" class="form-control" placeholder="Choose a strong password" required autocomplete="new-password">
+                <input type="password" id="register-password" class="form-control" placeholder="Choose a strong password" data-i18n-placeholder="auth-choose-password-placeholder" required autocomplete="new-password">
               </div>
               <div id="register-password-requirements" class="auth-requirements mt-2" style="display: none;">
                 <ul class="requirements-list">
-                  <li id="pass-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least 8 characters long</li>
-                  <li id="pass-req-upper" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one uppercase letter (A-Z)</li>
-                  <li id="pass-req-lower" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one lowercase letter (a-z)</li>
-                  <li id="pass-req-number" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> At least one number (0-9)</li>
+                  <li id="pass-req-length" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-pass-len">At least 8 characters long</span></li>
+                  <li id="pass-req-upper" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-pass-upper">At least one uppercase letter (A-Z)</span></li>
+                  <li id="pass-req-lower" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-pass-lower">At least one lowercase letter (a-z)</span></li>
+                  <li id="pass-req-number" class="text-muted"><i class="fa-solid fa-circle mr-1" style="font-size: 0.5rem; vertical-align: middle;"></i> <span data-i18n="auth-req-pass-number">At least one number (0-9)</span></li>
                 </ul>
               </div>
               <div id="register-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block mt-4" id="register-submit-btn">
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="register-submit-btn" data-i18n="auth-register-btn">
               Register <i class="fa-solid fa-user-plus ml-1"></i>
             </button>
             
-            <div class="auth-divider google-auth-divider" style="display: none;"><span>OR</span></div>
+            <div class="auth-divider google-auth-divider" style="display: none;"><span data-i18n="auth-or-divider">OR</span></div>
             
             <div class="social-login-group">
               <!-- Live Google Native Container -->
@@ -346,55 +337,55 @@
             </div>
             
             <p class="auth-switch-text text-center mt-3">
-              Already have an account? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Sign in here</span>
+              <span data-i18n="auth-has-account">Already have an account?</span> <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')" data-i18n="auth-signin-here">Sign in here</span>
             </p>
           </form>
 
           <!-- Forgot Password Form -->
           <form id="forgot-password-form" class="auth-form" novalidate style="display: none;">
-            <h3 class="auth-form-title text-center">Reset Password</h3>
-            <p class="text-center text-light mb-4" style="font-size: 0.9rem;">Enter your email to receive a reset PIN.</p>
+            <h3 class="auth-form-title text-center" data-i18n="auth-forgot-title">Reset Password</h3>
+            <p class="text-center text-light mb-4" style="font-size: 0.9rem;" data-i18n="auth-forgot-desc">Enter your email to receive a reset PIN.</p>
             <div class="form-group">
-              <label for="forgot-email">Email Address</label>
+              <label for="forgot-email" data-i18n="auth-email-lbl">Email Address</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-envelope input-icon"></i>
-                <input type="email" id="forgot-email" class="form-control" placeholder="Enter your email" required autocomplete="email">
+                <input type="email" id="forgot-email" class="form-control" placeholder="Enter your email" data-i18n-placeholder="auth-forgot-email-placeholder" required autocomplete="email">
               </div>
               <div id="forgot-email-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block mt-4" id="forgot-submit-btn">
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="forgot-submit-btn" data-i18n="auth-send-pin-btn">
               Send PIN <i class="fa-solid fa-paper-plane ml-1"></i>
             </button>
             <p class="auth-switch-text text-center mt-3">
-              Remembered your password? <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Sign in</span>
+              <span data-i18n="auth-forgot-remembered">Remembered your password?</span> <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')" data-i18n="auth-forgot-signin">Sign in</span>
             </p>
           </form>
 
           <!-- Reset Password Form -->
           <form id="reset-password-form" class="auth-form" novalidate style="display: none;">
-            <h3 class="auth-form-title text-center">New Password</h3>
-            <p class="text-center text-light mb-4" style="font-size: 0.9rem;">Enter the PIN and your new password.</p>
+            <h3 class="auth-form-title text-center" data-i18n="auth-new-pass-title">New Password</h3>
+            <p class="text-center text-light mb-4" style="font-size: 0.9rem;" data-i18n="auth-new-pass-desc">Enter the PIN and your new password.</p>
             <div class="form-group">
-              <label for="reset-token">Reset PIN</label>
+              <label for="reset-token" data-i18n="auth-reset-pin-lbl">Reset PIN</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-key input-icon"></i>
-                <input type="text" id="reset-token" class="form-control" placeholder="Enter 6-digit PIN" required>
+                <input type="text" id="reset-token" class="form-control" placeholder="Enter 6-digit PIN" data-i18n-placeholder="auth-reset-pin-placeholder" required>
               </div>
               <div id="reset-token-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
             <div class="form-group">
-              <label for="reset-password">New Password</label>
+              <label for="reset-password" data-i18n="auth-new-password-lbl">New Password</label>
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
-                <input type="password" id="reset-password" class="form-control" placeholder="Choose a strong password" required autocomplete="new-password">
+                <input type="password" id="reset-password" class="form-control" placeholder="Choose a strong password" data-i18n-placeholder="auth-choose-password-placeholder" required autocomplete="new-password">
               </div>
               <div id="reset-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block mt-4" id="reset-submit-btn">
+            <button type="submit" class="btn btn-primary btn-block mt-4" id="reset-submit-btn" data-i18n="auth-update-pass-btn">
               Update Password <i class="fa-solid fa-check ml-1"></i>
             </button>
             <p class="auth-switch-text text-center mt-3">
-              <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')">Back to login</span>
+              <span class="text-neon cursor-pointer" onclick="toggleAuthTab('login')" data-i18n="auth-back-login">Back to login</span>
             </p>
           </form>
         </div>
@@ -676,8 +667,8 @@
     <section id="admin-view" class="view">
       <div class="container">
         <div class="dashboard-header mb-4">
-          <h2 class="view-title">Admin Control Panel</h2>
-          <p class="view-subtitle text-muted">Manage tennis courts, track bookings, view user statistics, and check revenue.</p>
+          <h2 class="view-title" data-i18n="admin-title">Admin Control Panel</h2>
+          <p class="view-subtitle text-muted" data-i18n="admin-subtitle">Manage tennis courts, track bookings, view user statistics, and check revenue.</p>
         </div>
 
         <!-- Stats row -->
@@ -686,28 +677,28 @@
             <div class="stat-icon bg-neon-alpha"><i class="fa-solid fa-calendar-check text-neon"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="admin-stat-bookings">0</span>
-              <span class="stat-label">Total Bookings</span>
+              <span class="stat-label" data-i18n="admin-stat-bookings-lbl">Total Bookings</span>
             </div>
           </div>
           <div class="stat-card glassmorphism">
             <div class="stat-icon bg-green-alpha"><i class="fa-solid fa-hand-holding-dollar text-green"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="admin-stat-revenue">฿0</span>
-              <span class="stat-label">Total Revenue</span>
+              <span class="stat-label" data-i18n="admin-stat-revenue-lbl">Total Revenue</span>
             </div>
           </div>
           <div class="stat-card glassmorphism">
             <div class="stat-icon bg-blue-alpha"><i class="fa-solid fa-users text-blue"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="admin-stat-users">0</span>
-              <span class="stat-label">Registered Users</span>
+              <span class="stat-label" data-i18n="admin-stat-users-lbl">Registered Users</span>
             </div>
           </div>
           <div class="stat-card glassmorphism">
             <div class="stat-icon bg-yellow-alpha"><i class="fa-solid fa-baseball text-yellow"></i></div>
             <div class="stat-details">
               <span class="stat-val" id="admin-stat-courts">0</span>
-              <span class="stat-label">Active Courts</span>
+              <span class="stat-label" data-i18n="admin-stat-courts-lbl">Active Courts</span>
             </div>
           </div>
         </div>
@@ -715,35 +706,35 @@
         <!-- Admin tabs navigation -->
         <div class="admin-tabs mb-4">
           <button class="btn btn-outline active" id="btn-admin-tab-bookings" onclick="switchAdminTab('bookings')">
-            <i class="fa-solid fa-calendar-days mr-1"></i> Bookings
+            <i class="fa-solid fa-calendar-days mr-1"></i> <span data-i18n="admin-tab-bookings">Bookings</span>
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-courts" onclick="switchAdminTab('courts')">
-            <i class="fa-solid fa-baseball mr-1"></i> Courts
+            <i class="fa-solid fa-baseball mr-1"></i> <span data-i18n="admin-tab-courts">Courts</span>
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-users" onclick="switchAdminTab('users')">
-            <i class="fa-solid fa-users mr-1"></i> Users
+            <i class="fa-solid fa-users mr-1"></i> <span data-i18n="admin-tab-users">Users</span>
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-promocodes" onclick="switchAdminTab('promocodes')">
-            <i class="fa-solid fa-tags mr-1"></i> Promo Codes
+            <i class="fa-solid fa-tags mr-1"></i> <span data-i18n="admin-tab-promos">Promo Codes</span>
           </button>
         </div>
 
         <!-- Tab 1: Bookings Management -->
         <div class="admin-tab-content glassmorphism p-4" id="admin-tab-bookings-content">
-          <h3 class="mb-4">All Bookings</h3>
+          <h3 class="mb-4" data-i18n="admin-hdr-bookings">All Bookings</h3>
           <div class="table-responsive">
             <table class="table admin-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>User</th>
-                  <th>Court</th>
-                  <th>Date</th>
-                  <th>Time</th>
-                  <th>Price</th>
-                  <th>PIN</th>
-                  <th>Status</th>
-                  <th>Action</th>
+                  <th data-i18n="admin-tbl-id">ID</th>
+                  <th data-i18n="admin-tbl-user">User</th>
+                  <th data-i18n="admin-tbl-court">Court</th>
+                  <th data-i18n="admin-tbl-date">Date</th>
+                  <th data-i18n="admin-tbl-time">Time</th>
+                  <th data-i18n="admin-tbl-price">Price</th>
+                  <th data-i18n="admin-tbl-pin">PIN</th>
+                  <th data-i18n="admin-tbl-status">Status</th>
+                  <th data-i18n="admin-tbl-action">Action</th>
                 </tr>
               </thead>
               <tbody id="admin-bookings-table-body">
@@ -758,16 +749,16 @@
           <div class="admin-courts-grid">
             <!-- Courts list table -->
             <div class="courts-list-section">
-              <h3 class="mb-4">Active Courts</h3>
+              <h3 class="mb-4" data-i18n="admin-hdr-courts">Active Courts</h3>
               <div class="table-responsive">
                 <table class="table admin-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Name</th>
-                      <th>Price/Hour</th>
-                      <th>Description</th>
-                      <th>Action</th>
+                      <th data-i18n="admin-tbl-id">ID</th>
+                      <th data-i18n="admin-tbl-name">Name</th>
+                      <th data-i18n="admin-tbl-price-hr">Price/Hour</th>
+                      <th data-i18n="admin-tbl-desc">Description</th>
+                      <th data-i18n="admin-tbl-action">Action</th>
                     </tr>
                   </thead>
                   <tbody id="admin-courts-table-body">
@@ -779,22 +770,22 @@
             
             <!-- Add Court form -->
             <div class="add-court-section p-4 glassmorphism border-neon">
-              <h3 class="mb-4 text-neon">Add New Court</h3>
+              <h3 class="mb-4 text-neon" data-i18n="admin-add-court">Add New Court</h3>
               <form id="admin-add-court-form" onsubmit="handleAdminAddCourt(event)">
                 <div class="form-group mb-3">
-                  <label for="court-name-input">Court Name</label>
+                  <label for="court-name-input" data-i18n="admin-court-name">Court Name</label>
                   <input type="text" id="court-name-input" class="form-control" placeholder="e.g. Center Court E" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="court-price-input">Price Per Hour (฿)</label>
+                  <label for="court-price-input" data-i18n="admin-court-price">Price Per Hour (฿)</label>
                   <input type="number" id="court-price-input" class="form-control" placeholder="e.g. 500" min="0" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="court-desc-input">Description</label>
+                  <label for="court-desc-input" data-i18n="admin-court-desc">Description</label>
                   <textarea id="court-desc-input" class="form-control" placeholder="Court features..." rows="3"></textarea>
                 </div>
                 <div class="form-group mb-4">
-                  <label for="court-image-input">Select Theme Image</label>
+                  <label for="court-image-input" data-i18n="admin-court-theme">Select Theme Image</label>
                   <select id="court-image-input" class="form-control">
                     <option value="court_indoor_a">Indoor Premium (A)</option>
                     <option value="court_outdoor_b">Outdoor Floodlight (B)</option>
@@ -803,7 +794,7 @@
                   </select>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">
-                  <i class="fa-solid fa-plus mr-1"></i> Save Court
+                  <i class="fa-solid fa-plus mr-1"></i> <span data-i18n="admin-save-court">Save Court</span>
                 </button>
               </form>
             </div>
@@ -812,17 +803,17 @@
 
         <!-- Tab 3: Users Management -->
         <div class="admin-tab-content glassmorphism p-4" id="admin-tab-users-content" style="display: none;">
-          <h3 class="mb-4">Registered Users</h3>
+          <h3 class="mb-4" data-i18n="admin-hdr-users">Registered Users</h3>
           <div class="table-responsive">
             <table class="table admin-table">
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Registered At</th>
-                  <th>Change Role</th>
+                  <th data-i18n="admin-tbl-id">ID</th>
+                  <th data-i18n="admin-tbl-username">Username</th>
+                  <th data-i18n="admin-tbl-email">Email</th>
+                  <th data-i18n="admin-tbl-role">Role</th>
+                  <th data-i18n="admin-tbl-reg-at">Registered At</th>
+                  <th data-i18n="admin-tbl-change-role">Change Role</th>
                 </tr>
               </thead>
               <tbody id="admin-users-table-body">
@@ -836,18 +827,18 @@
         <div class="admin-tab-content glassmorphism p-4" id="admin-tab-promocodes-content" style="display: none;">
           <div class="admin-courts-grid">
             <div class="courts-list-section">
-              <h3 class="mb-4">Active Promo Codes</h3>
+              <h3 class="mb-4" data-i18n="admin-hdr-promos">Active Promo Codes</h3>
               <div class="table-responsive">
                 <table class="table admin-table">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Code</th>
-                      <th>Discount</th>
-                      <th>Valid Until</th>
-                      <th>Uses</th>
-                      <th>Status</th>
-                      <th>Action</th>
+                      <th data-i18n="admin-tbl-id">ID</th>
+                      <th data-i18n="admin-tbl-code">Code</th>
+                      <th data-i18n="admin-tbl-discount">Discount</th>
+                      <th data-i18n="admin-tbl-valid">Valid Until</th>
+                      <th data-i18n="admin-tbl-uses">Uses</th>
+                      <th data-i18n="admin-tbl-status">Status</th>
+                      <th data-i18n="admin-tbl-action">Action</th>
                     </tr>
                   </thead>
                   <tbody id="admin-promocodes-table-body">
@@ -858,19 +849,19 @@
             </div>
             
             <div class="add-court-section p-4 glassmorphism border-neon">
-              <h3 id="promo-form-title" class="mb-4 text-neon">Add Promo Code</h3>
+              <h3 id="promo-form-title" class="mb-4 text-neon" data-i18n="admin-add-promo">Add Promo Code</h3>
               <form id="admin-add-promocode-form" onsubmit="handleAdminAddPromoCode(event)">
                 <div class="form-group mb-3">
-                  <label for="promo-code-input">Code</label>
+                  <label for="promo-code-input" data-i18n="admin-promo-code">Code</label>
                   <input type="text" id="promo-code-input" class="form-control" placeholder="e.g. SUMMER20" required style="text-transform: uppercase;" pattern="[A-Za-z0-9_\-]+" oninput="this.value = this.value.replace(/[^a-zA-Z0-9_\-]/g, '').toUpperCase()">
                 </div>
                 <div class="form-row mb-3" style="display: flex; gap: 10px;">
                   <div class="form-group" style="flex: 1;">
-                    <label for="promo-discount-amount">Amount</label>
+                    <label for="promo-discount-amount" data-i18n="admin-promo-amount">Amount</label>
                     <input type="number" id="promo-discount-amount" class="form-control" placeholder="e.g. 20" min="0" max="100" required>
                   </div>
                   <div class="form-group" style="flex: 1;">
-                    <label for="promo-discount-type">Type</label>
+                    <label for="promo-discount-type" data-i18n="admin-promo-type">Type</label>
                     <select id="promo-discount-type" class="form-control" onchange="handlePromoTypeChange()">
                       <option value="percent">% Percent</option>
                       <option value="fixed">฿ Fixed</option>
@@ -878,24 +869,24 @@
                   </div>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="promo-valid-until">Valid Until (Optional)</label>
+                  <label for="promo-valid-until" data-i18n="admin-promo-valid">Valid Until (Optional)</label>
                   <div class="input-icon-group">
                     <i class="fa-regular fa-calendar input-icon text-neon" style="pointer-events: none;"></i>
                     <input type="date" id="promo-valid-until" class="form-control" placeholder="Select Expiry Date">
                   </div>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="promo-max-uses">Max Uses (Optional)</label>
+                  <label for="promo-max-uses" data-i18n="admin-promo-max">Max Uses (Optional)</label>
                   <input type="number" id="promo-max-uses" class="form-control" placeholder="e.g. 100" min="1">
                 </div>
                 <div class="form-group mb-4" id="promo-active-group" style="display: none; align-items: center; gap: 8px;">
                   <label class="d-flex align-items-center" style="cursor: pointer; gap: 8px; font-weight: 500;">
                     <input type="checkbox" id="promo-is-active" checked style="width: 18px; height: 18px; margin: 0; cursor: pointer;">
-                    Active Status
+                    <span data-i18n="admin-promo-status">Active Status</span>
                   </label>
                 </div>
                 <button type="submit" class="btn btn-primary w-100">
-                  <i class="fa-solid fa-plus mr-1"></i> Save Promo Code
+                  <i class="fa-solid fa-plus mr-1"></i> <span data-i18n="admin-save-promo">Save Promo Code</span>
                 </button>
               </form>
             </div>

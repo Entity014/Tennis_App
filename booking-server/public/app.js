@@ -123,7 +123,109 @@ const TRANSLATIONS = {
     'ticket-pin': 'COURT ACCESS PIN CODE',
     'ticket-pin-info': 'Enter this 6-digit PIN on the court kiosk screen to unlock system and lights.',
     'btn-go-dashboard': 'Go to My Bookings',
-    'btn-go-home': 'Return Home'
+    'btn-go-home': 'Return Home',
+    
+    // Auth View
+    'auth-tab-login': 'Sign In',
+    'auth-tab-register': 'Register',
+    'auth-login-title': 'Welcome Back',
+    'auth-register-title': 'Create Account',
+    'auth-forgot-title': 'Reset Password',
+    'auth-new-pass-title': 'New Password',
+    'auth-username-lbl': 'Username',
+    'auth-email-lbl': 'Email Address',
+    'auth-password-lbl': 'Password',
+    'auth-new-password-lbl': 'New Password',
+    'auth-reset-pin-lbl': 'Reset PIN',
+    'auth-username-placeholder': 'Enter username',
+    'auth-choose-username-placeholder': 'Choose a username',
+    'auth-email-placeholder': 'Enter email',
+    'auth-forgot-email-placeholder': 'Enter your email',
+    'auth-password-placeholder': 'Enter password',
+    'auth-choose-password-placeholder': 'Choose a strong password',
+    'auth-reset-pin-placeholder': 'Enter 6-digit PIN',
+    'auth-forgot-link': 'Forgot Password?',
+    'auth-login-btn': 'Sign In',
+    'auth-register-btn': 'Register',
+    'auth-send-pin-btn': 'Send PIN',
+    'auth-update-pass-btn': 'Update Password',
+    'auth-or-divider': 'OR',
+    'auth-no-account': "Don't have an account?",
+    'auth-register-here': 'Register here',
+    'auth-has-account': 'Already have an account?',
+    'auth-signin-here': 'Sign in here',
+    'auth-forgot-desc': 'Enter your email to receive a reset PIN.',
+    'auth-forgot-remembered': 'Remembered your password?',
+    'auth-forgot-signin': 'Sign in',
+    'auth-new-pass-desc': 'Enter the PIN and your new password.',
+    'auth-req-username-len': '3 to 20 characters long',
+    'auth-req-username-chars': 'Letters, numbers, and underscores only',
+    'auth-req-pass-len': 'At least 8 characters long',
+    'auth-req-pass-upper': 'At least one uppercase letter (A-Z)',
+    'auth-req-pass-lower': 'At least one lowercase letter (a-z)',
+    'auth-back-login': 'Back to login',
+    // Admin View
+    'admin-title': 'Admin Control Panel',
+    'admin-subtitle': 'Manage tennis courts, track bookings, view user statistics, and check revenue.',
+    'admin-stat-bookings-lbl': 'Total Bookings',
+    'admin-stat-revenue-lbl': 'Total Revenue',
+    'admin-stat-users-lbl': 'Registered Users',
+    'admin-stat-courts-lbl': 'Active Courts',
+    'admin-tab-bookings': 'Bookings',
+    'admin-tab-courts': 'Courts',
+    'admin-tab-users': 'Users',
+    'admin-tab-promos': 'Promo Codes',
+    'admin-hdr-bookings': 'All Bookings',
+    'admin-hdr-courts': 'Active Courts',
+    'admin-hdr-users': 'Registered Users',
+    'admin-hdr-promos': 'Active Promo Codes',
+    'admin-add-court': 'Add New Court',
+    'admin-court-name': 'Court Name',
+    'admin-court-price': 'Price Per Hour (฿)',
+    'admin-court-desc': 'Description',
+    'admin-court-theme': 'Select Theme Image',
+    'admin-save-court': 'Save Court',
+    'admin-add-promo': 'Add Promo Code',
+    'admin-promo-code': 'Code',
+    'admin-promo-amount': 'Amount',
+    'admin-promo-type': 'Type',
+    'admin-promo-valid': 'Valid Until (Optional)',
+    'admin-promo-max': 'Max Uses (Optional)',
+    'admin-promo-status': 'Active Status',
+    'admin-save-promo': 'Save Promo Code',
+    'admin-tbl-id': 'ID',
+    'admin-tbl-user': 'User',
+    'admin-tbl-court': 'Court',
+    'admin-tbl-date': 'Date',
+    'admin-tbl-time': 'Time',
+    'admin-tbl-price': 'Price',
+    'admin-tbl-pin': 'PIN',
+    'admin-tbl-status': 'Status',
+    'admin-tbl-action': 'Action',
+    'admin-tbl-name': 'Name',
+    'admin-tbl-price-hr': 'Price/Hour',
+    'admin-tbl-desc': 'Description',
+    'admin-tbl-username': 'Username',
+    'admin-tbl-email': 'Email',
+    'admin-tbl-role': 'Role',
+    'admin-tbl-reg-at': 'Registered At',
+    'admin-tbl-change-role': 'Change Role',
+    'admin-tbl-code': 'Code',
+    'admin-tbl-discount': 'Discount',
+    'admin-tbl-uses': 'Uses',
+    'admin-no-bookings': 'No bookings found in database.',
+    'admin-no-courts': 'No courts configured.',
+    'admin-no-promos': 'No promo codes found.',
+    'admin-status-active': 'Active',
+    'admin-status-inactive': 'Inactive',
+    'admin-status-expired': 'Expired',
+    'admin-status-limit': 'Limit Reached',
+    'admin-action-cancelling': 'Cancelling...',
+    'admin-action-cancel': 'Cancel',
+    'admin-action-edit': 'Edit',
+    'admin-action-delete': 'Delete',
+    'admin-save-court-update': 'Update Court',
+    'admin-save-promo-update': 'Update Promo Code'
   },
   th: {
     // Navbar
@@ -200,7 +302,165 @@ const TRANSLATIONS = {
     'ticket-pin': 'รหัสผ่านประตูสนาม',
     'ticket-pin-info': 'กรุณาพิมพ์รหัส PIN 6 หลักนี้บนหน้าจอตู้คีออสหน้าสนามเพื่อปลดล็อกระบบและไฟสนาม',
     'btn-go-dashboard': 'ไปที่การจองของฉัน',
-    'btn-go-home': 'กลับหน้าแรก'
+    'btn-go-home': 'กลับหน้าแรก',
+    
+    // Auth View
+    'auth-tab-login': 'เข้าสู่ระบบ',
+    'auth-tab-register': 'สมัครสมาชิก',
+    'auth-login-title': 'ยินดีต้อนรับกลับมา',
+    'auth-register-title': 'สร้างบัญชีผู้ใช้',
+    'auth-forgot-title': 'รีเซ็ตรหัสผ่าน',
+    'auth-new-pass-title': 'ตั้งรหัสผ่านใหม่',
+    'auth-username-lbl': 'ชื่อผู้ใช้',
+    'auth-email-lbl': 'ที่อยู่อีเมล',
+    'auth-password-lbl': 'รหัสผ่าน',
+    'auth-new-password-lbl': 'รหัสผ่านใหม่',
+    'auth-reset-pin-lbl': 'รหัส PIN สำหรับรีเซ็ต',
+    'auth-username-placeholder': 'กรอกชื่อผู้ใช้',
+    'auth-choose-username-placeholder': 'เลือกชื่อผู้ใช้',
+    'auth-email-placeholder': 'กรอกอีเมลของคุณ',
+    'auth-forgot-email-placeholder': 'กรอกอีเมลของคุณ',
+    'auth-password-placeholder': 'กรอกรหัสผ่าน',
+    'auth-choose-password-placeholder': 'เลือกตั้งรหัสผ่านที่ปลอดภัย',
+    'auth-reset-pin-placeholder': 'กรอกรหัส PIN 6 หลัก',
+    'auth-forgot-link': 'ลืมรหัสผ่าน?',
+    'auth-login-btn': 'เข้าสู่ระบบ',
+    'auth-register-btn': 'สมัครสมาชิก',
+    'auth-send-pin-btn': 'ส่งรหัส PIN',
+    'auth-update-pass-btn': 'อัปเดตรหัสผ่าน',
+    'auth-or-divider': 'หรือ',
+    'auth-no-account': 'ยังไม่มีบัญชีผู้ใช้?',
+    'auth-register-here': 'สมัครสมาชิกที่นี่',
+    'auth-has-account': 'มีบัญชีผู้ใช้อยู่แล้ว?',
+    'auth-signin-here': 'เข้าสู่ระบบที่นี่',
+    'auth-forgot-desc': 'กรอกอีเมลของคุณเพื่อรับรหัส PIN สำหรับรีเซ็ต',
+    'auth-forgot-remembered': 'จำรหัสผ่านได้แล้ว?',
+    'auth-forgot-signin': 'เข้าสู่ระบบ',
+    'auth-new-pass-desc': 'กรอกรหัส PIN และรหัสผ่านใหม่ของคุณ',
+    'auth-req-username-len': 'ความยาว 3 ถึง 20 ตัวอักษร',
+    'auth-req-username-chars': 'ตัวอักษร, ตัวเลข และเครื่องหมายขีดล่าง (_) เท่านั้น',
+    'auth-req-pass-len': 'ความยาวอย่างน้อย 8 ตัวอักษร',
+    'auth-req-pass-upper': 'มีตัวอักษรพิมพ์ใหญ่ (A-Z) อย่างน้อย 1 ตัว',
+    'auth-req-pass-lower': 'มีตัวอักษรพิมพ์เล็ก (a-z) อย่างน้อย 1 ตัว',
+    'auth-back-login': 'กลับไปหน้าเข้าสู่ระบบ',
+    // Admin View
+    'admin-title': 'แผงควบคุมระบบ',
+    'admin-subtitle': 'จัดการสนามเทนนิส ตรวจสอบประวัติการจอง ดูสถิติผู้ใช้งาน และตรวจสอบรายได้',
+    'admin-stat-bookings-lbl': 'รายการจองทั้งหมด',
+    'admin-stat-revenue-lbl': 'รายได้ทั้งหมด',
+    'admin-stat-users-lbl': 'ผู้ใช้งานที่ลงทะเบียน',
+    'admin-stat-courts-lbl': 'สนามที่เปิดให้บริการ',
+    'admin-tab-bookings': 'รายการจอง',
+    'admin-tab-courts': 'สนาม',
+    'admin-tab-users': 'ผู้ใช้งาน',
+    'admin-tab-promos': 'รหัสโปรโมชั่น',
+    'admin-hdr-bookings': 'รายการจองทั้งหมด',
+    'admin-hdr-courts': 'สนามที่เปิดให้บริการ',
+    'admin-hdr-users': 'ผู้ใช้งานที่ลงทะเบียน',
+    'admin-hdr-promos': 'รหัสโปรโมชั่นที่ใช้งานอยู่',
+    'admin-add-court': 'เพิ่มสนามใหม่',
+    'admin-court-name': 'ชื่อสนาม',
+    'admin-court-price': 'ราคาต่อชั่วโมง (฿)',
+    'admin-court-desc': 'คำอธิบายสนาม',
+    'admin-court-theme': 'เลือกรูปภาพธีม',
+    'admin-save-court': 'บันทึกข้อมูลสนาม',
+    'admin-add-promo': 'เพิ่มรหัสโปรโมชั่น',
+    'admin-promo-code': 'รหัสโปรโมชั่น',
+    'admin-promo-amount': 'จำนวนลด',
+    'admin-promo-type': 'ประเภทส่วนลด',
+    'admin-promo-valid': 'ใช้งานได้ถึง (ไม่บังคับ)',
+    'admin-promo-max': 'สิทธิ์ใช้งานสูงสุด (ไม่บังคับ)',
+    'admin-promo-status': 'สถานะเปิดใช้งาน',
+    'admin-save-promo': 'บันทึกรหัสโปรโมชั่น',
+    'admin-tbl-id': 'ไอดี',
+    'admin-tbl-user': 'ผู้ใช้งาน',
+    'admin-tbl-court': 'สนาม',
+    'admin-tbl-date': 'วันที่',
+    'admin-tbl-time': 'เวลา',
+    'admin-tbl-price': 'ราคา',
+    'admin-tbl-pin': 'รหัส PIN',
+    'admin-tbl-status': 'สถานะ',
+    'admin-tbl-action': 'การดำเนินการ',
+    'admin-tbl-name': 'ชื่อสนาม',
+    'admin-tbl-price-hr': 'ราคา/ชั่วโมง',
+    'admin-tbl-desc': 'คำอธิบาย',
+    'admin-tbl-username': 'ชื่อผู้ใช้',
+    'admin-tbl-email': 'อีเมล',
+    'admin-tbl-role': 'บทบาท',
+    'admin-tbl-reg-at': 'วันที่ลงทะเบียน',
+    'admin-tbl-change-role': 'เปลี่ยนบทบาท',
+    'admin-tbl-code': 'รหัส',
+    'admin-tbl-discount': 'ส่วนลด',
+    'admin-tbl-uses': 'จำนวนครั้งที่ใช้',
+    'admin-no-bookings': 'ไม่พบประวัติการจองในระบบ',
+    'admin-no-courts': 'ยังไม่ได้กำหนดค่าสนาม',
+    'admin-no-promos': 'ไม่พบรหัสโปรโมชั่นในระบบ',
+    'admin-status-active': 'เปิดใช้งาน',
+    'admin-status-inactive': 'ปิดใช้งาน',
+    'admin-status-expired': 'หมดอายุ',
+    'admin-status-limit': 'สิทธิ์เต็มแล้ว',
+    'admin-action-cancelling': 'กำลังยกเลิก...',
+    'admin-action-cancel': 'ยกเลิก',
+    'admin-action-edit': 'แก้ไข',
+    'admin-action-delete': 'ลบ',
+
+    // Notifications & Dialog Translations
+    'Successfully logged in with Google!': 'เข้าสู่ระบบด้วย Google สำเร็จ!',
+    'Google authentication failed': 'การยืนยันตัวตนด้วย Google ล้มเหลว',
+    'Unable to connect to login server': 'ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์เข้าสู่ระบบได้',
+    'Facebook SDK not loaded yet': 'ยังไม่ได้โหลด Facebook SDK',
+    'Successfully logged in with Facebook!': 'เข้าสู่ระบบด้วย Facebook สำเร็จ!',
+    'Facebook authentication failed': 'การยืนยันตัวตนด้วย Facebook ล้มเหลว',
+    'User cancelled login or did not authorize email.': 'ผู้ใช้ยกเลิกการเข้าสู่ระบบหรือไม่ได้รับอนุญาตอีเมล',
+    'Please sign in to view bookings.': 'กรุณาเข้าสู่ระบบเพื่อดูรายการจอง',
+    'Logged out successfully.': 'ออกจากระบบเรียบร้อยแล้ว',
+    'Welcome back!': 'ยินดีต้อนรับกลับมา!',
+    'Registration successful! Please login.': 'สมัครสมาชิกสำเร็จ! กรุณาเข้าสู่ระบบ',
+    'Connection error during registration': 'เกิดข้อผิดพลาดในการเชื่อมต่อระหว่างสมัครสมาชิก',
+    'A password reset PIN has been sent to your email. Please check your inbox.': 'รหัส PIN สำหรับรีเซ็ตรหัสผ่านถูกส่งไปยังอีเมลของคุณแล้ว กรุณาตรวจสอบกล่องจดหมายของคุณ',
+    'Connection error': 'เกิดข้อผิดพลาดในการเชื่อมต่อ',
+    'Password updated successfully. You can now login.': 'อัปเดตรหัสผ่านสำเร็จ คุณสามารถเข้าสู่ระบบได้แล้ว',
+    'Failed to retrieve user details': 'ไม่สามารถดึงข้อมูลผู้ใช้ได้',
+    'Social login failed': 'การเข้าสู่ระบบด้วยโซเชียลมีเดียล้มเหลว',
+    'Connection error during social authentication': 'เกิดข้อผิดพลาดในการเชื่อมต่อระหว่างการตรวจสอบสิทธิ์โซเชียล',
+    'Please select at least one timeslot.': 'กรุณาเลือกช่วงเวลาอย่างน้อย 1 ช่อง',
+    'Sign in required to complete booking.': 'จำเป็นต้องเข้าสู่ระบบเพื่อทำรายการจองให้เสร็จสิ้น',
+    'Booking confirmed! Cash payment recorded.': 'ยืนยันการจองเรียบร้อย! บันทึกการชำระเงินด้วยเงินสดแล้ว',
+    'Unable to secure slot. It might have been booked by someone else.': 'ไม่สามารถจองช่วงเวลานี้ได้ อาจมีผู้อื่นจองไปแล้ว',
+    'Error securing timeslot. Please try again.': 'เกิดข้อผิดพลาดในการจองช่วงเวลา กรุณาลองใหม่อีกครั้ง',
+    'Error loading court availability.': 'เกิดข้อผิดพลาดในการโหลดข้อมูลสนามที่ว่าง',
+    'This slot is unavailable.': 'ช่วงเวลานี้ไม่สามารถใช้งานได้',
+    'Cannot select range: contains unavailable timeslots in between.': 'ไม่สามารถเลือกช่วงนี้ได้: มีช่วงเวลาที่ไม่ว่างคั่นกลางอยู่',
+    'Cannot expand range: next slot is unavailable.': 'ไม่สามารถขยายช่วงได้: ช่วงเวลาถัดไปไม่ว่าง',
+    'Cannot expand range: preceding slot is unavailable.': 'ไม่สามารถขยายช่วงได้: ช่วงเวลาก่อนหน้าไม่ว่าง',
+    'No active booking to apply promo to.': 'ไม่มีรายการจองที่สามารถใช้รหัสโปรโมชั่นได้',
+    'Promo code applied successfully!': 'ใช้รหัสโปรโมชั่นสำเร็จ!',
+    'Invalid coupon or promo code.': 'คูปองหรือรหัสโปรโมชั่นไม่ถูกต้อง',
+    'Error communicating with server': 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์',
+    'Please select an image file.': 'กรุณาเลือกไฟล์รูปภาพ',
+    'Analyzing slip image...': 'กำลังวิเคราะห์รูปภาพสลิป...',
+    'No valid QR code detected. Please ensure you upload a clear PromptPay transfer slip to save API quota.': 'ตรวจไม่พบรหัส QR ที่ถูกต้อง โปรดอัปโหลดสลิป PromptPay ที่ชัดเจนเพื่อประหยัดโควตา API',
+    'Slip QR code detected successfully.': 'ตรวจพบรหัส QR ในสลิปสำเร็จ',
+    'QR Code expired. Generating a new one...': 'รหัส QR หมดอายุแล้ว กำลังสร้างรหัสใหม่...',
+    'Please upload your payment slip first.': 'กรุณาอัปโหลดสลิปการชำระเงินก่อน',
+    'Verifying payment details...': 'กำลังตรวจสอบรายละเอียดการชำระเงิน...',
+    'Confirming booking details...': 'กำลังยืนยันรายละเอียดการจอง...',
+    'Payment verified successfully!': 'ตรวจสอบการชำระเงินเสร็จสมบูรณ์!',
+    'Booking confirmed successfully!': 'ยืนยันการจองสนามสำเร็จ!',
+    'Payment verification failed': 'การตรวจสอบการชำระเงินล้มเหลว',
+    'Promo code deleted successfully': 'ลบรหัสโปรโมชั่นสำเร็จแล้ว',
+    'Promo code updated successfully': 'อัปเดตรหัสโปรโมชั่นสำเร็จแล้ว',
+    'Promo code added successfully': 'เพิ่มรหัสโปรโมชั่นสำเร็จแล้ว',
+    'Court updated successfully': 'อัปเดตข้อมูลสนามสำเร็จแล้ว',
+    'Court added successfully': 'เพิ่มสนามสำเร็จแล้ว',
+    'Court deleted': 'ลบข้อมูลสนามแล้ว',
+    'Booking deleted': 'ลบรายการจองแล้ว',
+    'Are you sure you want to cancel this pending booking?': 'คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการจองที่รอดำเนินการนี้?',
+    'Are you sure you want to delete/cancel this booking?': 'คุณแน่ใจหรือไม่ว่าต้องการลบ/ยกเลิกการจองนี้?',
+    'Are you sure you want to delete this court? This might affect existing bookings!': 'คุณแน่ใจหรือไม่ว่าต้องการลบคอร์ทนี้? การดำเนินการนี้อาจส่งผลกระทบต่อรายการจองที่มีอยู่!',
+    'Are you sure you want to delete this promo code?': 'คุณแน่ใจหรือไม่ว่าต้องการลบรหัสโปรโมชั่นนี้?',
+    'admin-save-court-update': 'อัปเดตข้อมูลสนาม',
+    'admin-save-promo-update': 'อัปเดตรหัสโปรโมชั่น'
   }
 };
 
@@ -241,11 +501,28 @@ function applyLanguage(lang) {
     const modalGrid = document.getElementById('modal-courts-grid');
     if (modalGrid) renderModalCourts(STATE.courts, modalGrid);
   }
+
+  // Re-initialize Flatpickr to apply the new locale
+  if (typeof initFlatpickr === 'function') {
+    initFlatpickr();
+  }
 }
 
 function toggleLanguage() {
   const nextLang = currentLang === 'en' ? 'th' : 'en';
   applyLanguage(nextLang);
+}
+
+function t(key, defaultVal) {
+  const dict = TRANSLATIONS[currentLang];
+  if (dict && dict[key]) {
+    return dict[key];
+  }
+  return defaultVal !== undefined ? defaultVal : key;
+}
+
+function translateConfirm(message) {
+  return t(message, message);
 }
 
 // Application State
@@ -337,7 +614,7 @@ window.addEventListener('app-dom-ready', () => {
 });
 
 // Fallback in case the event was already fired or we are not in React
-if (document.getElementById('featured-courts-grid')) {
+if (document.getElementById('theme-toggle-btn')) {
   initializeApp();
 }
 
@@ -372,15 +649,22 @@ function applyTheme(themeName) {
   STATE.theme = themeName;
   const body = document.body;
   const toggleBtn = document.getElementById('theme-toggle-btn');
+  const toggleIcon = toggleBtn ? toggleBtn.querySelector('i') : null;
 
   if (themeName === 'light') {
     body.classList.remove('dark-theme');
     body.classList.add('light-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'false');
+    if (toggleIcon) {
+      toggleIcon.className = 'fa-solid fa-moon';
+    }
   } else {
     body.classList.remove('light-theme');
     body.classList.add('dark-theme');
     if (toggleBtn) toggleBtn.setAttribute('aria-checked', 'true');
+    if (toggleIcon) {
+      toggleIcon.className = 'fa-solid fa-sun';
+    }
   }
 
   // Update Flatpickr theme Link element
@@ -444,14 +728,16 @@ function updateCustomSearchDateDisplay(dateObj) {
 
   subLabelEl.textContent = dateStrDMY;
 
+  const isThai = currentLang === 'th';
   if (compareDate.getTime() === today.getTime()) {
-    dayLabelEl.textContent = 'Today';
+    dayLabelEl.textContent = isThai ? 'วันนี้' : 'Today';
   } else if (compareDate.getTime() === tomorrow.getTime()) {
-    dayLabelEl.textContent = 'Tomorrow';
+    dayLabelEl.textContent = isThai ? 'พรุ่งนี้' : 'Tomorrow';
   } else {
     // Large formatted date, e.g. "Monday, May 25"
+    const locale = isThai ? 'th-TH' : 'en-US';
     const options = { weekday: 'long', month: 'short', day: 'numeric' };
-    dayLabelEl.textContent = dateObj.toLocaleDateString('en-US', options);
+    dayLabelEl.textContent = dateObj.toLocaleDateString(locale, options);
   }
 }
 
@@ -480,6 +766,7 @@ function initFlatpickr() {
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
+    locale: currentLang === 'th' ? 'th' : 'default',
     minDate: minDate,
     maxDate: maxDate,
     disableMobile: true,
@@ -514,6 +801,7 @@ function initFlatpickr() {
     dateFormat: "Y-m-d",
     defaultDate: STATE.selectedDate,
     theme: isDark ? "dark" : "light",
+    locale: currentLang === 'th' ? 'th' : 'default',
     minDate: minDate,
     maxDate: maxDate,
     disableMobile: true,
@@ -545,6 +833,7 @@ function initFlatpickr() {
       altFormat: "d/m/Y",
       dateFormat: "Y-m-d",
       theme: isDark ? "dark" : "light",
+      locale: currentLang === 'th' ? 'th' : 'default',
       minDate: "today",
       disableMobile: true
     });
@@ -784,6 +1073,22 @@ function initNavigation() {
     });
   }
 
+  // User Profile Dropdown Toggle
+  const profileTrigger = document.getElementById('user-profile-trigger');
+  const profileDropdown = document.getElementById('user-display');
+  if (profileTrigger && profileDropdown) {
+    profileTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      profileDropdown.classList.toggle('open');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!profileDropdown.contains(e.target)) {
+        profileDropdown.classList.remove('open');
+      }
+    });
+  }
+
   // Logout Button
   document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem('token');
@@ -857,6 +1162,7 @@ function navigateTo(viewId) {
 
 // --- Notification Banner Helper ---
 function showNotification(message, type = 'success') {
+  message = t(message, message);
   const container = document.getElementById('notification-container');
   const notification = document.createElement('div');
   notification.className = `notification ${type === 'error' ? 'error' : ''}`;
@@ -1295,13 +1601,18 @@ function checkLoggedInState() {
   const loginNavBtn = document.getElementById('login-nav-btn');
   const userDisplay = document.getElementById('user-display');
   const usernameSpan = document.getElementById('username-span');
+  const dropdownUsername = document.getElementById('dropdown-username');
   const authRequiredLinks = document.querySelectorAll('.auth-required');
   const adminRequiredLinks = document.querySelectorAll('.admin-required');
 
   if (STATE.token && STATE.user) {
     loginNavBtn.style.display = 'none';
     userDisplay.style.display = 'flex';
-    usernameSpan.textContent = STATE.user.display_name || STATE.user.username;
+    const displayName = STATE.user.display_name || STATE.user.username;
+    usernameSpan.textContent = displayName;
+    if (dropdownUsername) {
+      dropdownUsername.textContent = displayName;
+    }
     authRequiredLinks.forEach(link => link.style.display = 'block');
 
     // Only admin can see the Admin Panel nav link
@@ -2918,7 +3229,7 @@ function loadUserBookings() {
       if (cancelBtn) {
         cancelBtn.addEventListener('click', (e) => {
           e.stopPropagation();
-          if (confirm('Are you sure you want to cancel this pending booking?')) {
+          if (confirm(translateConfirm('Are you sure you want to cancel this pending booking?'))) {
             cancelBtn.disabled = true;
             cancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-1"></i> Cancelling...';
             
@@ -3089,7 +3400,7 @@ function loadAdminBookings() {
     tbody.innerHTML = '';
     
     if (bookings.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No bookings found in database.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">${t('admin-no-bookings', 'No bookings found in database.')}</td></tr>`;
       return;
     }
 
@@ -3104,10 +3415,10 @@ function loadAdminBookings() {
         <td>${b.start_time.substring(0, 5)} - ${b.end_time.substring(0, 5)}</td>
         <td>฿${b.price}</td>
         <td><code>${b.pin_code}</code></td>
-        <td><span class="booking-status-badge ${statusClass}">${b.status}</span></td>
+        <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
           <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)">
-            <i class="fa-solid fa-trash"></i> Delete
+            <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
           </button>
         </td>
       `;
@@ -3126,7 +3437,7 @@ function loadAdminCourts() {
     tbody.innerHTML = '';
 
     if (courts.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No courts configured.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">${t('admin-no-courts', 'No courts configured.')}</td></tr>`;
       return;
     }
 
@@ -3142,10 +3453,10 @@ function loadAdminCourts() {
         <td><small class="text-muted">${c.description || '-'}</small></td>
         <td>
           <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', ${c.price_per_hour}, '${escapedDesc}', '${c.image_name}')">
-            <i class="fa-solid fa-pen-to-square"></i> Edit
+            <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
           </button>
           <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminCourt(${c.id})">
-            <i class="fa-solid fa-trash"></i> Delete
+            <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
           </button>
         </td>
       `;
@@ -3251,14 +3562,14 @@ function startEditCourt(id, name, price, desc, img) {
   
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {
-    formHeader.textContent = `Edit Court: ${name}`;
+    formHeader.textContent = `${t('admin-action-edit', 'Edit')} ${t('admin-tbl-court', 'Court')}: ${name}`;
     formHeader.classList.remove('text-neon');
     formHeader.style.color = '#38bdf8'; // Sky blue in edit mode
   }
   
   const submitBtn = document.querySelector('#admin-add-court-form button[type="submit"]');
   if (submitBtn) {
-    submitBtn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> Update Court`;
+    submitBtn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> ${t('admin-save-court-update', 'Update Court')}`;
     submitBtn.style.backgroundColor = '#0284c7';
     submitBtn.style.color = '#ffffff';
   }
@@ -3268,7 +3579,7 @@ function startEditCourt(id, name, price, desc, img) {
     cancelBtn.type = 'button';
     cancelBtn.id = 'cancel-edit-court-btn';
     cancelBtn.className = 'btn btn-outline w-100 mt-2';
-    cancelBtn.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> Cancel Edit`;
+    cancelBtn.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> ${t('admin-action-cancel', 'Cancel')} ${t('admin-action-edit', 'Edit')}`;
     cancelBtn.addEventListener('click', resetCourtForm);
     document.getElementById('admin-add-court-form').appendChild(cancelBtn);
   }
@@ -3282,14 +3593,14 @@ function resetCourtForm() {
   
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {
-    formHeader.textContent = 'Add New Court';
+    formHeader.textContent = t('admin-add-court', 'Add New Court');
     formHeader.classList.add('text-neon');
     formHeader.style.color = '';
   }
   
   const submitBtn = document.querySelector('#admin-add-court-form button[type="submit"]');
   if (submitBtn) {
-    submitBtn.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> Save Court`;
+    submitBtn.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> ${t('admin-save-court', 'Save Court')}`;
     submitBtn.style.backgroundColor = '';
     submitBtn.style.color = '';
   }
@@ -3299,7 +3610,7 @@ function resetCourtForm() {
 }
 
 function deleteAdminBooking(id, btn) {
-  if (!confirm('Are you sure you want to delete/cancel this booking?')) return;
+  if (!confirm(translateConfirm('Are you sure you want to delete/cancel this booking?'))) return;
 
   // Optimistic UI: remove the row immediately
   const row = btn ? btn.closest('tr') : null;
@@ -3343,7 +3654,7 @@ function deleteAdminBooking(id, btn) {
 }
 
 function deleteAdminCourt(id) {
-  if (!confirm('Are you sure you want to delete this court? This might affect existing bookings!')) return;
+  if (!confirm(translateConfirm('Are you sure you want to delete this court? This might affect existing bookings!'))) return;
 
   fetch(`/api/admin/courts/${id}`, {
     method: 'DELETE',
@@ -3387,18 +3698,18 @@ function loadAdminUsers() {
 
       tr.innerHTML = `
         <td>${u.id}</td>
-        <td><strong>${u.username}</strong>${isSelf ? ' <span class="badge" style="font-size:0.7rem;">You</span>' : ''}</td>
+        <td><strong>${u.username}</strong>${isSelf ? ` <span class="badge" style="font-size:0.7rem;">${t('You', 'You')}</span>` : ''}</td>
         <td>${u.email}</td>
-        <td><span class="badge ${roleClass}">${u.role}</span></td>
-        <td>${new Date(u.created_at).toLocaleString('th-TH')}</td>
+        <td><span class="badge ${roleClass}">${t(u.role, u.role)}</span></td>
+        <td>${new Date(u.created_at).toLocaleString(currentLang === 'th' ? 'th-TH' : 'en-US')}</td>
         <td>
           ${isSelf ? '<span class="text-muted" style="font-size:0.8rem;">—</span>' : `
           <select class="role-select-dropdown"
             data-original="${u.role}"
             onchange="changeUserRole(${u.id}, this.value, this)">
-            <option value="user" ${u.role === 'user' ? 'selected' : ''}>user</option>
-            <option value="mod" ${u.role === 'mod' ? 'selected' : ''}>mod</option>
-            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>admin</option>
+            <option value="user" ${u.role === 'user' ? 'selected' : ''}>${t('user', 'user')}</option>
+            <option value="mod" ${u.role === 'mod' ? 'selected' : ''}>${t('mod', 'mod')}</option>
+            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>${t('admin', 'admin')}</option>
           </select>`}
         </td>
       `;
@@ -3432,7 +3743,7 @@ function changeUserRole(userId, newRole, selectEl) {
     // Refresh the badge next to the dropdown
     const badge = selectEl.closest('tr').querySelector('.badge');
     if (badge) {
-      badge.textContent = newRole;
+      badge.textContent = t(newRole, newRole);
       badge.className = 'badge ' + ({ admin: 'badge-neon', mod: 'badge-blue', user: '' }[newRole] || '');
     }
   })
@@ -3454,7 +3765,7 @@ function loadAdminPromoCodes() {
     tbody.innerHTML = '';
 
     if (!Array.isArray(promos) || promos.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">No promo codes found.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="7" class="text-center text-muted">${t('admin-no-promos', 'No promo codes found.')}</td></tr>`;
       return;
     }
 
@@ -3466,19 +3777,19 @@ function loadAdminPromoCodes() {
       const isLimitReached = p.maxUses !== null && p.currentUses >= p.maxUses;
       
       let statusClass = 'badge-danger';
-      let statusText = 'Inactive';
+      let statusText = t('admin-status-inactive', 'Inactive');
       if (p.isActive) {
         if (isExpired) {
-          statusText = 'Expired';
+          statusText = t('admin-status-expired', 'Expired');
         } else if (isLimitReached) {
-          statusText = 'Limit Reached';
+          statusText = t('admin-status-limit', 'Limit Reached');
         } else {
           statusClass = 'badge-neon';
-          statusText = 'Active';
+          statusText = t('admin-status-active', 'Active');
         }
       }
 
-      const validUntilStr = p.validUntil ? formatDateDMY(p.validUntil.substring(0, 10)) : 'Never';
+      const validUntilStr = p.validUntil ? formatDateDMY(p.validUntil.substring(0, 10)) : t('Never', 'Never');
       const discountText = p.discountType === 'percent' ? `${p.discountAmount}%` : `฿${p.discountAmount}`;
 
       tr.innerHTML = `
@@ -3526,9 +3837,9 @@ function editAdminPromoCode(id) {
   document.getElementById('promo-is-active').checked = promo.isActive;
 
   // Change headers / button texts
-  document.getElementById('promo-form-title').textContent = 'Edit Promo Code';
+  document.getElementById('promo-form-title').textContent = `${t('admin-action-edit', 'Edit')} ${t('admin-tbl-code', 'Code')}: ${promo.code}`;
   const submitBtn = document.querySelector('#admin-add-promocode-form button[type="submit"]');
-  submitBtn.innerHTML = '<i class="fa-solid fa-check mr-1"></i> Update Promo Code';
+  submitBtn.innerHTML = `<i class="fa-solid fa-check mr-1"></i> ${t('admin-save-promo-update', 'Update Promo Code')}`;
 
   // Show Cancel Button if not already there
   let cancelBtn = document.getElementById('promo-cancel-edit-btn');
@@ -3537,7 +3848,7 @@ function editAdminPromoCode(id) {
     cancelBtn.type = 'button';
     cancelBtn.id = 'promo-cancel-edit-btn';
     cancelBtn.className = 'btn btn-outline w-100 mt-2';
-    cancelBtn.textContent = 'Cancel Edit';
+    cancelBtn.innerHTML = `<i class="fa-solid fa-xmark mr-1"></i> ${t('admin-action-cancel', 'Cancel')} ${t('admin-action-edit', 'Edit')}`;
     cancelBtn.addEventListener('click', cancelPromoEdit);
     document.getElementById('admin-add-promocode-form').appendChild(cancelBtn);
   }
@@ -3554,10 +3865,10 @@ function cancelPromoEdit() {
   }
 
   document.getElementById('promo-active-group').style.display = 'none';
-  document.getElementById('promo-form-title').textContent = 'Add Promo Code';
+  document.getElementById('promo-form-title').textContent = t('admin-add-promo', 'Add Promo Code');
   
   const submitBtn = document.querySelector('#admin-add-promocode-form button[type="submit"]');
-  submitBtn.innerHTML = '<i class="fa-solid fa-plus mr-1"></i> Save Promo Code';
+  submitBtn.innerHTML = `<i class="fa-solid fa-plus mr-1"></i> ${t('admin-save-promo', 'Save Promo Code')}`;
 
   const cancelBtn = document.getElementById('promo-cancel-edit-btn');
   if (cancelBtn) {
@@ -3629,7 +3940,7 @@ function handleAdminAddPromoCode(event) {
 }
 
 function deleteAdminPromoCode(id) {
-  if (!confirm('Are you sure you want to delete this promo code?')) return;
+  if (!confirm(translateConfirm('Are you sure you want to delete this promo code?'))) return;
 
   fetch(`/api/admin/promo-codes/${id}`, {
     method: 'DELETE',
