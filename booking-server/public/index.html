@@ -773,16 +773,24 @@
               <h3 class="mb-4 text-neon" data-i18n="admin-add-court">Add New Court</h3>
               <form id="admin-add-court-form" onsubmit="handleAdminAddCourt(event)">
                 <div class="form-group mb-3">
-                  <label for="court-name-input" data-i18n="admin-court-name">Court Name</label>
+                  <label for="court-name-input" data-i18n="admin-court-name">Court Name (English)</label>
                   <input type="text" id="court-name-input" class="form-control" placeholder="e.g. Center Court E" required>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="court-name-th-input" data-i18n="admin-court-name-th">Court Name (Thai)</label>
+                  <input type="text" id="court-name-th-input" class="form-control" placeholder="เช่น สนามเซนเตอร์คอร์ท E">
                 </div>
                 <div class="form-group mb-3">
                   <label for="court-price-input" data-i18n="admin-court-price">Price Per Hour (฿)</label>
                   <input type="number" id="court-price-input" class="form-control" placeholder="e.g. 500" min="0" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="court-desc-input" data-i18n="admin-court-desc">Description</label>
+                  <label for="court-desc-input" data-i18n="admin-court-desc">Description (English)</label>
                   <textarea id="court-desc-input" class="form-control" placeholder="Court features..." rows="3"></textarea>
+                </div>
+                <div class="form-group mb-3">
+                  <label for="court-desc-th-input" data-i18n="admin-court-desc-th">Description (Thai)</label>
+                  <textarea id="court-desc-th-input" class="form-control" placeholder="คุณสมบัติสนาม เช่น สนามในร่มปรับอากาศ..." rows="3"></textarea>
                 </div>
                 <div class="form-group mb-4">
                   <label for="court-image-input" data-i18n="admin-court-theme">Select Theme Image</label>

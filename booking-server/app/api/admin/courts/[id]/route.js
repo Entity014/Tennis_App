@@ -11,7 +11,7 @@ export async function PUT(req, { params }) {
 
     const { id } = await params;
     const courtId = parseInt(id);
-    const { name, price_per_hour, description, image_name } = await req.json();
+    const { name, name_th, price_per_hour, description, description_th, image_name } = await req.json();
 
     if (!name || !price_per_hour) {
       return NextResponse.json({ message: 'Name and price_per_hour are required' }, { status: 400 });
@@ -42,8 +42,10 @@ export async function PUT(req, { params }) {
       where: { id: courtId },
       data: {
         name,
+        nameTh: name_th || '',
         pricePerHour: parseFloat(price_per_hour),
         description: description || '',
+        descriptionTh: description_th || '',
         imageName: image_name || 'court_indoor_a'
       }
     });

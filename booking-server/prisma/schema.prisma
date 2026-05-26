@@ -7,7 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -27,12 +26,14 @@ model User {
 }
 
 model Court {
-  id           Int       @id @default(autoincrement())
-  name         String
-  pricePerHour Float     @map("price_per_hour")
-  description  String?
-  imageName    String?   @map("image_name")
-  bookings     Booking[]
+  id            Int       @id @default(autoincrement())
+  name          String
+  nameTh        String?   @map("name_th")
+  pricePerHour  Float     @map("price_per_hour")
+  description   String?
+  descriptionTh String?   @map("description_th")
+  imageName     String?   @map("image_name")
+  bookings      Booking[]
 
   @@map("courts")
 }

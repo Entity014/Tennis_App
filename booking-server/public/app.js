@@ -180,9 +180,11 @@ const TRANSLATIONS = {
     'admin-hdr-users': 'Registered Users',
     'admin-hdr-promos': 'Active Promo Codes',
     'admin-add-court': 'Add New Court',
-    'admin-court-name': 'Court Name',
+    'admin-court-name': 'Court Name (English)',
+    'admin-court-name-th': 'Court Name (Thai)',
     'admin-court-price': 'Price Per Hour (฿)',
-    'admin-court-desc': 'Description',
+    'admin-court-desc': 'Description (English)',
+    'admin-court-desc-th': 'Description (Thai)',
     'admin-court-theme': 'Select Theme Image',
     'admin-save-court': 'Save Court',
     'admin-add-promo': 'Add Promo Code',
@@ -370,9 +372,11 @@ const TRANSLATIONS = {
     'admin-hdr-users': 'ผู้ใช้งานที่ลงทะเบียน',
     'admin-hdr-promos': 'รหัสโปรโมชั่นที่ใช้งานอยู่',
     'admin-add-court': 'เพิ่มสนามใหม่',
-    'admin-court-name': 'ชื่อสนาม',
+    'admin-court-name': 'ชื่อสนาม (ภาษาอังกฤษ)',
+    'admin-court-name-th': 'ชื่อสนาม (ภาษาไทย)',
     'admin-court-price': 'ราคาต่อชั่วโมง (฿)',
-    'admin-court-desc': 'คำอธิบายสนาม',
+    'admin-court-desc': 'คำอธิบายสนาม (ภาษาอังกฤษ)',
+    'admin-court-desc-th': 'คำอธิบายสนาม (ภาษาไทย)',
     'admin-court-theme': 'เลือกรูปภาพธีม',
     'admin-save-court': 'บันทึกข้อมูลสนาม',
     'admin-add-promo': 'เพิ่มรหัสโปรโมชั่น',
@@ -529,7 +533,11 @@ const TRANSLATIONS = {
     'Cancelling...': 'กำลังยกเลิก...',
     'Booking...': 'กำลังจองสนาม...',
     'Verifying Payment...': 'กำลังตรวจสอบการชำระเงิน...',
-    'Confirming Booking...': 'กำลังยืนยันการจอง...'
+    'Confirming Booking...': 'กำลังยืนยันการจอง...',
+    'Applying...': 'กำลังใช้ส่วนลด...',
+    'Promo code applied successfully': 'ใช้รหัสโปรโมชั่นสำเร็จ!',
+    'Promo code applied successfully.': 'ใช้รหัสโปรโมชั่นสำเร็จ!',
+    'Invalid coupon or promo code': 'คูปองหรือรหัสโปรโมชั่นไม่ถูกต้อง',
   }
 };
 
@@ -579,6 +587,21 @@ function applyLanguage(lang) {
   if (typeof initFlatpickr === 'function') {
     initFlatpickr();
   }
+
+  // Re-load current active views/tabs that are generated dynamically
+  if (typeof STATE !== 'undefined') {
+    if (STATE.currentView === 'dashboard-view' && typeof loadUserBookings === 'function') {
+      loadUserBookings();
+    } else if (STATE.currentView === 'admin-view') {
+      const activeTabEl = document.querySelector('#admin-sidebar .active');
+      const activeTab = activeTabEl ? activeTabEl.dataset.tab : 'dashboard';
+      if (activeTab === 'dashboard' && typeof loadAdminDashboard === 'function') loadAdminDashboard();
+      else if (activeTab === 'bookings' && typeof loadAdminBookings === 'function') loadAdminBookings();
+      else if (activeTab === 'courts' && typeof loadAdminCourts === 'function') loadAdminCourts();
+      else if (activeTab === 'users' && typeof loadAdminUsers === 'function') loadAdminUsers();
+      else if (activeTab === 'promos' && typeof loadAdminPromoCodes === 'function') loadAdminPromoCodes();
+    }
+  }
 }
 
 function toggleLanguage() {
@@ -592,6 +615,27 @@ function t(key, defaultVal) {
     return dict[key];
   }
   return defaultVal !== undefined ? defaultVal : key;
+}
+
+function translateCourtName(court) {
+  if (!court) return '';
+  if (currentLang === 'th' && court.name_th) {
+    return court.name_th;
+  }
+  return t(court.name);
+}
+
+function translateCourtDesc(court) {
+  if (!court) return '';
+  if (currentLang === 'th') {
+    if (court.description_th) return court.description_th;
+    if (court.name.includes('Court A')) return TRANSLATIONS.th['court-desc-A'] || court.description;
+    if (court.name.includes('Court B')) return TRANSLATIONS.th['court-desc-B'] || court.description;
+    if (court.name.includes('Arena C')) return TRANSLATIONS.th['court-desc-C'] || court.description;
+    if (court.name.includes('Court D')) return TRANSLATIONS.th['court-desc-D'] || court.description;
+    return t(court.description);
+  }
+  return court.description;
 }
 
 function translateConfirm(message) {
@@ -2085,18 +2129,7 @@ function renderFeaturedCourts(courts) {
     const card = document.createElement('div');
     card.className = 'court-card';
     
-    let desc = court.description;
-    if (currentLang === 'th') {
-      if (court.name.includes('Court A')) {
-        desc = TRANSLATIONS.th['court-desc-A'];
-      } else if (court.name.includes('Court B')) {
-        desc = TRANSLATIONS.th['court-desc-B'];
-      } else if (court.name.includes('Arena C')) {
-        desc = TRANSLATIONS.th['court-desc-C'];
-      } else if (court.name.includes('Court D')) {
-        desc = TRANSLATIONS.th['court-desc-D'];
-      }
-    }
+    let desc = translateCourtDesc(court);
     
     card.innerHTML = `
       <div class="court-img-container">
@@ -2104,7 +2137,7 @@ function renderFeaturedCourts(courts) {
         <div class="court-img-bg-shape"></div>
       </div>
       <div class="court-card-body">
-        <h3 class="court-card-title">${court.name}</h3>
+        <h3 class="court-card-title">${translateCourtName(court)}</h3>
         <p class="court-card-desc">${desc}</p>
         <div class="court-card-footer">
           <div class="court-card-price">
@@ -2168,18 +2201,7 @@ function renderModalCourts(courts, grid) {
     card.className = 'court-card';
     card.style.cursor = 'pointer';
     
-    let desc = court.description;
-    if (currentLang === 'th') {
-      if (court.name.includes('Court A')) {
-        desc = TRANSLATIONS.th['court-desc-A'];
-      } else if (court.name.includes('Court B')) {
-        desc = TRANSLATIONS.th['court-desc-B'];
-      } else if (court.name.includes('Arena C')) {
-        desc = TRANSLATIONS.th['court-desc-C'];
-      } else if (court.name.includes('Court D')) {
-        desc = TRANSLATIONS.th['court-desc-D'];
-      }
-    }
+    let desc = translateCourtDesc(court);
 
     card.innerHTML = `
       <div class="court-img-container">
@@ -2187,7 +2209,7 @@ function renderModalCourts(courts, grid) {
         <div class="court-img-bg-shape"></div>
       </div>
       <div class="court-card-body">
-        <h3 class="court-card-title">${court.name}</h3>
+        <h3 class="court-card-title">${translateCourtName(court)}</h3>
         <p class="court-card-desc">${desc}</p>
         <div class="court-card-footer">
           <div class="court-card-price">
@@ -2384,20 +2406,9 @@ function loadCourtsAvailability() {
     // Render Active Court Info Sidebar
     const activeCourt = courts.find(c => c.id === STATE.activeCourtId);
     if (activeCourt) {
-      document.getElementById('detail-court-name').textContent = activeCourt.name;
+      document.getElementById('detail-court-name').textContent = translateCourtName(activeCourt);
       
-      let desc = activeCourt.description;
-      if (currentLang === 'th') {
-        if (activeCourt.name.includes('Court A')) {
-          desc = TRANSLATIONS.th['court-desc-A'];
-        } else if (activeCourt.name.includes('Court B')) {
-          desc = TRANSLATIONS.th['court-desc-B'];
-        } else if (activeCourt.name.includes('Arena C')) {
-          desc = TRANSLATIONS.th['court-desc-C'];
-        } else if (activeCourt.name.includes('Court D')) {
-          desc = TRANSLATIONS.th['court-desc-D'];
-        }
-      }
+      let desc = translateCourtDesc(activeCourt);
       document.getElementById('detail-court-desc').textContent = desc;
       document.getElementById('detail-court-price').textContent = `฿${activeCourt.price_per_hour}`;
     }
@@ -2641,7 +2652,7 @@ function initPromoHandlers() {
     const applyBtn = document.getElementById('promo-apply-btn');
     const origText = applyBtn.textContent;
     applyBtn.disabled = true;
-    applyBtn.textContent = 'Applying...';
+    applyBtn.textContent = t('Applying...');
 
     fetch('/api/promo/validate', {
       method: 'POST',
@@ -2669,16 +2680,16 @@ function initPromoHandlers() {
           price: data.price,
           discount: discountFraction
         };
-        showNotification(data.message || 'Promo code applied successfully!', 'success');
+        showNotification(data.message ? t(data.message) : t('Promo code applied successfully!'), 'success');
         updateReviewDetails();
       } else {
-        showNotification(data.message || 'Invalid coupon or promo code.', 'error');
+        showNotification(data.message ? t(data.message) : t('Invalid coupon or promo code.'), 'error');
       }
     })
     .catch(err => {
       applyBtn.disabled = false;
       applyBtn.textContent = origText;
-      showNotification(err.message || 'Invalid coupon or promo code.', 'error');
+      showNotification(err.message ? t(err.message) : t('Invalid coupon or promo code.'), 'error');
     });
   });
 
@@ -3607,7 +3618,7 @@ function loadAdminBookings() {
         <td><code>${b.pin_code}</code></td>
         <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
-          <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)">
+          <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
             <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
           </button>
         </td>
@@ -3635,17 +3646,19 @@ function loadAdminCourts() {
       const tr = document.createElement('tr');
       // Escape single quotes for HTML injection safely
       const escapedName = c.name.replace(/'/g, "\\'");
+      const escapedNameTh = (c.name_th || '').replace(/'/g, "\\'");
       const escapedDesc = (c.description || '').replace(/'/g, "\\'");
+      const escapedDescTh = (c.description_th || '').replace(/'/g, "\\'");
       tr.innerHTML = `
         <td>${c.id}</td>
-        <td><strong>${c.name}</strong></td>
+        <td><strong>${translateCourtName(c)}</strong></td>
         <td>฿${c.price_per_hour}/hr</td>
-        <td><small class="text-muted">${c.description || '-'}</small></td>
+        <td><small class="text-muted">${translateCourtDesc(c) || '-'}</small></td>
         <td>
-          <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', ${c.price_per_hour}, '${escapedDesc}', '${c.image_name}')">
+          <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', '${escapedNameTh}', ${c.price_per_hour}, '${escapedDesc}', '${escapedDescTh}', '${c.image_name}')" data-i18n="admin-action-edit">
             <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
           </button>
-          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminCourt(${c.id})">
+          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminCourt(${c.id})" data-i18n="admin-action-delete">
             <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
           </button>
         </td>
@@ -3660,8 +3673,10 @@ function handleAdminAddCourt(event) {
   event.preventDefault();
   
   const name = document.getElementById('court-name-input').value;
+  const name_th = document.getElementById('court-name-th-input').value;
   const price = document.getElementById('court-price-input').value;
   const desc = document.getElementById('court-desc-input').value;
+  const desc_th = document.getElementById('court-desc-th-input').value;
   const img = document.getElementById('court-image-input').value;
 
   const url = STATE.editingCourtId ? `/api/admin/courts/${STATE.editingCourtId}` : '/api/admin/courts';
@@ -3675,8 +3690,10 @@ function handleAdminAddCourt(event) {
     },
     body: JSON.stringify({
       name,
+      name_th,
       price_per_hour: price,
       description: desc,
+      description_th: desc_th,
       image_name: img
     })
   })
@@ -3742,12 +3759,14 @@ function handleAdminAddCourt(event) {
   .catch(err => showNotification(err.message || 'Error saving court details', 'error'));
 }
 
-function startEditCourt(id, name, price, desc, img) {
+function startEditCourt(id, name, nameTh, price, desc, descTh, img) {
   STATE.editingCourtId = id;
   
   document.getElementById('court-name-input').value = name;
+  document.getElementById('court-name-th-input').value = nameTh || '';
   document.getElementById('court-price-input').value = price;
   document.getElementById('court-desc-input').value = desc || '';
+  document.getElementById('court-desc-th-input').value = descTh || '';
   document.getElementById('court-image-input').value = img || 'court_indoor_a';
   
   const formHeader = document.querySelector('.add-court-section h3');

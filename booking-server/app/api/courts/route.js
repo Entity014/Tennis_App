@@ -24,8 +24,10 @@ export async function GET(req) {
       return NextResponse.json(courts.map(c => ({
         id: c.id,
         name: c.name,
+        name_th: c.nameTh,
         price_per_hour: c.pricePerHour,
         description: c.description,
+        description_th: c.descriptionTh,
         image_name: c.imageName
       })), {
         headers: {
@@ -59,8 +61,10 @@ export async function GET(req) {
       return {
         id: court.id,
         name: court.name,
+        name_th: court.nameTh,
         price_per_hour: court.pricePerHour,
         description: court.description,
+        description_th: court.descriptionTh,
         image_name: court.imageName,
         booked_slots: bookedSlots
       };
