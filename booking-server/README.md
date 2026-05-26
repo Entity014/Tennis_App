@@ -1,6 +1,6 @@
-# 🌐 AcePoint Booking Web App
+# 🌐 Mini Tennis Booking Web App
 
-This is the Booking Server component for the AcePoint Tennis Court Booking system, built with [Next.js](https://nextjs.org/) (App Router).
+This is the Booking Server component for the Mini Tennis Court Booking system, built with [Next.js](https://nextjs.org/) (App Router).
 
 ## 🚀 Features
 

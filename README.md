@@ -1,10 +1,10 @@
-# 🎾 AcePoint — Tennis Court Booking & Kiosk Lock System
+# 🎾 Mini Tennis — Tennis Court Booking & Kiosk Lock System
 
 ระบบจองสนามเทนนิสออนไลน์, ระบบล็อก Kiosk และระบบควบคุมเครื่องยิงลูกเทนนิส ประกอบด้วย 3 ส่วนหลัก:
 
 | ระบบ                                  | คำอธิบาย                                                     |
 | ------------------------------------- | ------------------------------------------------------------ |
-| **🌐 AcePoint Booking Web App**       | เว็บแอปจองคอร์ตสำหรับผู้ใช้งานทั่วไปและแผงควบคุม Admin       |
+| **🌐 Mini Tennis Booking Web App**    | เว็บแอปจองคอร์ตสำหรับผู้ใช้งานทั่วไปและแผงควบคุม Admin       |
 | **📱 TennisLock Kiosk Android App**   | แอป Android ล็อก Kiosk สำหรับหน้าจอติดตั้งที่สนามเทนนิส      |
 | **🤖 PusunTennis Tablet Android App** | แอป Android สำหรับแท็บเล็ตควบคุมเครื่องยิงลูกเทนนิสผ่าน BLE |
 
@@ -14,9 +14,9 @@
 
 ```mermaid
 graph TD
-    subgraph "🌐 System 1: AcePoint Booking Platform (Next.js)"
+    subgraph "🌐 System 1: Mini Tennis Booking Platform (Next.js)"
         User["👤 ผู้ใช้/ลูกค้า\n(Web Browser)"]
-        BookingWeb["💻 AcePoint Web App\n(HTML + Vanilla JS + CSS)"]
+        BookingWeb["💻 Mini Tennis Web App\n(HTML + Vanilla JS + CSS)"]
         BookingServer["⚙️ Next.js App Router API\n(Next.js Server Actions/Routes)"]
         Database[("🗄️ PostgreSQL DB\n(Prisma ORM)")]
         SlipAPI["💳 SLIP Verify API\n(Thunder / Slip2Go)"]
@@ -51,7 +51,7 @@ Tennis_App/
 ├── .env                        # ตัวแปรสภาพแวดล้อมหลัก (root-level)
 ├── .gitignore
 │
-├── booking-server/             # ⭐ ระบบที่ 1: AcePoint Booking Web App (Next.js)
+├── booking-server/             # ⭐ ระบบที่ 1: Mini Tennis Booking Web App (Next.js)
 │   ├── app/                    # Next.js App Router (API Endpoints, Layouts, Pages)
 │   ├── lib/                    # Helper libraries (Prisma, Auth, SSE)
 │   ├── prisma/                 # Prisma schema & seed script สำหรับ PostgreSQL
@@ -101,7 +101,7 @@ Tennis_App/
 
 ---
 
-# 🌐 ระบบที่ 1: AcePoint Booking Web App
+# 🌐 ระบบที่ 1: Mini Tennis Booking Web App
 
 เว็บแอปจองสนามเทนนิสออนไลน์แบบ Single Page Application รองรับการจองคอร์ต, ชำระเงินผ่าน PromptPay QR, ยืนยันสลิปอัตโนมัติ และแผงควบคุม Admin
 
@@ -479,7 +479,7 @@ sequenceDiagram
 ทั้ง 2 ระบบทำงานแยกกันแต่เชื่อมกันผ่าน **PIN Code**:
 
 ```
-[AcePoint Booking Web App]          [TennisLock Kiosk App]
+[Mini Tennis Booking Web App]          [TennisLock Kiosk App]
          |                                    |
   ผู้ใช้จองคอร์ต                      หน้าจอติดที่สนาม
   ชำระเงินสลิป ✅                     รอรับ PIN
@@ -518,4 +518,4 @@ sequenceDiagram
 
 ## 📄 License
 
-MIT License — © 2026 AcePoint Tennis Platform
+MIT License — © 2026 Mini Tennis Platform
