@@ -20,6 +20,17 @@ export async function PUT(req, { params }) {
       return NextResponse.json({ message: 'Promo code not found' }, { status: 404 });
     }
 
+    const finalType = discountType !== undefined ? discountType : existingPromo.discountType;
+    const finalAmount = discountAmount !== undefined ? parseFloat(discountAmount) : existingPromo.discountAmount;
+
+    if (isNaN(finalAmount) || finalAmount < 0) {
+      return NextResponse.json({ message: 'Discount amount must be a positive number' }, { status: 400 });
+    }
+
+    if (finalType === 'percent' && finalAmount > 100) {
+      return NextResponse.json({ message: 'Percentage discount cannot exceed 100%' }, { status: 400 });
+    }
+
     if (code && code !== existingPromo.code) {
       if (!/^[a-zA-Z0-9_\-]+$/.test(code.trim())) {
         return NextResponse.json({ message: 'Promo code can only contain English letters, numbers, hyphens, and underscores' }, { status: 400 });

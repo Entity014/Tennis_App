@@ -2180,7 +2180,11 @@ function initPaymentHandlers() {
     testModeToggle.addEventListener('change', () => {
       let finalPrice = STATE.activeBooking ? STATE.activeBooking.price : 0;
       if (STATE.appliedPromo && STATE.activeBooking) {
-        finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+        if (STATE.appliedPromo.price !== undefined) {
+          finalPrice = STATE.appliedPromo.price;
+        } else {
+          finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+        }
       }
       
       if (testModeToggle.checked) {
@@ -2189,12 +2193,28 @@ function initPaymentHandlers() {
       
       document.getElementById('payment-amount-display').textContent = `฿${finalPrice.toFixed(2)}`;
       
-      // Regenerate QR Code matching the test amount
+      // Regenerate QR Code / visibility based on finalPrice
+      const receiver = STATE.config.prompayReceiverId || '0917291840';
+      const qrImg = document.getElementById('qr-code-img');
+      const qrPlaceholderIcon = document.getElementById('qr-code-placeholder-icon');
+      const slipUploadBox = document.getElementById('slip-upload-label');
+      const qrCountdownBox = document.querySelector('.qr-timer');
+      const qrInstruction = document.querySelector('.qr-info-text');
+
       if (finalPrice > 0) {
-        const receiver = STATE.config.prompayReceiverId || '0917291840';
         const payload = generatePromptPayPayload(receiver, finalPrice);
-        const qrImg = document.getElementById('qr-code-img');
         qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(payload)}`;
+        qrImg.style.display = 'block';
+        qrPlaceholderIcon.style.display = 'none';
+        if (slipUploadBox) slipUploadBox.style.display = 'flex';
+        if (qrCountdownBox) qrCountdownBox.style.display = 'block';
+        if (qrInstruction) qrInstruction.textContent = 'Scan this PromptPay QR Code with any banking app to pay';
+      } else {
+        qrImg.style.display = 'none';
+        qrPlaceholderIcon.style.display = 'block';
+        if (slipUploadBox) slipUploadBox.style.display = 'none';
+        if (qrCountdownBox) qrCountdownBox.style.display = 'none';
+        if (qrInstruction) qrInstruction.textContent = 'Your booking is completely free! Click "Pay Now" below to confirm.';
       }
     });
   }
@@ -2240,7 +2260,11 @@ function togglePaymentMethod(method) {
 
     let finalPrice = STATE.activeBooking ? STATE.activeBooking.price : 0;
     if (STATE.appliedPromo && STATE.activeBooking) {
-      finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+      if (STATE.appliedPromo.price !== undefined) {
+        finalPrice = STATE.appliedPromo.price;
+      } else {
+        finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+      }
     }
     
     const testModeToggle = document.getElementById('test-mode-toggle');
@@ -2248,17 +2272,31 @@ function togglePaymentMethod(method) {
       finalPrice = 0.1;
     }
     
+    const qrImg = document.getElementById('qr-code-img');
+    const qrPlaceholderIcon = document.getElementById('qr-code-placeholder-icon');
+    const slipUploadBox = document.getElementById('slip-upload-label');
+    const qrCountdownBox = document.querySelector('.qr-timer');
+    const qrInstruction = document.querySelector('.qr-info-text');
+
     if (finalPrice > 0) {
       const payload = generatePromptPayPayload(receiver, finalPrice);
-      const qrImg = document.getElementById('qr-code-img');
-      const qrPlaceholderIcon = document.getElementById('qr-code-placeholder-icon');
-      
       qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(payload)}`;
       qrImg.style.display = 'block';
       qrPlaceholderIcon.style.display = 'none';
+      if (slipUploadBox) slipUploadBox.style.display = 'flex';
+      if (qrCountdownBox) qrCountdownBox.style.display = 'block';
+      if (qrInstruction) qrInstruction.textContent = 'Scan this PromptPay QR Code with any banking app to pay';
+      startQrCountdown();
+    } else {
+      qrImg.style.display = 'none';
+      qrPlaceholderIcon.style.display = 'block';
+      if (slipUploadBox) slipUploadBox.style.display = 'none';
+      if (qrCountdownBox) qrCountdownBox.style.display = 'none';
+      if (qrInstruction) qrInstruction.textContent = 'Your booking is completely free! Click "Pay Now" below to confirm.';
+      
+      const display = document.getElementById('qr-countdown');
+      if (display) display.textContent = '--:--';
     }
-    
-    startQrCountdown();
   }
 }
 
@@ -2283,9 +2321,23 @@ function submitBookingToDatabase() {
   const b = STATE.activeBooking;
   if (!b || !STATE.token) return;
 
+  let finalPrice = b.price;
+  if (STATE.appliedPromo) {
+    if (STATE.appliedPromo.price !== undefined) {
+      finalPrice = STATE.appliedPromo.price;
+    } else {
+      finalPrice = finalPrice - (finalPrice * STATE.appliedPromo.discount);
+    }
+  }
+
+  const testModeToggle = document.getElementById('test-mode-toggle');
+  if (testModeToggle && testModeToggle.checked) {
+    finalPrice = 0.1;
+  }
+
   const method = document.getElementById('pay-tab-card').classList.contains('active') ? 'Credit Card' : 'PromptPay QR';
 
-  if (method === 'PromptPay QR' && !STATE.slipImage) {
+  if (finalPrice > 0 && method === 'PromptPay QR' && !STATE.slipImage) {
     showNotification('Please upload your payment slip first.', 'error');
     return;
   }
@@ -2294,10 +2346,12 @@ function submitBookingToDatabase() {
   const payBtn = document.getElementById('pay-submit-btn');
   const originalBtnHTML = payBtn.innerHTML;
   payBtn.disabled = true;
-  payBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Payment...';
+  payBtn.innerHTML = finalPrice > 0 
+    ? '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Payment...' 
+    : '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Confirming Booking...';
 
   // Perform Payment processing on that Booking
-  showNotification('Verifying payment details...', 'info');
+  showNotification(finalPrice > 0 ? 'Verifying payment details...' : 'Confirming booking details...', 'info');
 
   fetch(`/api/payment/${b.id}`, {
     method: 'POST',
@@ -2307,7 +2361,7 @@ function submitBookingToDatabase() {
     },
     body: JSON.stringify({
       payment_method: method,
-      slip_image: STATE.slipImage,
+      slip_image: finalPrice > 0 ? STATE.slipImage : null,
       promo_code: STATE.appliedPromo ? STATE.appliedPromo.code : null
     })
   })
@@ -2327,7 +2381,7 @@ function submitBookingToDatabase() {
     if (paymentResult.booking) {
       // Clear active booking state and display E-ticket
       clearInterval(countdownTimer);
-      showNotification('Payment verified successfully!', 'success');
+      showNotification(finalPrice > 0 ? 'Payment verified successfully!' : 'Booking confirmed successfully!', 'success');
 
       // Clear uploaded slip state
       STATE.slipImage = null;
@@ -3175,6 +3229,17 @@ function handleAdminAddPromoCode(event) {
   const validUntil = document.getElementById('promo-valid-until').value;
   const maxUses = document.getElementById('promo-max-uses').value;
   const isActive = document.getElementById('promo-is-active').checked;
+
+  const parsedAmount = parseFloat(amount);
+  if (isNaN(parsedAmount) || parsedAmount < 0) {
+    showNotification('Discount amount must be a positive number', 'error');
+    return;
+  }
+
+  if (type === 'percent' && parsedAmount > 100) {
+    showNotification('Percentage discount cannot exceed 100%', 'error');
+    return;
+  }
 
   const isEdit = STATE.editingPromoId !== null;
   const url = isEdit ? `/api/admin/promo-codes/${STATE.editingPromoId}` : '/api/admin/promo-codes';

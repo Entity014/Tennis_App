@@ -54,7 +54,7 @@ export async function validateAndApplyPromo(code, basePrice) {
   let finalPrice = basePrice;
   if (promo.discountType === 'percent') {
     finalPrice = basePrice * (1 - promo.discountAmount / 100);
-  } else if (promo.discountType === 'amount') {
+  } else if (promo.discountType === 'fixed' || promo.discountType === 'amount') {
     finalPrice = Math.max(0, basePrice - promo.discountAmount);
   }
 

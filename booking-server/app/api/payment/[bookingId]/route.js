@@ -106,6 +106,55 @@ export async function POST(req, { params }) {
       }
     }
 
+    if (finalPrice === 0) {
+      const refString = `Free Promo (Code: ${promo_code || 'N/A'})`;
+      await prisma.booking.update({
+        where: { id: bId },
+        data: {
+          status: 'paid',
+          paymentStatus: 'completed',
+          paymentMethod: refString
+        }
+      });
+
+      // Increment promo code uses if applicable
+      if (promo_code) {
+        const cleanCode = promo_code.trim().toUpperCase();
+        await prisma.promoCode.update({
+          where: { code: cleanCode },
+          data: { currentUses: { increment: 1 } }
+        }).catch((err) => {
+          console.error('[Payment Route] Failed to increment promo code usage:', err.message);
+        });
+      }
+
+      // Broadcast update
+      broadcastEvent({ type: 'booking-updated' });
+
+      const updatedBooking = await prisma.booking.findUnique({
+        where: { id: bId },
+        include: { court: true }
+      });
+
+      const formattedBooking = {
+        id: updatedBooking.id,
+        user_id: updatedBooking.userId,
+        court_id: updatedBooking.courtId,
+        date: updatedBooking.date,
+        start_time: updatedBooking.startTime,
+        end_time: updatedBooking.endTime,
+        price: updatedBooking.price,
+        status: updatedBooking.status,
+        pin_code: updatedBooking.pinCode,
+        payment_method: updatedBooking.paymentMethod,
+        payment_status: updatedBooking.paymentStatus,
+        created_at: updatedBooking.createdAt,
+        court_name: updatedBooking.court.name
+      };
+
+      return NextResponse.json({ message: 'Payment successful', booking: formattedBooking });
+    }
+
     if (payment_method === 'PromptPay QR') {
       console.log('[Payment Route] Request received for bookingId:', bId);
       if (!slip_image) {

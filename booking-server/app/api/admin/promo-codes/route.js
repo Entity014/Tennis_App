@@ -47,6 +47,15 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Code and discount amount are required' }, { status: 400 });
     }
 
+    const parsedAmount = parseFloat(discountAmount);
+    if (isNaN(parsedAmount) || parsedAmount < 0) {
+      return NextResponse.json({ message: 'Discount amount must be a positive number' }, { status: 400 });
+    }
+
+    if ((discountType || 'percent') === 'percent' && parsedAmount > 100) {
+      return NextResponse.json({ message: 'Percentage discount cannot exceed 100%' }, { status: 400 });
+    }
+
     if (!/^[a-zA-Z0-9_\-]+$/.test(code.trim())) {
       return NextResponse.json({ message: 'Promo code can only contain English letters, numbers, hyphens, and underscores' }, { status: 400 });
     }
