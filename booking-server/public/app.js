@@ -1,6 +1,13 @@
+function getCookie(name) {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop().split(';').shift();
+  return null;
+}
+
 // Application State
 const STATE = {
-  token: localStorage.getItem('token') || null,
+  token: getCookie('token') || localStorage.getItem('token') || null,
   user: JSON.parse(localStorage.getItem('user')) || null,
   currentView: 'home-view',
   selectedDate: '',
@@ -449,13 +456,17 @@ function handleGoogleLiveCredentialResponse(response) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ credential: response.credential })
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error();
+    return res.json();
+  })
   .then(data => {
-    if (data.token) {
+    const token = getCookie('token');
+    if (token) {
       handleAuthSuccess(data);
       showNotification('Successfully logged in with Google!', 'success');
     } else {
-      showNotification(data.message || 'Google authentication failed', 'error');
+      showNotification('Google authentication failed', 'error');
     }
   })
   .catch(err => {
@@ -529,6 +540,7 @@ function initNavigation() {
   document.getElementById('logout-btn').addEventListener('click', () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    document.cookie = 'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
     STATE.token = null;
     STATE.user = null;
     STATE.activeBooking = null;
@@ -662,9 +674,13 @@ function initAuthForms() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     })
-    .then(res => res.json())
+    .then(async res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
     .then(data => {
-      if (data.token) {
+      const token = getCookie('token');
+      if (token) {
         handleAuthSuccess(data);
         showNotification('Welcome back!', 'success');
       } else {
@@ -672,7 +688,10 @@ function initAuthForms() {
         loginPasswordError.style.display = 'block';
       }
     })
-    .catch(() => showNotification('Unable to connect to auth server', 'error'));
+    .catch(() => {
+      loginPasswordError.textContent = 'Incorrect username or password. Please try again.';
+      loginPasswordError.style.display = 'block';
+    });
   });
 
   // Form elements for validation
@@ -981,17 +1000,44 @@ function initAuthForms() {
 }
 
 function handleAuthSuccess(data) {
-  STATE.token = data.token;
-  STATE.user = data.user;
-  localStorage.setItem('token', data.token);
-  localStorage.setItem('user', JSON.stringify(data.user));
-  checkLoggedInState();
+  STATE.token = getCookie('token') || (data && data.token);
+  localStorage.setItem('token', STATE.token || '');
 
-  // Redirect based on previous workflow target
-  if (STATE.inBookingFlow && STATE.activeBooking) {
-    createPendingBooking();
+  if (data && data.user) {
+    STATE.user = data.user;
+    localStorage.setItem('user', JSON.stringify(data.user));
+    checkLoggedInState();
+
+    // Redirect based on previous workflow target
+    if (STATE.inBookingFlow && STATE.activeBooking) {
+      createPendingBooking();
+    } else {
+      navigateTo('dashboard');
+    }
   } else {
-    navigateTo('dashboard');
+    // Fetch user details from /api/auth/me since they weren't in the response body
+    fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${STATE.token}` }
+    })
+    .then(res => {
+      if (!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(user => {
+      STATE.user = user;
+      localStorage.setItem('user', JSON.stringify(user));
+      checkLoggedInState();
+
+      // Redirect based on previous workflow target
+      if (STATE.inBookingFlow && STATE.activeBooking) {
+        createPendingBooking();
+      } else {
+        navigateTo('dashboard');
+      }
+    })
+    .catch(() => {
+      showNotification('Failed to retrieve user details', 'error');
+    });
   }
 }
 
@@ -1241,9 +1287,13 @@ function submitSimulatedSocialLogin(provider, account) {
       id: account.id
     })
   })
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error();
+    return res.json();
+  })
   .then(data => {
-    if (data.token) {
+    const token = getCookie('token');
+    if (token) {
       handleAuthSuccess(data);
       showNotification(`Logged in as ${account.name} (Simulated)`, 'success');
     } else {

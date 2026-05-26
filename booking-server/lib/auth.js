@@ -10,7 +10,27 @@ export function getJwtSecret() {
 
 export function verifyAuthToken(req) {
   const authHeader = req.headers.get('authorization');
-  const token = authHeader && authHeader.split(' ')[1];
+  let token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    // Try to get token from NextRequest cookies if present
+    if (req.cookies && typeof req.cookies.get === 'function') {
+      const cookieVal = req.cookies.get('token');
+      if (cookieVal) {
+        token = typeof cookieVal === 'string' ? cookieVal : cookieVal.value;
+      }
+    }
+    // Fallback to manual parsing from the raw Cookie header
+    if (!token) {
+      const cookieHeader = req.headers.get('cookie');
+      if (cookieHeader) {
+        const match = cookieHeader.match(/(?:^|;)\s*token\s*=\s*([^;]+)/);
+        if (match) {
+          token = match[1];
+        }
+      }
+    }
+  }
 
   if (!token) {
     return null;

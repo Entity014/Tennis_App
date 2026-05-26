@@ -31,15 +31,19 @@ export async function POST(req) {
       { expiresIn: '24h' }
     );
 
-    return NextResponse.json({
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role
-      }
+    const response = NextResponse.json({
+      message: 'Login successful'
     });
+
+    response.cookies.set('token', token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+
+    return response;
   } catch (err) {
     return NextResponse.json({ message: 'Server error during login', error: err.message }, { status: 500 });
   }

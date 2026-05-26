@@ -70,8 +70,7 @@ export async function POST(req) {
       { expiresIn: '24h' }
     );
 
-    return NextResponse.json({
-      token,
+    const response = NextResponse.json({
       user: {
         id: user.id,
         username: user.username,
@@ -81,6 +80,16 @@ export async function POST(req) {
         display_name: user.displayName
       }
     });
+
+    response.cookies.set('token', token, {
+      httpOnly: false,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 // 24 hours
+    });
+
+    return response;
   } catch (err) {
     return NextResponse.json({ message: 'Google login server error', error: err.message }, { status: 500 });
   }
