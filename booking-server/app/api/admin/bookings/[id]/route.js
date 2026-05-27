@@ -40,15 +40,88 @@ export async function PUT(req, { params }) {
 
     const { id } = await params;
     const bookingId = parseInt(id);
-    const { status } = await req.json();
+    const { status, courtId, date, startTime, endTime } = await req.json();
 
-    if (!status) {
-      return NextResponse.json({ message: 'Status is required' }, { status: 400 });
+    const booking = await prisma.booking.findUnique({
+      where: { id: bookingId }
+    });
+
+    if (!booking) {
+      return NextResponse.json({ message: 'Booking not found' }, { status: 404 });
+    }
+
+    const updateData = {};
+    if (status !== undefined) {
+      updateData.status = status;
+    }
+
+    if (courtId !== undefined || date !== undefined || startTime !== undefined || endTime !== undefined) {
+      const newCourtId = courtId !== undefined ? parseInt(courtId) : booking.courtId;
+      const newDate = date !== undefined ? date : booking.date;
+      const newStartTime = startTime !== undefined ? startTime : booking.startTime;
+      const newEndTime = endTime !== undefined ? endTime : booking.endTime;
+
+      if (newStartTime >= newEndTime) {
+        return NextResponse.json({ message: 'Start time must be before end time' }, { status: 400 });
+      }
+
+      // Validate target court
+      const court = await prisma.court.findUnique({
+        where: { id: newCourtId }
+      });
+      if (!court) {
+        return NextResponse.json({ message: 'Selected court not found' }, { status: 400 });
+      }
+      if (court.isMaintenance) {
+        return NextResponse.json({ message: 'Selected court is currently under maintenance' }, { status: 400 });
+      }
+
+      // Check overlaps with other active bookings
+      const conflictingBooking = await prisma.booking.findFirst({
+        where: {
+          courtId: newCourtId,
+          date: newDate,
+          id: { not: bookingId }, // exclude current booking
+          status: { in: ['paid', 'pending', 'refund_pending'] },
+          OR: [
+            {
+              startTime: { lte: newStartTime },
+              endTime: { gt: newStartTime }
+            },
+            {
+              startTime: { lt: newEndTime },
+              endTime: { gte: newEndTime }
+            },
+            {
+              startTime: { gte: newStartTime },
+              endTime: { lte: newEndTime }
+            }
+          ]
+        }
+      });
+
+      if (conflictingBooking) {
+        return NextResponse.json({ message: 'Timeslot conflict with an existing booking' }, { status: 400 });
+      }
+
+      updateData.courtId = newCourtId;
+      updateData.date = newDate;
+      updateData.startTime = newStartTime;
+      updateData.endTime = newEndTime;
+      
+      // Auto-restore to paid if conflict is resolved
+      if (booking.status === 'refund_pending' || booking.status === 'refunded') {
+        updateData.status = 'paid';
+      }
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ message: 'No fields to update' }, { status: 400 });
     }
 
     const updatedBooking = await prisma.booking.update({
       where: { id: bookingId },
-      data: { status }
+      data: updateData
     });
 
     // Broadcast update

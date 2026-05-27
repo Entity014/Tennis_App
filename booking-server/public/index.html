@@ -706,10 +706,12 @@
           </div>
         </div>
 
-        <!-- Admin tabs navigation -->
         <div class="admin-tabs mb-4">
           <button class="btn btn-outline active" id="btn-admin-tab-bookings" onclick="switchAdminTab('bookings')">
             <i class="fa-solid fa-calendar-days mr-1"></i> <span data-i18n="admin-tab-bookings">Bookings</span>
+          </button>
+          <button class="btn btn-outline" id="btn-admin-tab-conflicts" onclick="switchAdminTab('conflicts')">
+            <i class="fa-solid fa-triangle-exclamation mr-1"></i> <span data-i18n="admin-tab-conflicts">Conflicts / Refunds</span>
           </button>
           <button class="btn btn-outline" id="btn-admin-tab-courts" onclick="switchAdminTab('courts')">
             <i class="fa-solid fa-baseball mr-1"></i> <span data-i18n="admin-tab-courts">Courts</span>
@@ -911,6 +913,30 @@
                 </button>
               </form>
             </div>
+        </div>
+
+        <!-- Tab 5: Conflict & Refund Management -->
+        <div class="admin-tab-content glassmorphism p-4" id="admin-tab-conflicts-content" style="display: none;">
+          <h3 class="mb-4" data-i18n="admin-hdr-conflicts">Conflict & Refund Management</h3>
+          <div class="table-responsive">
+            <table class="table admin-table text-nowrap">
+              <thead>
+                <tr>
+                  <th data-i18n="admin-tbl-id">ID</th>
+                  <th data-i18n="admin-tbl-user">User</th>
+                  <th data-i18n="admin-tbl-court">Court</th>
+                  <th data-i18n="admin-tbl-date">Date</th>
+                  <th data-i18n="admin-tbl-time">Time</th>
+                  <th data-i18n="admin-tbl-price">Price</th>
+                  <th data-i18n="admin-tbl-pin">PIN</th>
+                  <th data-i18n="admin-tbl-status">Status</th>
+                  <th data-i18n="admin-tbl-action">Action</th>
+                </tr>
+              </thead>
+              <tbody id="admin-conflicts-table-body">
+                <!-- Dynamically populated conflicts -->
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
@@ -944,6 +970,47 @@
       </div>
       <div class="social-modal-body" id="policy-modal-body" style="max-height: 400px; overflow-y: auto; text-align: left; padding-right: 8px;">
         <!-- Dynamically populated content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Reschedule Booking Modal -->
+  <div id="reschedule-modal" class="social-modal-overlay" style="display: none;" onclick="if(event.target === this) closeRescheduleModal()">
+    <div class="social-modal glassmorphism" style="max-width: 500px; width: 95%;">
+      <div class="social-modal-header">
+        <span style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700;">
+          <i class="fa-solid fa-calendar-days text-neon mr-2"></i> <span id="reschedule-modal-title-text" data-i18n="reschedule-modal-title">Reschedule / Transfer Booking</span>
+        </span>
+        <button onclick="closeRescheduleModal()" class="btn-close-modal">&times;</button>
+      </div>
+      <div class="social-modal-body" style="text-align: left; padding: 20px 0;">
+        <form id="reschedule-form" onsubmit="handleAdminReschedule(event)">
+          <input type="hidden" id="reschedule-booking-id">
+          
+          <div class="form-group mb-3">
+            <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="lbl-court">Selected Court</label>
+            <select id="reschedule-court-select" class="form-input" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: white; padding: 8px; border-radius: 6px;"></select>
+          </div>
+          
+          <div class="form-group mb-3">
+            <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="search-date-label">Date</label>
+            <input type="date" id="reschedule-date-input" class="form-input" style="width: 100%; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: white; padding: 8px; border-radius: 6px;" required>
+          </div>
+          
+          <div class="form-group mb-4">
+            <label class="form-label" style="display: block; font-weight: 600; margin-bottom: 6px;" data-i18n="lbl-time">Time</label>
+            <div style="display: flex; gap: 10px; align-items: center;">
+              <select id="reschedule-start-select" class="form-input" style="flex: 1; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: white; padding: 8px; border-radius: 6px;" required></select>
+              <span style="align-self: center;">to</span>
+              <select id="reschedule-end-select" class="form-input" style="flex: 1; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.3); color: white; padding: 8px; border-radius: 6px;" required></select>
+            </div>
+          </div>
+          
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="closeRescheduleModal()" data-i18n="btn-cancel-back">Cancel</button>
+            <button type="submit" id="reschedule-confirm-btn" class="btn btn-primary btn-sm">Confirm Reschedule</button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

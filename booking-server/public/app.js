@@ -275,7 +275,13 @@ const TRANSLATIONS = {
     'admin-action-refund': 'Confirm Refund',
     'confirm-refund-prompt': 'Are you sure you want to mark this booking as refunded? (Please ensure you have manually transferred the refund via PromptPay)',
     'refund-success-notif': 'Booking status updated to refunded successfully.',
-    'processing': 'Processing...'
+    'processing': 'Processing...',
+    'admin-action-reschedule': 'Reschedule',
+    'reschedule-modal-title': 'Reschedule / Transfer Booking',
+    'reschedule-success-notif': 'Booking rescheduled successfully.',
+    'admin-tab-conflicts': 'Conflicts / Refunds',
+    'admin-hdr-conflicts': 'Conflict & Refund Management',
+    'admin-no-conflicts': 'No active conflicts or refunds pending.'
   },
   th: {
     // Navbar
@@ -464,6 +470,12 @@ const TRANSLATIONS = {
     'confirm-refund-prompt': 'คุณแน่ใจหรือไม่ว่าต้องการระบุว่ารายการจองนี้ได้รับการคืนเงินแล้ว? (กรุณาตรวจสอบว่าคุณได้โอนเงินคืนด้วยระบบ PromptPay ด้วยตนเองเรียบร้อยแล้ว)',
     'refund-success-notif': 'อัปเดตสถานะการจองเป็นคืนเงินแล้วสำเร็จ',
     'processing': 'กำลังดำเนินการ...',
+    'admin-action-reschedule': 'เปลี่ยนรอบ/สนาม',
+    'reschedule-modal-title': 'เปลี่ยนรอบ / ย้ายสนามจอง',
+    'reschedule-success-notif': 'ย้ายเวลาและสนามจองเรียบร้อยแล้ว',
+    'admin-tab-conflicts': 'เคสขัดแย้ง/คืนเงิน',
+    'admin-hdr-conflicts': 'การจัดการเคสขัดแย้งและคืนเงิน',
+    'admin-no-conflicts': 'ไม่พบประวัติเคสขัดแย้งหรือรายการรอคืนเงิน',
 
     // Notifications & Dialog Translations
     'Successfully logged in with Google!': 'เข้าสู่ระบบด้วย Google สำเร็จ!',
@@ -3818,6 +3830,11 @@ function changeSearchDateByOffset(offset) {
   bookingDatePicker.setDate(newDateStr, true);
 }
 window.changeSearchDateByOffset = changeSearchDateByOffset;
+window.confirmRefundBooking = confirmRefundBooking;
+window.openRescheduleModal = openRescheduleModal;
+window.closeRescheduleModal = closeRescheduleModal;
+window.handleAdminReschedule = handleAdminReschedule;
+window.loadAdminConflicts = loadAdminConflicts;
 
 // --- Admin Panel Functions ---
 let activeAdminTab = 'bookings';
@@ -3842,6 +3859,8 @@ function switchAdminTab(tabName) {
   // Load content if needed
   if (tabName === 'bookings') {
     loadAdminBookings();
+  } else if (tabName === 'conflicts') {
+    loadAdminConflicts();
   } else if (tabName === 'courts') {
     loadAdminCourts();
   } else if (tabName === 'users') {
@@ -3916,6 +3935,11 @@ function loadAdminBookings() {
                 <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
               </button>
             ` : ''}
+            ${b.status === 'paid' || b.status === 'pending' || b.status === 'refund_pending' ? `
+              <button class="btn btn-outline btn-sm text-neon" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
+                <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
+              </button>
+            ` : ''}
             <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
               <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
             </button>
@@ -3926,6 +3950,64 @@ function loadAdminBookings() {
     });
   })
   .catch(() => showNotification('Error loading bookings', 'error'));
+}
+
+function loadAdminConflicts() {
+  fetch('/api/admin/bookings', {
+    headers: { 'Authorization': `Bearer ${STATE.token}` }
+  })
+  .then(res => res.json())
+  .then(bookings => {
+    const tbody = document.getElementById('admin-conflicts-table-body');
+    tbody.innerHTML = '';
+    
+    // Filter only conflicts (refund_pending or refunded)
+    const conflicts = bookings.filter(b => b.status === 'refund_pending' || b.status === 'refunded');
+
+    if (conflicts.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">${t('admin-no-conflicts', 'No active conflicts or refunds pending.')}</td></tr>`;
+      return;
+    }
+
+    conflicts.forEach(b => {
+      const tr = document.createElement('tr');
+      let statusClass = 'status-pending';
+      if (b.status === 'paid') statusClass = 'status-paid';
+      else if (b.status === 'refund_pending') statusClass = 'status-refund-pending';
+      else if (b.status === 'refunded') statusClass = 'status-refunded';
+      else if (b.status === 'completed') statusClass = 'status-completed';
+
+      tr.innerHTML = `
+        <td>${b.id}</td>
+        <td><strong>${b.username}</strong><br><small class="text-muted">${b.email}</small></td>
+        <td>${b.court_name}</td>
+        <td>${formatDateDMY(b.date)}</td>
+        <td>${b.start_time.substring(0, 5)} - ${b.end_time.substring(0, 5)}</td>
+        <td>฿${b.price}</td>
+        <td><code>${b.pin_code}</code></td>
+        <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
+        <td>
+          <div style="display: inline-flex; gap: 8px; align-items: center;">
+            ${b.status === 'refund_pending' ? `
+              <button class="btn btn-success-sm" onclick="confirmRefundBooking(${b.id}, this)">
+                <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
+              </button>
+            ` : ''}
+            ${b.status === 'paid' || b.status === 'pending' || b.status === 'refund_pending' ? `
+              <button class="btn btn-outline btn-sm text-neon" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
+                <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
+              </button>
+            ` : ''}
+            <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
+              <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+            </button>
+          </div>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  })
+  .catch(() => showNotification('Error loading conflicts list', 'error'));
 }
 
 function confirmRefundBooking(bookingId, btn) {
@@ -3952,12 +4034,139 @@ function confirmRefundBooking(bookingId, btn) {
   })
   .then(() => {
     showNotification(t('refund-success-notif', 'Booking status updated to refunded successfully.'), 'success');
-    loadAdminBookings();
+    if (activeAdminTab === 'conflicts') {
+      loadAdminConflicts();
+    } else {
+      loadAdminBookings();
+    }
   })
   .catch(err => {
     showNotification(err.message, 'error');
     btn.disabled = false;
     btn.innerHTML = originalHtml;
+  });
+}
+
+function openRescheduleModal(bookingId, currentCourtId, currentDate, currentStartTime, currentEndTime) {
+  document.getElementById('reschedule-booking-id').value = bookingId;
+  document.getElementById('reschedule-date-input').value = currentDate;
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  document.getElementById('reschedule-date-input').min = `${yyyy}-${mm}-${dd}`;
+
+  fetch('/api/courts')
+  .then(res => res.json())
+  .then(courts => {
+    const courtSelect = document.getElementById('reschedule-court-select');
+    courtSelect.innerHTML = '';
+    courts.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      const maintTxt = c.is_maintenance ? ` (${currentLang === 'th' ? 'ปิดปรับปรุง' : 'Maintenance'})` : '';
+      opt.textContent = `${currentLang === 'th' && c.name_th ? c.name_th : c.name}${maintTxt}`;
+      opt.disabled = c.is_maintenance;
+      opt.selected = c.id === currentCourtId;
+      courtSelect.appendChild(opt);
+    });
+  })
+  .catch(() => showNotification('Error loading courts list', 'error'));
+
+  const startSelect = document.getElementById('reschedule-start-select');
+  const endSelect = document.getElementById('reschedule-end-select');
+  
+  startSelect.innerHTML = '';
+  endSelect.innerHTML = '';
+
+  const formatHour = h => h < 10 ? `0${h}:00` : `${h}:00`;
+
+  for (let h = 6; h <= 22; h++) {
+    const timeStr = formatHour(h);
+    const opt = document.createElement('option');
+    opt.value = timeStr;
+    opt.textContent = timeStr;
+    opt.selected = timeStr.substring(0, 5) === currentStartTime.substring(0, 5);
+    startSelect.appendChild(opt);
+  }
+
+  const currentStartHour = parseInt(currentStartTime.split(':')[0]);
+  for (let h = currentStartHour + 1; h <= 23; h++) {
+    const timeStr = formatHour(h);
+    const opt = document.createElement('option');
+    opt.value = timeStr;
+    opt.textContent = timeStr;
+    opt.selected = timeStr.substring(0, 5) === currentEndTime.substring(0, 5);
+    endSelect.appendChild(opt);
+  }
+
+  startSelect.onchange = () => {
+    const startHour = parseInt(startSelect.value.split(':')[0]);
+    endSelect.innerHTML = '';
+    for (let h = startHour + 1; h <= 23; h++) {
+      const timeStr = formatHour(h);
+      const opt = document.createElement('option');
+      opt.value = timeStr;
+      opt.textContent = timeStr;
+      if (h === startHour + 1) opt.selected = true;
+      endSelect.appendChild(opt);
+    }
+  };
+
+  document.getElementById('reschedule-modal').style.display = 'flex';
+}
+
+function closeRescheduleModal() {
+  document.getElementById('reschedule-modal').style.display = 'none';
+  document.getElementById('reschedule-form').reset();
+}
+
+function handleAdminReschedule(event) {
+  event.preventDefault();
+  
+  const bookingId = document.getElementById('reschedule-booking-id').value;
+  const courtId = parseInt(document.getElementById('reschedule-court-select').value);
+  const date = document.getElementById('reschedule-date-input').value;
+  const startTime = document.getElementById('reschedule-start-select').value;
+  const endTime = document.getElementById('reschedule-end-select').value;
+  
+  const confirmBtn = document.getElementById('reschedule-confirm-btn');
+  confirmBtn.disabled = true;
+  const originalHtml = confirmBtn.innerHTML;
+  confirmBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> ${t('processing', 'Processing...')}`;
+
+  fetch(`/api/admin/bookings/${bookingId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.token}`
+    },
+    body: JSON.stringify({
+      courtId,
+      date,
+      startTime,
+      endTime
+    })
+  })
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error rescheduling booking');
+    return data;
+  })
+  .then(() => {
+    showNotification(t('reschedule-success-notif', 'Booking rescheduled successfully.'), 'success');
+    closeRescheduleModal();
+    if (activeAdminTab === 'conflicts') {
+      loadAdminConflicts();
+    } else {
+      loadAdminBookings();
+    }
+  })
+  .catch(err => {
+    showNotification(err.message, 'error');
+    confirmBtn.disabled = false;
+    confirmBtn.innerHTML = originalHtml;
   });
 }
 
@@ -4182,6 +4391,10 @@ function deleteAdminBooking(id, btn) {
     const tbody = document.getElementById('admin-bookings-table-body');
     if (tbody && tbody.children.length === 0) {
       tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">No bookings found in database.</td></tr>`;
+    }
+    const tbodyConflicts = document.getElementById('admin-conflicts-table-body');
+    if (tbodyConflicts && tbodyConflicts.children.length === 0) {
+      tbodyConflicts.innerHTML = `<tr><td colspan="9" class="text-center text-muted">${t('admin-no-conflicts', 'No active conflicts or refunds pending.')}</td></tr>`;
     }
 
     showNotification('Booking deleted', 'success');
