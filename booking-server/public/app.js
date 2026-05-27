@@ -3935,15 +3935,20 @@ function loadAdminBookings() {
         <td><code>${b.pin_code}</code></td>
         <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
-          <div style="display: inline-flex; gap: 8px; align-items: center;">
-            ${b.status === 'paid' || b.status === 'pending' ? `
-              <button class="btn btn-outline btn-sm text-neon" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
-                <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
-              </button>
-            ` : ''}
-            <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
-              <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+          <div class="kebab-menu">
+            <button class="kebab-trigger" onclick="toggleKebab(event, this)">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
+            <div class="kebab-dropdown">
+              ${b.status === 'paid' || b.status === 'pending' ? `
+                <button class="kebab-item kebab-reschedule" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
+                  <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
+                </button>
+              ` : ''}
+              <button class="kebab-item kebab-delete" onclick="deleteAdminBooking(${b.id}, this)">
+                <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+              </button>
+            </div>
           </div>
         </td>
       `;
@@ -3988,20 +3993,25 @@ function loadAdminConflicts() {
         <td><code>${b.pin_code}</code></td>
         <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
-          <div style="display: inline-flex; gap: 8px; align-items: center;">
-            ${b.status === 'refund_pending' ? `
-              <button class="btn btn-success-sm" onclick="confirmRefundBooking(${b.id}, this)">
-                <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
-              </button>
-            ` : ''}
-            ${b.status === 'paid' || b.status === 'pending' || b.status === 'refund_pending' ? `
-              <button class="btn btn-outline btn-sm text-neon" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
-                <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
-              </button>
-            ` : ''}
-            <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
-              <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+          <div class="kebab-menu">
+            <button class="kebab-trigger" onclick="toggleKebab(event, this)">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
             </button>
+            <div class="kebab-dropdown">
+              ${b.status === 'refund_pending' ? `
+                <button class="kebab-item kebab-refund" onclick="confirmRefundBooking(${b.id}, this)">
+                  <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
+                </button>
+              ` : ''}
+              ${b.status === 'paid' || b.status === 'pending' || b.status === 'refund_pending' ? `
+                <button class="kebab-item kebab-reschedule" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
+                  <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
+                </button>
+              ` : ''}
+              <button class="kebab-item kebab-delete" onclick="deleteAdminBooking(${b.id}, this)">
+                <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+              </button>
+            </div>
           </div>
         </td>
       `;
@@ -4368,6 +4378,22 @@ function resetCourtForm() {
   const cancelBtn = document.getElementById('cancel-edit-court-btn');
   if (cancelBtn) cancelBtn.remove();
 }
+
+// ── Kebab Action Menu Toggle ──
+function toggleKebab(event, triggerBtn) {
+  event.stopPropagation();
+  const menu = triggerBtn.closest('.kebab-menu');
+  // Close all other open menus first
+  document.querySelectorAll('.kebab-menu.open').forEach(m => {
+    if (m !== menu) m.classList.remove('open');
+  });
+  menu.classList.toggle('open');
+}
+
+// Close all kebab menus when clicking outside
+document.addEventListener('click', () => {
+  document.querySelectorAll('.kebab-menu.open').forEach(m => m.classList.remove('open'));
+});
 
 function deleteAdminBooking(id, btn) {
   if (!confirm(translateConfirm('Are you sure you want to delete/cancel this booking?'))) return;
