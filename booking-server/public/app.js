@@ -281,7 +281,8 @@ const TRANSLATIONS = {
     'reschedule-success-notif': 'Booking rescheduled successfully.',
     'admin-tab-conflicts': 'Conflicts / Refunds',
     'admin-hdr-conflicts': 'Conflict & Refund Management',
-    'admin-no-conflicts': 'No active conflicts or refunds pending.'
+    'admin-no-conflicts': 'No active conflicts or refunds pending.',
+    'admin-court-maintenance': 'Under Maintenance'
   },
   th: {
     // Navbar
@@ -596,6 +597,7 @@ const TRANSLATIONS = {
     'Promo code applied successfully': 'ใช้รหัสโปรโมชั่นสำเร็จ!',
     'Promo code applied successfully.': 'ใช้รหัสโปรโมชั่นสำเร็จ!',
     'Invalid coupon or promo code': 'คูปองหรือรหัสโปรโมชั่นไม่ถูกต้อง',
+    'admin-court-maintenance': 'ปิดปรับปรุงสนาม'
   }
 };
 
