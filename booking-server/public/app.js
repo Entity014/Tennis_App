@@ -650,6 +650,8 @@ function applyLanguage(lang) {
   if (typeof STATE !== 'undefined') {
     if (STATE.currentView === 'dashboard-view' && typeof loadUserBookings === 'function') {
       loadUserBookings();
+    } else if (STATE.currentView === 'confirmation-view' && STATE.activeBooking) {
+      renderETicket(STATE.activeBooking);
     } else if (STATE.currentView === 'admin-view') {
       const activeTabEl = document.querySelector('#admin-sidebar .active');
       const activeTab = activeTabEl ? activeTabEl.dataset.tab : 'dashboard';
@@ -3473,6 +3475,7 @@ function submitBookingToDatabase() {
 }
 
 function renderETicket(booking) {
+  STATE.activeBooking = booking;
   document.getElementById('ticket-court').textContent = booking.court_name;
   document.getElementById('ticket-date').textContent = formatDateDMY(booking.date);
   document.getElementById('ticket-time').textContent = `${booking.start_time} - ${booking.end_time}`;

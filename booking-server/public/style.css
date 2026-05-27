@@ -2024,7 +2024,7 @@ body.light-theme .ticket-footer {
 }
 
 svg.ticket-barcode {
-  display: block !important;
+  display: block;
   height: 46px !important;
   width: 160px !important;
   background: #fff !important;
