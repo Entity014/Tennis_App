@@ -34,6 +34,7 @@ model Court {
   description   String?
   descriptionTh String?   @map("description_th")
   imageName     String?   @map("image_name")
+  isMaintenance Boolean   @default(false) @map("is_maintenance")
   bookings      Booking[]
 
   @@map("courts")

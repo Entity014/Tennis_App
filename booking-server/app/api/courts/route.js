@@ -28,7 +28,8 @@ export async function GET(req) {
         price_per_hour: c.pricePerHour,
         description: c.description,
         description_th: c.descriptionTh,
-        image_name: c.imageName
+        image_name: c.imageName,
+        is_maintenance: c.isMaintenance
       })), {
         headers: {
           'Cache-Control': 'no-store, max-age=0, must-revalidate'
@@ -66,6 +67,7 @@ export async function GET(req) {
         description: court.description,
         description_th: court.descriptionTh,
         image_name: court.imageName,
+        is_maintenance: court.isMaintenance,
         booked_slots: bookedSlots
       };
     });

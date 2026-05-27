@@ -52,6 +52,10 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Court not found' }, { status: 404 });
     }
 
+    if (court.isMaintenance) {
+      return NextResponse.json({ message: 'This court is currently closed for maintenance.' }, { status: 400 });
+    }
+
     const startHour = parseInt(start_time.split(':')[0]);
     const endHour = parseInt(end_time.split(':')[0]);
     const duration = endHour - startHour;

@@ -2248,30 +2248,44 @@ function renderFeaturedCourts(courts) {
     card.className = 'court-card';
     
     let desc = translateCourtDesc(court);
+    const isMaintenance = court.is_maintenance;
+    const btnText = isMaintenance 
+      ? (currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง') 
+      : (currentLang === 'en' ? 'Book Now' : 'จองตอนนี้');
+    const btnClass = isMaintenance ? 'btn btn-outline btn-sm btn-disabled' : 'btn btn-primary btn-sm btn-book';
     
     card.innerHTML = `
       <div class="court-img-container">
         <i class="fa-solid fa-baseball court-img-svg"></i>
         <div class="court-img-bg-shape"></div>
+        ${isMaintenance ? `
+          <div class="court-maintenance-overlay" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
+            <i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}
+          </div>
+        ` : ''}
       </div>
       <div class="court-card-body">
         <h3 class="court-card-title">${translateCourtName(court)}</h3>
         <p class="court-card-desc">${desc}</p>
         <div class="court-card-footer">
-          <div class="court-card-price">
+          <div class="court-card-price" style="${isMaintenance ? 'opacity: 0.5;' : ''}">
             <span class="price">฿${court.price_per_hour}</span>
             <span class="label">${currentLang === 'en' ? 'per hour' : 'ต่อชั่วโมง'}</span>
           </div>
-          <button class="btn btn-primary btn-sm btn-book" data-id="${court.id}">${currentLang === 'en' ? 'Book Now' : 'จองตอนนี้'}</button>
+          <button class="${btnClass}" data-id="${court.id}" ${isMaintenance ? 'disabled' : ''}>${btnText}</button>
         </div>
       </div>
     `;
     
-    card.style.cursor = 'pointer';
-    card.addEventListener('click', () => {
-      STATE.activeCourtId = court.id;
-      navigateTo('timeslot');
-    });
+    if (!isMaintenance) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        STATE.activeCourtId = court.id;
+        navigateTo('timeslot');
+      });
+    } else {
+      card.style.cursor = 'default';
+    }
 
     grid.appendChild(card);
   });
@@ -2317,32 +2331,47 @@ function renderModalCourts(courts, grid) {
   courts.forEach(court => {
     const card = document.createElement('div');
     card.className = 'court-card';
-    card.style.cursor = 'pointer';
     
     let desc = translateCourtDesc(court);
+    const isMaintenance = court.is_maintenance;
+    const btnText = isMaintenance 
+      ? (currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง') 
+      : (currentLang === 'en' ? 'Book Now' : 'จองตอนนี้');
+    const btnClass = isMaintenance ? 'btn btn-outline btn-sm btn-disabled' : 'btn btn-primary btn-sm btn-book';
 
     card.innerHTML = `
       <div class="court-img-container">
         <i class="fa-solid fa-baseball court-img-svg"></i>
         <div class="court-img-bg-shape"></div>
+        ${isMaintenance ? `
+          <div class="court-maintenance-overlay" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
+            <i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}
+          </div>
+        ` : ''}
       </div>
       <div class="court-card-body">
         <h3 class="court-card-title">${translateCourtName(court)}</h3>
         <p class="court-card-desc">${desc}</p>
         <div class="court-card-footer">
-          <div class="court-card-price">
+          <div class="court-card-price" style="${isMaintenance ? 'opacity: 0.5;' : ''}">
             <span class="price">฿${court.price_per_hour}</span>
             <span class="label">${currentLang === 'en' ? 'per hour' : 'ต่อชั่วโมง'}</span>
           </div>
-          <button class="btn btn-primary btn-sm btn-book" data-id="${court.id}">${currentLang === 'en' ? 'Book Now' : 'จองตอนนี้'}</button>
+          <button class="${btnClass}" data-id="${court.id}" ${isMaintenance ? 'disabled' : ''}>${btnText}</button>
         </div>
       </div>
     `;
-    card.addEventListener('click', () => {
-      closeExploreCourtsModal();
-      STATE.activeCourtId = court.id;
-      navigateTo('timeslot');
-    });
+    
+    if (!isMaintenance) {
+      card.style.cursor = 'pointer';
+      card.addEventListener('click', () => {
+        closeExploreCourtsModal();
+        STATE.activeCourtId = court.id;
+        navigateTo('timeslot');
+      });
+    } else {
+      card.style.cursor = 'default';
+    }
     grid.appendChild(card);
   });
 }
@@ -2511,8 +2540,13 @@ function loadCourtsAvailability() {
 
     courts.forEach(court => {
       const tab = document.createElement('button');
-      tab.className = `court-tab-btn ${court.id === STATE.activeCourtId ? 'active' : ''}`;
-      tab.textContent = court.name;
+      if (court.is_maintenance) {
+        tab.className = `court-tab-btn maintenance-tab ${court.id === STATE.activeCourtId ? 'active' : ''}`;
+        tab.innerHTML = `<i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${translateCourtName(court)}`;
+      } else {
+        tab.className = `court-tab-btn ${court.id === STATE.activeCourtId ? 'active' : ''}`;
+        tab.textContent = translateCourtName(court);
+      }
       tab.addEventListener('click', () => {
         STATE.activeCourtId = court.id;
         STATE.selectedSlots = [];
@@ -2561,6 +2595,17 @@ function renderTimeGrid(court) {
   grid.innerHTML = '';
 
   if (!court) return;
+
+  if (court.is_maintenance) {
+    grid.innerHTML = `
+      <div class="maintenance-notice text-center p-5 w-100" style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.08); border: 1px dashed rgba(239, 68, 68, 0.3); border-radius: 12px; margin: 20px 0;">
+        <i class="fa-solid fa-screwdriver-wrench mb-3" style="font-size: 3rem; color: #ef4444;"></i>
+        <h4 class="text-white mb-2" style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700;">${currentLang === 'en' ? 'Court Closed for Maintenance' : 'สนามปิดปรับปรุงชั่วคราว'}</h4>
+        <p class="text-muted" style="font-size: 0.9rem;">${currentLang === 'en' ? 'This court is currently undergoing maintenance. Please select another court.' : 'สนามนี้กำลังอยู่ระหว่างการปิดปรับปรุงระบบ กรุณาเลือกสนามอื่น'}</p>
+      </div>
+    `;
+    return;
+  }
 
   // Render slots from 06:00 to 22:00
   for (let hour = 6; hour < 22; hour++) {
@@ -3769,11 +3814,11 @@ function loadAdminCourts() {
       const escapedDescTh = (c.description_th || '').replace(/'/g, "\\'");
       tr.innerHTML = `
         <td>${c.id}</td>
-        <td><strong>${translateCourtName(c)}</strong></td>
+        <td><strong>${translateCourtName(c)}</strong>${c.is_maintenance ? ` <span class="badge badge-danger ml-1" style="font-size:0.7rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">${currentLang === 'th' ? 'ปิดปรับปรุง' : 'Maintenance'}</span>` : ''}</td>
         <td>฿${c.price_per_hour}/hr</td>
         <td><small class="text-muted">${translateCourtDesc(c) || '-'}</small></td>
         <td>
-          <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', '${escapedNameTh}', ${c.price_per_hour}, '${escapedDesc}', '${escapedDescTh}', '${c.image_name}')" data-i18n="admin-action-edit">
+          <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', '${escapedNameTh}', ${c.price_per_hour}, '${escapedDesc}', '${escapedDescTh}', '${c.image_name}', ${c.is_maintenance})" data-i18n="admin-action-edit">
             <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
           </button>
           <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminCourt(${c.id})" data-i18n="admin-action-delete">
@@ -3796,6 +3841,7 @@ function handleAdminAddCourt(event) {
   const desc = document.getElementById('court-desc-input').value;
   const desc_th = document.getElementById('court-desc-th-input').value;
   const img = document.getElementById('court-image-input').value;
+  const is_maintenance = document.getElementById('court-is-maintenance').checked;
 
   const url = STATE.editingCourtId ? `/api/admin/courts/${STATE.editingCourtId}` : '/api/admin/courts';
   const method = STATE.editingCourtId ? 'PUT' : 'POST';
@@ -3812,7 +3858,8 @@ function handleAdminAddCourt(event) {
       price_per_hour: price,
       description: desc,
       description_th: desc_th,
-      image_name: img
+      image_name: img,
+      is_maintenance
     })
   })
   .then(async res => {
@@ -3877,7 +3924,7 @@ function handleAdminAddCourt(event) {
   .catch(err => showNotification(err.message || 'Error saving court details', 'error'));
 }
 
-function startEditCourt(id, name, nameTh, price, desc, descTh, img) {
+function startEditCourt(id, name, nameTh, price, desc, descTh, img, isMaintenance) {
   STATE.editingCourtId = id;
   
   document.getElementById('court-name-input').value = name;
@@ -3886,6 +3933,7 @@ function startEditCourt(id, name, nameTh, price, desc, descTh, img) {
   document.getElementById('court-desc-input').value = desc || '';
   document.getElementById('court-desc-th-input').value = descTh || '';
   document.getElementById('court-image-input').value = img || 'court_indoor_a';
+  document.getElementById('court-is-maintenance').checked = !!isMaintenance;
   
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {
@@ -3917,6 +3965,7 @@ function startEditCourt(id, name, nameTh, price, desc, descTh, img) {
 function resetCourtForm() {
   STATE.editingCourtId = null;
   document.getElementById('admin-add-court-form').reset();
+  document.getElementById('court-is-maintenance').checked = false;
   
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {

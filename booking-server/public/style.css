@@ -1136,6 +1136,16 @@ body.light-theme .court-price-box {
   color: var(--neon-green);
 }
 
+.court-tab-btn.maintenance-tab {
+  border-color: rgba(239, 68, 68, 0.4) !important;
+  color: #ef4444 !important;
+}
+
+.court-tab-btn.maintenance-tab.active {
+  background: rgba(239, 68, 68, 0.15) !important;
+  border-color: #ef4444 !important;
+}
+
 .timeslot-grid-card {
   padding: 24px;
 }
