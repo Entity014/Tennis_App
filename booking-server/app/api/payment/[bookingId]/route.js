@@ -77,6 +77,14 @@ export async function POST(req, { params }) {
       return NextResponse.json({ message: 'Booking not found' }, { status: 404 });
     }
 
+    const court = await prisma.court.findUnique({
+      where: { id: booking.courtId }
+    });
+
+    if (!court || court.isMaintenance) {
+      return NextResponse.json({ message: 'Court is under maintenance or not found' }, { status: 400 });
+    }
+
     if (booking.status === 'paid') {
       return NextResponse.json({ message: 'Booking is already paid' }, { status: 400 });
     }

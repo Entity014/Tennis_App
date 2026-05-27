@@ -2221,6 +2221,18 @@ body.light-theme .booking-court-avatar {
   border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
+.status-refund-pending {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-refunded {
+  background: rgba(148, 163, 184, 0.15);
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}
+
 .btn-danger-sm {
   display: inline-flex;
   align-items: center;
@@ -2241,6 +2253,28 @@ body.light-theme .booking-court-avatar {
   background: rgba(239, 68, 68, 0.2);
   border-color: #ef4444;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+.btn-success-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  transition: all var(--transition-speed);
+}
+
+.btn-success-sm:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.2);
 }
 
 /* Empty State */

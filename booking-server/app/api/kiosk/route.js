@@ -30,6 +30,9 @@ export async function GET(req) {
         status: 'paid',
         date: {
           gte: dateLimitStr
+        },
+        court: {
+          isMaintenance: false
         }
       },
       select: {

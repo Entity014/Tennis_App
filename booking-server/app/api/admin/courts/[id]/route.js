@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
+import { broadcastEvent } from '@/lib/sse';
 
 export async function PUT(req, { params }) {
   try {
@@ -50,6 +51,35 @@ export async function PUT(req, { params }) {
         isMaintenance: !!is_maintenance
       }
     });
+
+    if (!!is_maintenance) {
+      const todayStr = new Date(Date.now() + 7 * 60 * 60 * 1000).toISOString().split('T')[0];
+      // Find all upcoming paid bookings and set to refund_pending
+      await prisma.booking.updateMany({
+        where: {
+          courtId: courtId,
+          status: 'paid',
+          date: {
+            gte: todayStr
+          }
+        },
+        data: {
+          status: 'refund_pending'
+        }
+      });
+      
+      // Delete upcoming unpaid pending bookings
+      await prisma.booking.deleteMany({
+        where: {
+          courtId: courtId,
+          status: 'pending',
+          date: {
+            gte: todayStr
+          }
+        }
+      });
+      broadcastEvent({ type: 'booking-updated' });
+    }
 
     return NextResponse.json({ message: 'Court updated successfully' });
   } catch (err) {

@@ -265,8 +265,17 @@ const TRANSLATIONS = {
     'dashboard-stat-upcoming': 'Upcoming Bookings',
     'dashboard-stat-total': 'Total Bookings',
     'dashboard-section-title': 'Your Bookings',
-    'dashboard-empty-txt': "You don't have any bookings yet.",
-    'dashboard-empty-btn': 'Book Your First Court'
+    'dashboard-empty-btn': 'Book Your First Court',
+    'pending': 'Pending',
+    'paid': 'Paid',
+    'refund_pending': 'Refund Pending',
+    'refunded': 'Refunded',
+    'completed': 'Completed',
+    'expired': 'Expired',
+    'admin-action-refund': 'Confirm Refund',
+    'confirm-refund-prompt': 'Are you sure you want to mark this booking as refunded? (Please ensure you have manually transferred the refund via PromptPay)',
+    'refund-success-notif': 'Booking status updated to refunded successfully.',
+    'processing': 'Processing...'
   },
   th: {
     // Navbar
@@ -444,8 +453,17 @@ const TRANSLATIONS = {
     'admin-status-limit': 'สิทธิ์เต็มแล้ว',
     'admin-action-cancelling': 'กำลังยกเลิก...',
     'admin-action-cancel': 'ยกเลิก',
-    'admin-action-edit': 'แก้ไข',
     'admin-action-delete': 'ลบ',
+    'pending': 'รอดำเนินการ',
+    'paid': 'ชำระเงินแล้ว',
+    'refund_pending': 'รอคืนเงิน',
+    'refunded': 'คืนเงินแล้ว',
+    'completed': 'เสร็จสิ้น',
+    'expired': 'หมดอายุ',
+    'admin-action-refund': 'ยืนยันคืนเงิน',
+    'confirm-refund-prompt': 'คุณแน่ใจหรือไม่ว่าต้องการระบุว่ารายการจองนี้ได้รับการคืนเงินแล้ว? (กรุณาตรวจสอบว่าคุณได้โอนเงินคืนด้วยระบบ PromptPay ด้วยตนเองเรียบร้อยแล้ว)',
+    'refund-success-notif': 'อัปเดตสถานะการจองเป็นคืนเงินแล้วสำเร็จ',
+    'processing': 'กำลังดำเนินการ...',
 
     // Notifications & Dialog Translations
     'Successfully logged in with Google!': 'เข้าสู่ระบบด้วย Google สำเร็จ!',
@@ -3462,7 +3480,43 @@ function renderETicket(booking) {
     const bookingEndStr = `${booking.date}T${booking.end_time}:00+07:00`;
     const isExpired = booking.status === 'completed' || booking.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
     
-    if (booking.court_is_maintenance) {
+    if (booking.status === 'refund_pending') {
+      pinEl.textContent = currentLang === 'th' ? 'รอคืนเงิน' : 'REFUND PENDING';
+      pinEl.style.fontSize = '1.8rem';
+      pinEl.style.letterSpacing = '1px';
+      pinEl.style.color = '#ef4444';
+      pinEl.style.textDecoration = 'none';
+      
+      document.querySelector('.pin-instruction').style.display = 'block';
+      document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
+        ? `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> สนามปิดปรับปรุงชั่วคราวในช่วงเวลานี้ เพื่อขอรับเงินคืนผ่าน PromptPay กรุณาติดต่อเจ้าหน้าที่ที่:<br>
+           <div class="mt-2" style="padding-left: 20px; text-align: left; display: inline-block;">
+             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>เบอร์โทร:</strong> 02-123-4567<br>
+             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>อีเมล:</strong> support@minitennis.com<br>
+             <i class="fa-brands fa-line mr-1 mt-1 text-neon"></i> <strong>Line:</strong> @MiniTennis
+           </div><br>
+           <span style="display: block;" class="mt-2 text-muted">พร้อมแจ้งรหัสอ้างอิงการจอง (REF) ด้านล่าง</span>`
+        : `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> Court is under maintenance. To claim your PromptPay refund, please contact staff at:<br>
+           <div class="mt-2" style="padding-left: 20px; text-align: left; display: inline-block;">
+             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>Hotline:</strong> 02-123-4567<br>
+             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>Email:</strong> support@minitennis.com<br>
+             <i class="fa-brands fa-line mr-1 mt-1 text-neon"></i> <strong>Line:</strong> @MiniTennis
+           </div><br>
+           <span style="display: block;" class="mt-2 text-muted">along with your Booking Reference (REF) below.</span>`;
+      if (barcodeEl) barcodeEl.style.display = 'none';
+    } else if (booking.status === 'refunded') {
+      pinEl.textContent = currentLang === 'th' ? 'คืนเงินแล้ว' : 'REFUNDED';
+      pinEl.style.fontSize = '1.8rem';
+      pinEl.style.letterSpacing = '1px';
+      pinEl.style.color = '#94a3b8';
+      pinEl.style.textDecoration = 'none';
+      
+      document.querySelector('.pin-instruction').style.display = 'block';
+      document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
+        ? `<i class="fa-solid fa-circle-check mr-1" style="color: #10b981;"></i> รายการจองนี้ได้รับการคืนเงินเรียบร้อยแล้ว`
+        : `<i class="fa-solid fa-circle-check mr-1" style="color: #10b981;"></i> This booking has been successfully refunded.`;
+      if (barcodeEl) barcodeEl.style.display = 'none';
+    } else if (booking.court_is_maintenance) {
       pinEl.style.color = '#ef4444';
       pinEl.style.textDecoration = 'line-through';
       document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
@@ -3556,7 +3610,55 @@ function loadUserBookings() {
       // Check if booking has expired (end_time passed or marked completed/expired on server)
       const bookingEndStr = `${b.date}T${b.end_time}:00+07:00`;
       const isExpired = b.status === 'completed' || b.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
-      const showMaintenanceWarning = b.court_is_maintenance && !isExpired;
+      const showMaintenanceWarning = b.court_is_maintenance && !isExpired && b.status !== 'refund_pending' && b.status !== 'refunded';
+
+      let pinBadgeHtml = '';
+      if (isPaid && b.status !== 'refund_pending' && b.status !== 'refunded') {
+        if (isExpired) {
+          pinBadgeHtml = `<span class="badge" style="background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);">PIN: ${formattedPin}</span>`;
+        } else {
+          pinBadgeHtml = `<span class="badge badge-neon">PIN: ${formattedPin}</span>`;
+        }
+      }
+
+      let statusBadgeClass = 'status-pending';
+      let statusBadgeText = currentLang === 'th' ? 'รอดำเนินการ' : 'PENDING';
+      let statusBadgeStyle = 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);';
+
+      if (b.status === 'paid') {
+        if (isExpired) {
+          statusBadgeClass = 'status-completed';
+          statusBadgeText = currentLang === 'th' ? 'เสร็จสิ้น' : 'Completed';
+          statusBadgeStyle = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);';
+        } else {
+          statusBadgeClass = 'status-paid';
+          statusBadgeText = currentLang === 'th' ? 'ชำระเงินแล้ว' : 'Paid';
+          statusBadgeStyle = ''; // default defined in CSS
+        }
+      } else if (b.status === 'refund_pending') {
+        statusBadgeClass = 'status-refund-pending';
+        statusBadgeText = currentLang === 'th' ? 'รอคืนเงิน' : 'Refund Pending';
+        statusBadgeStyle = ''; // default defined in CSS
+      } else if (b.status === 'refunded') {
+        statusBadgeClass = 'status-refunded';
+        statusBadgeText = currentLang === 'th' ? 'คืนเงินแล้ว' : 'Refunded';
+        statusBadgeStyle = ''; // default defined in CSS
+      } else if (b.status === 'completed') {
+        statusBadgeClass = 'status-completed';
+        statusBadgeText = currentLang === 'th' ? 'เสร็จสิ้น' : 'Completed';
+        statusBadgeStyle = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);';
+      } else if (b.status === 'expired') {
+        statusBadgeClass = 'status-completed';
+        statusBadgeText = currentLang === 'th' ? 'หมดอายุ' : 'Expired';
+        statusBadgeStyle = 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);';
+      }
+
+      let actionButtonHtml = '';
+      if (b.status === 'pending') {
+        actionButtonHtml = `<button class="btn btn-danger btn-sm btn-cancel-booking" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">${currentLang === 'th' ? 'ยกเลิก' : 'Cancel'}</button>`;
+      } else {
+        actionButtonHtml = `<button class="btn btn-outline btn-sm btn-ticket-view">${currentLang === 'th' ? 'ดูตั๋วการจอง' : 'View Ticket'}</button>`;
+      }
 
       row.innerHTML = `
         <div class="booking-info-main">
@@ -3577,42 +3679,26 @@ function loadUserBookings() {
             ? `<span class="booking-status-badge badge-danger" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight:600; white-space:nowrap; padding: 4px 10px; border-radius: 50px; font-size: 0.72rem; text-transform: uppercase;"><i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'th' ? 'สนามปิดปรับปรุง' : 'Court Maint.'}</span>`
             : ''
           }
-          ${isPaid 
-            ? (isExpired
-                ? `<span class="badge" style="background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);">PIN: ${formattedPin}</span>`
-                : `<span class="badge badge-neon">PIN: ${formattedPin}</span>`
-              )
-            : ''
-          }
-          <span class="booking-status-badge ${isPaid ? (isExpired ? 'status-completed' : 'status-paid') : 'status-pending'}" style="${
-            !isPaid 
-              ? 'background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3);' 
-              : (isExpired
-                  ? 'background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);'
-                  : ''
-                )
-          }">
-            ${isPaid ? (isExpired ? (currentLang === 'th' ? 'เสร็จสิ้น' : 'Completed') : (currentLang === 'th' ? 'ชำระเงินแล้ว' : 'Paid')) : (currentLang === 'th' ? 'รอดำเนินการ' : 'PENDING')}
+          ${pinBadgeHtml}
+          <span class="booking-status-badge ${statusBadgeClass}" style="${statusBadgeStyle}">
+            ${statusBadgeText}
           </span>
-          ${isPaid 
-            ? `<button class="btn btn-outline btn-sm btn-ticket-view">${currentLang === 'th' ? 'ดูตั๋วการจอง' : 'View Ticket'}</button>` 
-            : `<button class="btn btn-danger btn-sm btn-cancel-booking" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">${currentLang === 'th' ? 'ยกเลิก' : 'Cancel'}</button>`
-          }
+          ${actionButtonHtml}
         </div>
       `;
       
       row.style.cursor = 'pointer';
       row.addEventListener('click', () => {
-        if (isPaid) {
-          renderETicket(b);
-          navigateTo('confirmation');
-        } else {
+        if (b.status === 'pending') {
           // Resume payment flow for pending booking
           STATE.isResumedPayment = true;
           STATE.activeBooking = b;
           document.getElementById('payment-amount-display').textContent = `฿${b.price.toLocaleString()}`;
           navigateTo('payment');
           togglePaymentMethod('qr');
+        } else {
+          renderETicket(b);
+          navigateTo('confirmation');
         }
       });
 
@@ -3808,7 +3894,12 @@ function loadAdminBookings() {
 
     bookings.forEach(b => {
       const tr = document.createElement('tr');
-      const statusClass = b.status === 'paid' ? 'status-paid' : 'status-pending';
+      let statusClass = 'status-pending';
+      if (b.status === 'paid') statusClass = 'status-paid';
+      else if (b.status === 'refund_pending') statusClass = 'status-refund-pending';
+      else if (b.status === 'refunded') statusClass = 'status-refunded';
+      else if (b.status === 'completed') statusClass = 'status-completed';
+
       tr.innerHTML = `
         <td>${b.id}</td>
         <td><strong>${b.username}</strong><br><small class="text-muted">${b.email}</small></td>
@@ -3819,15 +3910,55 @@ function loadAdminBookings() {
         <td><code>${b.pin_code}</code></td>
         <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
-          <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
-            <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
-          </button>
+          <div style="display: inline-flex; gap: 8px; align-items: center;">
+            ${b.status === 'refund_pending' ? `
+              <button class="btn btn-success-sm" onclick="confirmRefundBooking(${b.id}, this)">
+                <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
+              </button>
+            ` : ''}
+            <button class="btn btn-danger-sm" onclick="deleteAdminBooking(${b.id}, this)" data-i18n="admin-action-delete">
+              <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+            </button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
     });
   })
   .catch(() => showNotification('Error loading bookings', 'error'));
+}
+
+function confirmRefundBooking(bookingId, btn) {
+  if (!confirm(t('confirm-refund-prompt', 'Are you sure you want to mark this booking as refunded? (Please ensure you have manually transferred the refund via PromptPay)'))) {
+    return;
+  }
+  
+  btn.disabled = true;
+  const originalHtml = btn.innerHTML;
+  btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> ${t('processing', 'Processing...')}`;
+  
+  fetch(`/api/admin/bookings/${bookingId}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${STATE.token}`
+    },
+    body: JSON.stringify({ status: 'refunded' })
+  })
+  .then(async res => {
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Error updating status');
+    return data;
+  })
+  .then(() => {
+    showNotification(t('refund-success-notif', 'Booking status updated to refunded successfully.'), 'success');
+    loadAdminBookings();
+  })
+  .catch(err => {
+    showNotification(err.message, 'error');
+    btn.disabled = false;
+    btn.innerHTML = originalHtml;
+  });
 }
 
 function loadAdminCourts() {
