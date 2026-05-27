@@ -4190,7 +4190,7 @@ function loadAdminCourts() {
     tbody.innerHTML = '';
 
     if (courts.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">${t('admin-no-courts', 'No courts configured.')}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">${t('admin-no-courts', 'No courts configured.')}</td></tr>`;
       return;
     }
 
@@ -4210,14 +4210,20 @@ function loadAdminCourts() {
           </div>
         </td>
         <td>฿${c.price_per_hour}/hr</td>
-        <td><small class="text-muted">${translateCourtDesc(c) || '-'}</small></td>
         <td>
-          <button class="btn btn-outline btn-sm text-neon mr-2" onclick="startEditCourt(${c.id}, '${escapedName}', '${escapedNameTh}', ${c.price_per_hour}, '${escapedDesc}', '${escapedDescTh}', '${c.image_name}', ${c.is_maintenance})" data-i18n="admin-action-edit">
-            <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
-          </button>
-          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminCourt(${c.id})" data-i18n="admin-action-delete">
-            <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
-          </button>
+          <div class="kebab-menu">
+            <button class="kebab-trigger" onclick="toggleKebab(event, this)">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="kebab-dropdown">
+              <button class="kebab-item kebab-reschedule" onclick="startEditCourt(${c.id}, '${escapedName}', '${escapedNameTh}', ${c.price_per_hour}, '${escapedDesc}', '${escapedDescTh}', '${c.image_name}', ${c.is_maintenance})">
+                <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
+              </button>
+              <button class="kebab-item kebab-delete" onclick="deleteAdminCourt(${c.id})">
+                <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+              </button>
+            </div>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -4590,12 +4596,19 @@ function loadAdminPromoCodes() {
         <td>${p.currentUses} / ${p.maxUses || '∞'}</td>
         <td><span class="badge ${statusClass}">${statusText}</span></td>
         <td>
-          <button class="btn btn-outline btn-sm text-neon mr-1" onclick="editAdminPromoCode(${p.id})">
-            <i class="fa-solid fa-pen"></i>
-          </button>
-          <button class="btn btn-outline btn-sm text-red" onclick="deleteAdminPromoCode(${p.id})">
-            <i class="fa-solid fa-trash"></i>
-          </button>
+          <div class="kebab-menu">
+            <button class="kebab-trigger" onclick="toggleKebab(event, this)">
+              <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <div class="kebab-dropdown">
+              <button class="kebab-item kebab-reschedule" onclick="editAdminPromoCode(${p.id})">
+                <i class="fa-solid fa-pen-to-square"></i> ${t('admin-action-edit', 'Edit')}
+              </button>
+              <button class="kebab-item kebab-delete" onclick="deleteAdminPromoCode(${p.id})">
+                <i class="fa-solid fa-trash"></i> ${t('admin-action-delete', 'Delete')}
+              </button>
+            </div>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
