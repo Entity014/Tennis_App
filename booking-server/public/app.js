@@ -3909,17 +3909,18 @@ function loadAdminBookings() {
     const tbody = document.getElementById('admin-bookings-table-body');
     tbody.innerHTML = '';
     
-    if (bookings.length === 0) {
+    // Filter out maintenance conflict / refund bookings from the main bookings list
+    const activeBookings = bookings.filter(b => b.status !== 'refund_pending' && b.status !== 'refunded');
+    
+    if (activeBookings.length === 0) {
       tbody.innerHTML = `<tr><td colspan="9" class="text-center text-muted">${t('admin-no-bookings', 'No bookings found in database.')}</td></tr>`;
       return;
     }
 
-    bookings.forEach(b => {
+    activeBookings.forEach(b => {
       const tr = document.createElement('tr');
       let statusClass = 'status-pending';
       if (b.status === 'paid') statusClass = 'status-paid';
-      else if (b.status === 'refund_pending') statusClass = 'status-refund-pending';
-      else if (b.status === 'refunded') statusClass = 'status-refunded';
       else if (b.status === 'completed') statusClass = 'status-completed';
 
       tr.innerHTML = `
@@ -3933,12 +3934,7 @@ function loadAdminBookings() {
         <td><span class="booking-status-badge ${statusClass}">${t(b.status, b.status)}</span></td>
         <td>
           <div style="display: inline-flex; gap: 8px; align-items: center;">
-            ${b.status === 'refund_pending' ? `
-              <button class="btn btn-success-sm" onclick="confirmRefundBooking(${b.id}, this)">
-                <i class="fa-solid fa-hand-holding-dollar"></i> ${t('admin-action-refund', 'Confirm Refund')}
-              </button>
-            ` : ''}
-            ${b.status === 'paid' || b.status === 'pending' || b.status === 'refund_pending' ? `
+            ${b.status === 'paid' || b.status === 'pending' ? `
               <button class="btn btn-outline btn-sm text-neon" onclick="openRescheduleModal(${b.id}, ${b.court_id}, '${b.date}', '${b.start_time}', '${b.end_time}')">
                 <i class="fa-solid fa-calendar-days"></i> ${t('admin-action-reschedule', 'Reschedule')}
               </button>
