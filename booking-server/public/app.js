@@ -2590,6 +2590,18 @@ function refreshTimeGridSelection() {
   });
 }
 
+function switchToAvailableCourt() {
+  const availableCourt = STATE.courts.find(c => !c.is_maintenance);
+  if (availableCourt) {
+    STATE.activeCourtId = availableCourt.id;
+    STATE.selectedSlots = [];
+    loadCourtsAvailability();
+  } else {
+    showNotification(currentLang === 'en' ? 'No other courts available.' : 'ไม่มีสนามอื่นที่พร้อมให้บริการในขณะนี้', 'info');
+  }
+}
+window.switchToAvailableCourt = switchToAvailableCourt;
+
 function renderTimeGrid(court) {
   const grid = document.getElementById('time-grid-slots');
   grid.innerHTML = '';
@@ -2598,10 +2610,28 @@ function renderTimeGrid(court) {
 
   if (court.is_maintenance) {
     grid.innerHTML = `
-      <div class="maintenance-notice text-center p-5 w-100" style="grid-column: 1 / -1; background: rgba(239, 68, 68, 0.08); border: 1px dashed rgba(239, 68, 68, 0.3); border-radius: 12px; margin: 20px 0;">
-        <i class="fa-solid fa-screwdriver-wrench mb-3" style="font-size: 3rem; color: #ef4444;"></i>
-        <h4 class="text-white mb-2" style="font-family: var(--font-heading); font-size: 1.25rem; font-weight: 700;">${currentLang === 'en' ? 'Court Closed for Maintenance' : 'สนามปิดปรับปรุงชั่วคราว'}</h4>
-        <p class="text-muted" style="font-size: 0.9rem;">${currentLang === 'en' ? 'This court is currently undergoing maintenance. Please select another court.' : 'สนามนี้กำลังอยู่ระหว่างการปิดปรับปรุงระบบ กรุณาเลือกสนามอื่น'}</p>
+      <div class="maintenance-container">
+        <div class="maintenance-card-premium">
+          <div class="maintenance-status-badge">
+            <span class="status-dot-pulse"></span>
+            <span>${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}</span>
+          </div>
+          <div class="maintenance-icon-wrapper">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+          </div>
+          <h4 class="maintenance-title-premium">${currentLang === 'en' ? 'Court Closed for Maintenance' : 'สนามปิดปรับปรุงชั่วคราว'}</h4>
+          <p class="maintenance-desc-premium">
+            ${currentLang === 'en' 
+              ? 'This court is currently undergoing scheduled maintenance to improve your experience. We apologize for the inconvenience.' 
+              : 'สนามนี้กำลังอยู่ระหว่างการปิดปรับปรุงระบบตามรอบการบำรุงรักษาเพื่อความปลอดภัย ขออภัยในความไม่สะดวก'}
+          </p>
+          <div class="maintenance-action-buttons">
+            <button class="btn btn-primary btn-sm" onclick="switchToAvailableCourt()">
+              <i class="fa-solid fa-circle-chevron-right mr-1"></i>
+              ${currentLang === 'en' ? 'Switch to Available Court' : 'สลับไปยังสนามอื่นที่ว่าง'}
+            </button>
+          </div>
+        </div>
       </div>
     `;
     return;
@@ -3814,7 +3844,12 @@ function loadAdminCourts() {
       const escapedDescTh = (c.description_th || '').replace(/'/g, "\\'");
       tr.innerHTML = `
         <td>${c.id}</td>
-        <td><strong>${translateCourtName(c)}</strong>${c.is_maintenance ? ` <span class="badge badge-danger ml-1" style="font-size:0.7rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3);">${currentLang === 'th' ? 'ปิดปรับปรุง' : 'Maintenance'}</span>` : ''}</td>
+        <td>
+          <div style="display: inline-flex; align-items: center; gap: 8px; flex-wrap: nowrap; white-space: nowrap;">
+            <strong>${translateCourtName(c)}</strong>
+            ${c.is_maintenance ? `<span class="badge badge-danger" style="font-size:0.7rem; background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); padding: 2px 8px; line-height: 1.2; display: inline-block; white-space: nowrap;">${currentLang === 'th' ? 'ปิดปรับปรุง' : 'Maintenance'}</span>` : ''}
+          </div>
+        </td>
         <td>฿${c.price_per_hour}/hr</td>
         <td><small class="text-muted">${translateCourtDesc(c) || '-'}</small></td>
         <td>
