@@ -2612,10 +2612,6 @@ function renderTimeGrid(court) {
     grid.innerHTML = `
       <div class="maintenance-container">
         <div class="maintenance-card-premium">
-          <div class="maintenance-status-badge">
-            <span class="status-dot-pulse"></span>
-            <span>${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}</span>
-          </div>
           <div class="maintenance-icon-wrapper">
             <i class="fa-solid fa-screwdriver-wrench"></i>
           </div>
@@ -3466,7 +3462,14 @@ function renderETicket(booking) {
     const bookingEndStr = `${booking.date}T${booking.end_time}:00+07:00`;
     const isExpired = booking.status === 'completed' || booking.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
     
-    if (isExpired) {
+    if (booking.court_is_maintenance) {
+      pinEl.style.color = '#ef4444';
+      pinEl.style.textDecoration = 'line-through';
+      document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
+        ? `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> สนามปิดปรับปรุงชั่วคราวในช่วงเวลานี้ กรุณาติดต่อพนักงานเพื่อเลื่อนรอบหรือรับเงินคืน`
+        : `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> Court is under maintenance. Please contact staff to reschedule or request a refund.`;
+      if (barcodeEl) barcodeEl.style.display = 'none';
+    } else if (isExpired) {
       pinEl.style.color = '#64748b';
       pinEl.style.textDecoration = 'line-through';
       document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
@@ -3553,6 +3556,7 @@ function loadUserBookings() {
       // Check if booking has expired (end_time passed or marked completed/expired on server)
       const bookingEndStr = `${b.date}T${b.end_time}:00+07:00`;
       const isExpired = b.status === 'completed' || b.status === 'expired' || (new Date().getTime() >= new Date(bookingEndStr).getTime());
+      const showMaintenanceWarning = b.court_is_maintenance && !isExpired;
 
       row.innerHTML = `
         <div class="booking-info-main">
@@ -3569,6 +3573,10 @@ function loadUserBookings() {
           </div>
         </div>
         <div class="booking-actions">
+          ${showMaintenanceWarning
+            ? `<span class="booking-status-badge badge-danger" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); font-weight:600; white-space:nowrap; padding: 4px 10px; border-radius: 50px; font-size: 0.72rem; text-transform: uppercase;"><i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'th' ? 'สนามปิดปรับปรุง' : 'Court Maint.'}</span>`
+            : ''
+          }
           ${isPaid 
             ? (isExpired
                 ? `<span class="badge" style="background: rgba(148, 163, 184, 0.1); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.2);">PIN: ${formattedPin}</span>`

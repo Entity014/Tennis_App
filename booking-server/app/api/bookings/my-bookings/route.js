@@ -56,7 +56,8 @@ export async function GET(req) {
       payment_status: b.paymentStatus,
       created_at: b.createdAt,
       court_name: b.court.name,
-      image_name: b.court.imageName
+      image_name: b.court.imageName,
+      court_is_maintenance: b.court.isMaintenance
     }));
 
     return NextResponse.json(formattedBookings, {
