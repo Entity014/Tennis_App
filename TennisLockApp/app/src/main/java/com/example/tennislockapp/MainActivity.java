@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private static final String PREFS_NAME = "LockAppPrefs";
-    private static final String ADMIN_PIN = "999999";
+    private static final String ADMIN_PIN = "999888";
 
     // Track activity visibility for background security watcher service
     public static boolean isActivityVisible = false;
@@ -1283,8 +1283,8 @@ public class MainActivity extends AppCompatActivity {
                     layoutType = WindowManager.LayoutParams.TYPE_PHONE;
                 }
 
-                // Increase height to 85dp to ensure we cover the entire swipe-down trigger zone at the top
-                int blockerHeight = (int) (85 * getResources().getDisplayMetrics().density);
+                // Reduce height to 15dp to avoid covering client UI buttons while still capturing top bezel swipe-down
+                int blockerHeight = (int) (15 * getResources().getDisplayMetrics().density);
 
                 WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                         WindowManager.LayoutParams.MATCH_PARENT,

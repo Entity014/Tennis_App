@@ -496,7 +496,9 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
         button.setOnClickListener(new View.OnClickListener() { // from class: com.pusun.pusuntennis.MainActivityPad2.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                BleManager.getInstance().disconnectAllDevice();
+                java.util.List<com.clj.fastble.data.BleDevice> connected = com.clj.fastble.BleManager.getInstance().getAllConnectedDevice();
+                final com.clj.fastble.data.BleDevice currentDevice = (connected != null && !connected.isEmpty()) ? connected.get(0) : bleDevice;
+                com.clj.fastble.BleManager.getInstance().disconnectAllDevice();
                 MainActivityPad2 mainActivityPad2 = MainActivityPad2.this;
                 ShowHelper.showProgressDialog(mainActivityPad2, mainActivityPad2.getResources().getString(R.string.changing));
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivityPad2.1.1
@@ -504,7 +506,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
                     public void run() {
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivityPad2.this, (Class<?>) MainActivity7New.class);
-                        intent.putExtra("device", MainActivityPad2.bleDevice);
+                        intent.putExtra("device", currentDevice);
                         MainActivityPad2.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -1039,7 +1041,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
         Button button4 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button4;
         button4.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1951,7 +1953,11 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 if (MainActivityPad2.this.blenoty.getText().toString().trim().contains(MainActivityPad2.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityPad2.this.checkPermissions();
+                    if (MainActivityPad2.bleDevice != null) {
+                        MainActivityPad2.this.connect(MainActivityPad2.bleDevice);
+                    } else {
+                        MainActivityPad2.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityPad2.this.blenoty.setText(MainActivityPad2.this.getResources().getString(R.string.disconnected));
@@ -2780,7 +2786,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
                         ShowHelper.toastShort(MainActivityPad2.this, MainActivityPad2.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityPad2.this.nameStar = bleDevice3.getName().trim();
+                MainActivityPad2.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityPad2.this.blenoty.setText(MainActivityPad2.this.getResources().getString(R.string.connected));
                 MainActivityPad2.this.blenoty.setBackground(MainActivityPad2.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPad2.this.signal_note.setText(MainActivityPad2.this.nameStar + MainActivityPad2.this.getResources().getString(R.string.connected));

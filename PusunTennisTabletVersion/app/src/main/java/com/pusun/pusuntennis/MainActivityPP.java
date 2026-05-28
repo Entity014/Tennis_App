@@ -1204,7 +1204,11 @@ public class MainActivityPP extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivityPP.this.blenoty.getText().toString().trim().contains(MainActivityPP.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityPP.this.checkPermissions();
+                    if (MainActivityPP.bleDevice != null) {
+                        MainActivityPP.this.connect(MainActivityPP.bleDevice);
+                    } else {
+                        MainActivityPP.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityPP.this.blenoty.setText(MainActivityPP.this.getResources().getString(R.string.disconnected));
@@ -1281,7 +1285,7 @@ public class MainActivityPP extends AppCompatActivity implements View.OnClickLis
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivityPP.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivityPP.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivityPP.this, MainActivityPP.this.getResources().getString(R.string.alert), MainActivityPP.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivityPP.this.getSharedPreferences(MainActivityPP.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivityPP.FORBID_INFO, 1);
@@ -1735,7 +1739,7 @@ public class MainActivityPP extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityPP.this, MainActivityPP.this.getResources().getString(R.string.please_use));
                     }
                 }, 1000L);
-                MainActivityPP.this.nameStar = bleDevice3.getName().trim();
+                MainActivityPP.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityPP.this.blenoty.setText(MainActivityPP.this.getResources().getString(R.string.connected));
                 MainActivityPP.this.blenoty.setBackground(MainActivityPP.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPP.this.signal_note.setText(MainActivityPP.this.nameStar + MainActivityPP.this.getResources().getString(R.string.connected));

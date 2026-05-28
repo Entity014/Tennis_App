@@ -1057,7 +1057,11 @@ public class MainActivity4 extends AppCompatActivity implements View.OnClickList
             public void onClick(View view) {
                 if (MainActivity4.this.blenoty.getText().toString().trim().contains(MainActivity4.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity4.this.checkPermissions();
+                    if (MainActivity4.bleDevice != null) {
+                        MainActivity4.this.connect(MainActivity4.bleDevice);
+                    } else {
+                        MainActivity4.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity4.this.blenoty.setText(MainActivity4.this.getResources().getString(R.string.disconnected));
@@ -1358,7 +1362,7 @@ public class MainActivity4 extends AppCompatActivity implements View.OnClickList
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivity4.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivity4.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivity4.this, MainActivity4.this.getResources().getString(R.string.alert), MainActivity4.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivity4.this.getSharedPreferences(MainActivity4.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivity4.FORBID_INFO, 1);
@@ -1851,7 +1855,7 @@ public class MainActivity4 extends AppCompatActivity implements View.OnClickList
                         ShowHelper.toastShort(MainActivity4.this, MainActivity4.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity4.this.nameStar = bleDevice3.getName().trim();
+                MainActivity4.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity4.this.blenoty.setText(MainActivity4.this.getResources().getString(R.string.connected));
                 MainActivity4.this.blenoty.setBackground(MainActivity4.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity4.this.signal_note.setText(MainActivity4.this.nameStar + MainActivity4.this.getResources().getString(R.string.connected));

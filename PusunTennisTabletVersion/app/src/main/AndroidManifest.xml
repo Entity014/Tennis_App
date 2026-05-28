@@ -46,197 +46,204 @@
         android:appComponentFactory="androidx.core.app.CoreComponentFactory">
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivityPPS"
-            android:exported="false"/>
+            android:exported="false"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+            android:screenOrientation="sensor"/>
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivityPPSP"
-            android:exported="false"/>
+            android:exported="false"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+            android:screenOrientation="sensor"/>
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivityDrill"
-            android:exported="false"/>
+            android:exported="false"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"
+            android:screenOrientation="sensor"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity7NewP"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.CourseDetailActivity"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.CourseListActivity"
             android:exported="false"
-            android:screenOrientation="sensor"/>
+            android:screenOrientation="sensor"
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivity"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivityPTP"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.VaryDrillActivityPS"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.AIDrillActivity"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPadX"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityXB"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityX"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityXV"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPMP"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPadPro"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPM"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPad2"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPad1"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityA6"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityA9"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityA"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity8"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityP"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPU"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity6"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity6New"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity6L"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity7"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity7New"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivitys7"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivitys7New"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivitys9"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivityPP"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity9"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity5"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity4"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity2"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.MainActivity3"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <activity
             android:name="com.pusun.pusuntennis.ScanActivity"
             android:exported="true"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout">
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -246,7 +253,7 @@
             android:name="com.pusun.pusuntennis.MainActivity"
             android:exported="false"
             android:screenOrientation="sensor"
-            android:configChanges="smallestScreenSize|screenSize|screenLayout"/>
+            android:configChanges="orientation|keyboardHidden|screenSize|smallestScreenSize|screenLayout"/>
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:exported="false"

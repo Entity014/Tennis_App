@@ -11,4 +11,37 @@ public class Util {
         lastClickTime = currentTimeMillis;
         return z;
     }
+
+    public static int getDeviceVersion(com.clj.fastble.data.BleDevice bleDevice) {
+        if (bleDevice == null) {
+            return 0;
+        }
+        try {
+            String name = bleDevice.getName();
+            if (name != null) {
+                String trimmed = name.trim();
+                if (trimmed.length() >= 9) {
+                    return Integer.parseInt(trimmed.substring(3, 9));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static String getDeviceName(com.clj.fastble.data.BleDevice bleDevice) {
+        if (bleDevice == null) {
+            return "";
+        }
+        try {
+            String name = bleDevice.getName();
+            if (name != null) {
+                return name.trim();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
 }

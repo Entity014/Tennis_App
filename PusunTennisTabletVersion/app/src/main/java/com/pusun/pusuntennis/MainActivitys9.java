@@ -1019,7 +1019,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
         Button button4 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button4;
         button4.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1918,7 +1918,11 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivitys9.this.blenoty.getText().toString().trim().contains(MainActivitys9.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivitys9.this.checkPermissions();
+                    if (MainActivitys9.bleDevice != null) {
+                        MainActivitys9.this.connect(MainActivitys9.bleDevice);
+                    } else {
+                        MainActivitys9.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivitys9.this.blenoty.setText(MainActivitys9.this.getResources().getString(R.string.disconnected));
@@ -2302,7 +2306,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivitys9.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivitys9.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivitys9.this, MainActivitys9.this.getResources().getString(R.string.alert), MainActivitys9.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivitys9.this.getSharedPreferences(MainActivitys9.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivitys9.FORBID_INFO, 1);
@@ -2806,7 +2810,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivitys9.this, MainActivitys9.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivitys9.this.nameStar = bleDevice3.getName().trim();
+                MainActivitys9.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivitys9.this.blenoty.setText(MainActivitys9.this.getResources().getString(R.string.connected));
                 MainActivitys9.this.blenoty.setBackground(MainActivitys9.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivitys9.this.signal_note.setText(MainActivitys9.this.nameStar + MainActivitys9.this.getResources().getString(R.string.connected));
@@ -3203,7 +3207,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
                     MainActivitys9.this.writeBleData(new byte[]{-86, 102, 0, 0, 0, 0, 0, 0, 103, -91});
                 }
             }, 50L);
-            if (BasicData39.b3[i][4] == 0 || BasicData39.b3[i][4] == 50 || Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() >= 650101) {
+            if (BasicData39.b3[i][4] == 0 || BasicData39.b3[i][4] == 50 || com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) >= 650101) {
                 return;
             }
             int i2 = BasicData39.b3[i][4] - 50;
@@ -3394,7 +3398,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivitys9.77
                 @Override // java.lang.Runnable
                 public void run() {
-                    if (Integer.valueOf(MainActivitys9.bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 650101) {
+                    if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(MainActivitys9.bleDevice) < 650101) {
                         MainActivitys9.this.writeBleData(new byte[]{-86, 106, 6, 0, 0, 0, 0, 0, 111, -91});
                     } else {
                         MainActivitys9.this.writeBleData(new byte[]{-86, 106, 8, 0, 0, 0, 0, 0, 111, -91});

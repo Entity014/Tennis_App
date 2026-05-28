@@ -504,7 +504,9 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
         button2.setOnClickListener(new View.OnClickListener() { // from class: com.pusun.pusuntennis.MainActivitys7New.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                BleManager.getInstance().disconnectAllDevice();
+                java.util.List<com.clj.fastble.data.BleDevice> connected = com.clj.fastble.BleManager.getInstance().getAllConnectedDevice();
+                final com.clj.fastble.data.BleDevice currentDevice = (connected != null && !connected.isEmpty()) ? connected.get(0) : bleDevice;
+                com.clj.fastble.BleManager.getInstance().disconnectAllDevice();
                 MainActivitys7New mainActivitys7New = MainActivitys7New.this;
                 ShowHelper.showProgressDialog(mainActivitys7New, mainActivitys7New.getResources().getString(R.string.changing));
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivitys7New.2.1
@@ -512,7 +514,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
                     public void run() {
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivitys7New.this, (Class<?>) MainActivityPadPro.class);
-                        intent.putExtra("device", MainActivitys7New.bleDevice);
+                        intent.putExtra("device", currentDevice);
                         MainActivitys7New.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -1031,7 +1033,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
         Button button5 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button5;
         button5.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1951,7 +1953,11 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
             public void onClick(View view) {
                 if (MainActivitys7New.this.blenoty.getText().toString().trim().contains(MainActivitys7New.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivitys7New.this.checkPermissions();
+                    if (MainActivitys7New.bleDevice != null) {
+                        MainActivitys7New.this.connect(MainActivitys7New.bleDevice);
+                    } else {
+                        MainActivitys7New.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivitys7New.this.blenoty.setText(MainActivitys7New.this.getResources().getString(R.string.disconnected));
@@ -2335,7 +2341,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivitys7New.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivitys7New.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivitys7New.this, MainActivitys7New.this.getResources().getString(R.string.alert), MainActivitys7New.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivitys7New.this.getSharedPreferences(MainActivitys7New.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivitys7New.FORBID_INFO, 1);
@@ -2840,7 +2846,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
                         ShowHelper.toastShort(MainActivitys7New.this, MainActivitys7New.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivitys7New.this.nameStar = bleDevice3.getName().trim();
+                MainActivitys7New.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivitys7New.this.blenoty.setText(MainActivitys7New.this.getResources().getString(R.string.connected));
                 MainActivitys7New.this.blenoty.setBackground(MainActivitys7New.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivitys7New.this.signal_note.setText(MainActivitys7New.this.nameStar + MainActivitys7New.this.getResources().getString(R.string.connected));
@@ -3237,7 +3243,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
                     MainActivitys7New.this.writeBleData(new byte[]{-86, 102, 0, 0, 0, 0, 0, 0, 103, -91});
                 }
             }, 50L);
-            if (BasicData31.b3[i][4] == 0 || BasicData31.b3[i][4] == 50 || Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() >= 650101) {
+            if (BasicData31.b3[i][4] == 0 || BasicData31.b3[i][4] == 50 || com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) >= 650101) {
                 return;
             }
             int i2 = BasicData31.b3[i][4] - 50;
@@ -3428,7 +3434,7 @@ public class MainActivitys7New extends AppCompatActivity implements View.OnClick
             new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivitys7New.79
                 @Override // java.lang.Runnable
                 public void run() {
-                    if (Integer.valueOf(MainActivitys7New.bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 650101) {
+                    if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(MainActivitys7New.bleDevice) < 650101) {
                         MainActivitys7New.this.writeBleData(new byte[]{-86, 106, 6, 0, 0, 0, 0, 0, 111, -91});
                     } else {
                         MainActivitys7New.this.writeBleData(new byte[]{-86, 106, 8, 0, 0, 0, 0, 0, 111, -91});

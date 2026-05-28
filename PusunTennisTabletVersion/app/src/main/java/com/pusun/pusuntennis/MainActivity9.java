@@ -1204,7 +1204,11 @@ public class MainActivity9 extends AppCompatActivity implements View.OnClickList
             public void onClick(View view) {
                 if (MainActivity9.this.blenoty.getText().toString().trim().contains(MainActivity9.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity9.this.checkPermissions();
+                    if (MainActivity9.bleDevice != null) {
+                        MainActivity9.this.connect(MainActivity9.bleDevice);
+                    } else {
+                        MainActivity9.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity9.this.blenoty.setText(MainActivity9.this.getResources().getString(R.string.disconnected));
@@ -1281,7 +1285,7 @@ public class MainActivity9 extends AppCompatActivity implements View.OnClickList
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivity9.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivity9.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivity9.this, MainActivity9.this.getResources().getString(R.string.alert), MainActivity9.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivity9.this.getSharedPreferences(MainActivity9.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivity9.FORBID_INFO, 1);
@@ -1735,7 +1739,7 @@ public class MainActivity9 extends AppCompatActivity implements View.OnClickList
                         ShowHelper.toastShort(MainActivity9.this, MainActivity9.this.getResources().getString(R.string.please_use));
                     }
                 }, 1000L);
-                MainActivity9.this.nameStar = bleDevice3.getName().trim();
+                MainActivity9.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity9.this.blenoty.setText(MainActivity9.this.getResources().getString(R.string.connected));
                 MainActivity9.this.blenoty.setBackground(MainActivity9.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity9.this.signal_note.setText(MainActivity9.this.nameStar + MainActivity9.this.getResources().getString(R.string.connected));

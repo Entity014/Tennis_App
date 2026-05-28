@@ -499,7 +499,9 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
         button2.setOnClickListener(new View.OnClickListener() { // from class: com.pusun.pusuntennis.MainActivity7NewP.2
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                BleManager.getInstance().disconnectAllDevice();
+                java.util.List<com.clj.fastble.data.BleDevice> connected = com.clj.fastble.BleManager.getInstance().getAllConnectedDevice();
+                final com.clj.fastble.data.BleDevice currentDevice = (connected != null && !connected.isEmpty()) ? connected.get(0) : bleDevice;
+                com.clj.fastble.BleManager.getInstance().disconnectAllDevice();
                 MainActivity7NewP mainActivity7NewP = MainActivity7NewP.this;
                 ShowHelper.showProgressDialog(mainActivity7NewP, mainActivity7NewP.getResources().getString(R.string.changing));
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivity7NewP.2.1
@@ -507,7 +509,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                     public void run() {
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivity7NewP.this, (Class<?>) MainActivityPadX.class);
-                        intent.putExtra("device", MainActivity7NewP.bleDevice);
+                        intent.putExtra("device", currentDevice);
                         MainActivity7NewP.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -1079,7 +1081,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
         Button button5 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button5;
         button5.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1998,7 +2000,11 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
             public void onClick(View view) {
                 if (MainActivity7NewP.this.blenoty.getText().toString().trim().contains(MainActivity7NewP.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity7NewP.this.checkPermissions();
+                    if (MainActivity7NewP.bleDevice != null) {
+                        MainActivity7NewP.this.connect(MainActivity7NewP.bleDevice);
+                    } else {
+                        MainActivity7NewP.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity7NewP.this.blenoty.setText(MainActivity7NewP.this.getResources().getString(R.string.disconnected));
@@ -2846,7 +2852,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                         ShowHelper.toastShort(MainActivity7NewP.this, MainActivity7NewP.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity7NewP.this.nameStar = bleDevice3.getName().trim();
+                MainActivity7NewP.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity7NewP.this.blenoty.setText(MainActivity7NewP.this.getResources().getString(R.string.connected));
                 MainActivity7NewP.this.blenoty.setBackground(MainActivity7NewP.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity7NewP.this.signal_note.setText(MainActivity7NewP.this.nameStar + MainActivity7NewP.this.getResources().getString(R.string.connected));
@@ -3238,7 +3244,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                     MainActivity7NewP.this.writeBleData(new byte[]{-86, 102, 0, 0, 0, 0, 0, 0, 103, -91});
                 }
             }, 50L);
-            if (BasicData37.b3[i][4] == 0 || BasicData37.b3[i][4] == 50 || Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() >= 250101) {
+            if (BasicData37.b3[i][4] == 0 || BasicData37.b3[i][4] == 50 || com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) >= 250101) {
                 return;
             }
             int i2 = BasicData37.b3[i][4] - 50;
@@ -3429,7 +3435,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
             new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivity7NewP.78
                 @Override // java.lang.Runnable
                 public void run() {
-                    if (Integer.valueOf(MainActivity7NewP.bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 250101) {
+                    if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(MainActivity7NewP.bleDevice) < 250101) {
                         MainActivity7NewP.this.writeBleData(new byte[]{-86, 106, 6, 0, 0, 0, 0, 0, 111, -91});
                     } else {
                         MainActivity7NewP.this.writeBleData(new byte[]{-86, 106, 6, 0, 0, 0, 0, 0, 111, -91});

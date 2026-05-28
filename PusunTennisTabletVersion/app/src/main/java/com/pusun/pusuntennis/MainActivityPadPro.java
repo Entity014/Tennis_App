@@ -497,7 +497,9 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
         button.setOnClickListener(new View.OnClickListener() { // from class: com.pusun.pusuntennis.MainActivityPadPro.1
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
-                BleManager.getInstance().disconnectAllDevice();
+                java.util.List<com.clj.fastble.data.BleDevice> connected = com.clj.fastble.BleManager.getInstance().getAllConnectedDevice();
+                final com.clj.fastble.data.BleDevice currentDevice = (connected != null && !connected.isEmpty()) ? connected.get(0) : bleDevice;
+                com.clj.fastble.BleManager.getInstance().disconnectAllDevice();
                 MainActivityPadPro mainActivityPadPro = MainActivityPadPro.this;
                 ShowHelper.showProgressDialog(mainActivityPadPro, mainActivityPadPro.getResources().getString(R.string.changing));
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivityPadPro.1.1
@@ -505,7 +507,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                     public void run() {
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivityPadPro.this, (Class<?>) MainActivitys7New.class);
-                        intent.putExtra("device", MainActivityPadPro.bleDevice);
+                        intent.putExtra("device", currentDevice);
                         MainActivityPadPro.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -1040,7 +1042,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
         Button button4 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button4;
         button4.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1952,7 +1954,11 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
             public void onClick(View view) {
                 if (MainActivityPadPro.this.blenoty.getText().toString().trim().contains(MainActivityPadPro.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityPadPro.this.checkPermissions();
+                    if (MainActivityPadPro.bleDevice != null) {
+                        MainActivityPadPro.this.connect(MainActivityPadPro.bleDevice);
+                    } else {
+                        MainActivityPadPro.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityPadPro.this.blenoty.setText(MainActivityPadPro.this.getResources().getString(R.string.disconnected));
@@ -2781,7 +2787,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         ShowHelper.toastShort(MainActivityPadPro.this, MainActivityPadPro.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityPadPro.this.nameStar = bleDevice3.getName().trim();
+                MainActivityPadPro.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityPadPro.this.blenoty.setText(MainActivityPadPro.this.getResources().getString(R.string.connected));
                 MainActivityPadPro.this.blenoty.setBackground(MainActivityPadPro.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPadPro.this.signal_note.setText(MainActivityPadPro.this.nameStar + MainActivityPadPro.this.getResources().getString(R.string.connected));

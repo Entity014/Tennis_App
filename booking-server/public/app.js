@@ -92,7 +92,7 @@ const TRANSLATIONS = {
     'btn-explore': 'Explore Courts',
     
     // Features Section
-    'section-title': 'Our Premium Courts',
+    'section-title': 'Our Courts',
     'section-subtitle': 'Professional surfaces designed to match your play style.',
     'court-desc-A': 'Premium hard court with professional lighting and spectator seating.',
     'court-desc-B': 'Traditional clay court offering excellent bounce and slide play.',
@@ -300,7 +300,7 @@ const TRANSLATIONS = {
     'btn-explore': 'สำรวจสนาม',
     
     // Features Section
-    'section-title': 'สนามระดับพรีเมียมของเรา',
+    'section-title': 'สนามของเรา',
     'section-subtitle': 'พื้นผิวสนามระดับมืออาชีพที่ออกแบบมาให้เข้ากับสไตล์การเล่นของคุณ',
     'court-desc-A': 'สนามฮาร์ดคอร์ทพรีเมียมพร้อมไฟส่องสว่างระดับอาชีพและที่นั่งผู้ชม',
     'court-desc-B': 'สนามดินเหนียวดั้งเดิมที่ให้แรงกระดอนและการเลื่อนไถลที่ยอดเยี่ยม',
@@ -601,7 +601,7 @@ const TRANSLATIONS = {
   }
 };
 
-let currentLang = localStorage.getItem('lang') || 'en';
+let currentLang = localStorage.getItem('lang') || 'th';
 
 function applyLanguage(lang) {
   currentLang = lang;
@@ -2087,15 +2087,15 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
           <ul style="padding-left: 20px;" class="mb-3">
             <li><strong>ข้อมูลลงทะเบียน:</strong> ชื่อ-นามสกุล, อีเมล, เบอร์โทรศัพท์ และรหัสผ่านที่ผ่านการเข้ารหัส</li>
-            <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และแฮชประวัติของรูปภาพสลิปที่ใช้ชำระเงิน</li>
+            <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และสลิปที่ใช้ชำระเงิน</li>
             <li><strong>Social Login:</strong> รูปโปรไฟล์ และอีเมลที่ได้รับจากระบบ Google OAuth</li>
           </ul>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. การนำข้อมูลไปใช้</h5>
-          <p class="mb-3">ข้อมูลของท่านจะถูกใช้เฉพาะการบริหารจัดการการจองสนาม, ตรวจสอบยอดชำระเงินโดยอัตโนมัติผ่านทาง API ตรวจสอบสลิป, นำส่ง PIN 6 หลักเพื่อปลดล็อกใช้งานสนาม, และติดต่อช่วยเหลือผู้ใช้</p>
+          <p class="mb-3">ข้อมูลของท่านจะถูกใช้เฉพาะการบริหารจัดการการจองสนาม, ตรวจสอบยอดชำระเงินโดยอัตโนมัติ, นำส่ง PIN 6 หลักเพื่อปลดล็อกใช้งานสนาม, และติดต่อช่วยเหลือผู้ใช้</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. ความปลอดภัยของข้อมูล</h5>
-          <p class="mb-3">ข้อมูลทั้งหมดจะได้รับการจัดเก็บในระบบ PostgreSQL ที่ปลอดภัย รหัสผ่านได้รับการเข้าแฮชผ่านกระบวนการ Cryptographic (bcrypt) เสมอ ข้อมูลรูปภาพสลิปจะไม่มีการส่งต่อไปที่ใดนอกเหนือจาก API ตรวจสอบสลิปอย่างปลอดภัย</p>
+          <p class="mb-3">ข้อมูลทั้งหมดจะได้รับการจัดเก็บในระบบฐานข้อมูลอย่างปลอดภัย รหัสผ่านจะถูกเข้ารหัสเสมอ ข้อมูลรูปภาพสลิปจะไม่มีการส่งต่อไปที่ใด</p>
         </div>
       `;
     } else {
@@ -2107,15 +2107,15 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. Information We Collect</h5>
           <ul style="padding-left: 20px;" class="mb-3">
             <li><strong>Registration Details:</strong> First and last name, email address, phone number, and encrypted password.</li>
-            <li><strong>Transaction Details:</strong> Booking history, dates and times, fee totals, and hash history of uploaded payment slips.</li>
+            <li><strong>Transaction Details:</strong> Booking history, dates and times, fee totals, and payment slips.</li>
             <li><strong>Social Login:</strong> Profile image and email retrieved from Google OAuth.</li>
           </ul>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-check mr-1 text-neon"></i> 2. How We Use Information</h5>
-          <p class="mb-3">Your information is used solely for managing court bookings, automatically verifying payments via our slip verification API, generating and sending the 6-digit access PIN, and providing customer support.</p>
+          <p class="mb-3">Your information is used solely for managing court bookings, automatically verifying payments, sending the 6-digit access PIN, and providing customer support.</p>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-lock mr-1 text-neon"></i> 3. Data Security</h5>
-          <p class="mb-3">All data is securely stored in a PostgreSQL database. Passwords are encrypted using a cryptographic hashing algorithm (bcrypt). Slip images are never shared outside our secure verification API.</p>
+          <p class="mb-3">All data is securely stored in our database. Passwords are encrypted. Slip images are never shared outside our secure verification system.</p>
         </div>
       `;
     }
@@ -2129,15 +2129,12 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. กติกาการจองและใช้สนาม</h5>
           <ul style="padding-left: 20px;" class="mb-3">
             <li>ผู้ใช้งานจะต้องเลือกช่วงเวลาที่ว่างและลงทะเบียนจองพร้อมโอนเงินชำระค่าบริการให้ถูกต้องเต็มจำนวนตามใบจอง</li>
-            <li>เมื่อการชำระเงินและตรวจสอบสลิปเสร็จสมบูรณ์ ท่านจะได้รับรหัส PIN 6 หลักทางหน้าเว็บและประวัติการจอง</li>
             <li>รหัส PIN จะเปิดใช้งานได้เฉพาะคอร์ทและช่วงเวลาที่ท่านได้ระบุจองไว้เท่านั้น และจะสิ้นสุดลงทันทีเมื่อหมดรอบการจอง</li>
           </ul>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. การปฏิเสธและคืนเงิน</h5>
           <p class="mb-3">รายการจองที่ได้รับการอนุมัติและออกรหัส PIN แล้ว **ไม่สามารถยกเลิกหรือขอคืนเงินได้** หากท่านต้องการเลื่อนเวลา กรุณาประสานงานแอดมินล่วงหน้าอย่างน้อย 24 ชั่วโมงก่อนเริ่มเวลาการจอง</p>
           
-          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. มาตรการป้องกันการทุจริตสลิป</h5>
-          <p class="mb-3">ระบบของเราติดตั้งระบบดักจับสลิปซ้ำและสลิปปลอมอัตโนมัติ หากผู้ใช้พยายามอัปโหลดสลิปที่ผ่านการตรวจแล้ว สลิปปลอม หรือสลิปที่แก้ไขตัวเลข ระบบจะทำการระงับบัญชีผู้ใช้งานทันที</p>
         </div>
       `;
     } else {
@@ -2149,15 +2146,12 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-exclamation mr-1 text-neon"></i> 1. Booking & Court Rules</h5>
           <ul style="padding-left: 20px;" class="mb-3">
             <li>Users must select an available timeslot, register their booking, and pay the full balance shown on the booking details.</li>
-            <li>Once payment verification is complete, a 6-digit PIN will be displayed on-screen and added to your booking history.</li>
             <li>The PIN is valid only for the specific court and timeslot selected, expiring automatically at the end of the booking session.</li>
           </ul>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-ban mr-1 text-neon"></i> 2. Cancellations & Refunds</h5>
           <p class="mb-3">Bookings that have been approved and assigned a PIN **cannot be cancelled or refunded**. For rescheduling requests, please contact the admin team at least 24 hours prior to the booking start time.</p>
           
-          <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-triangle-exclamation mr-1 text-neon"></i> 3. Anti-Fraud Measures</h5>
-          <p class="mb-3">Our system automatically detects duplicate or forged slips. Attempting to upload a previously processed slip, a fake slip, or modified transaction documents will result in an immediate and permanent account suspension.</p>
         </div>
       `;
     }
@@ -2171,14 +2165,14 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> ขั้นตอนการเข้าสนาม</h5>
           <ol style="padding-left: 20px;" class="mb-3">
             <li>หลังจากทำการจองและอัปโหลดรูปภาพสลิปชำระเงินสำเร็จแล้ว ให้คัดลอกหรือแคปหน้าจอ **PIN 6 หลัก**</li>
-            <li>เดินทางมายังหน้าสนามเทนนิส และนำรหัส PIN ไปป้อนลงที่หน้าจออุปกรณ์ Android Kiosk ด้านหน้าประตู</li>
-            <li>เมื่อรหัสผ่านถูกต้อง ระบบ Kiosk จะปลดล็อกประตูและเปิดไฟฟ้าสนามให้ทำงานทันที</li>
+            <li>เดินทางมายังหน้าสนามเทนนิส และนำรหัส PIN ไปป้อนลงที่หน้าจออุปกรณ์ Android Kiosk</li>
+            <li>เมื่อรหัสผ่านถูกต้อง ระบบ Kiosk จะปลดล็อกอุปกรณ์ให้ทำงานทันที</li>
           </ol>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> ช่องทางติดต่อทีมงานแอดมิน</h5>
           <ul style="padding-left: 20px; list-style: none;" class="mb-3">
-            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> 02-123-4567</li>
-            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> support@minitennis.com</li>
+            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>เบอร์โทรศัพท์ด่วน:</strong> (+66) 84-271-7997 </li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>อีเมลฝ่ายซัพพอร์ต:</strong> changphueak4.minitennis@gmail.com</li>
             <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @MiniTennis</li>
           </ul>
           
@@ -2194,14 +2188,14 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-list-check mr-1 text-neon"></i> Accessing the Court</h5>
           <ol style="padding-left: 20px;" class="mb-3">
             <li>After successful booking and uploading your payment slip, copy or screenshot your **6-digit PIN**.</li>
-            <li>Go to your designated tennis court and enter this PIN on the Android Kiosk device next to the gate.</li>
-            <li>Once the correct PIN is entered, the kiosk will unlock the gate and activate the court floodlights automatically.</li>
+            <li>Go to your designated tennis court and enter this PIN on the Android Kiosk device.</li>
+            <li>Once the correct PIN is entered, the kiosk will unlock the device to work.</li>
           </ol>
           
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-phone mr-1 text-neon"></i> Contact Support Team</h5>
           <ul style="padding-left: 20px; list-style: none;" class="mb-3">
-            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>Hotline:</strong> 02-123-4567</li>
-            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>Support Email:</strong> support@minitennis.com</li>
+            <li class="mb-1"><i class="fa-solid fa-phone-volume mr-2 text-neon"></i> <strong>Hotline:</strong> (+66) 84-271-7997 </li>
+            <li class="mb-1"><i class="fa-solid fa-envelope mr-2 text-neon"></i> <strong>Support Email:</strong> changphueak4.minitennis@gmail.com</li>
             <li class="mb-1"><i class="fa-brands fa-line mr-2 text-neon"></i> <strong>Official Line:</strong> @MiniTennis</li>
           </ul>
           

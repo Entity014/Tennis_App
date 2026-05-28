@@ -931,7 +931,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
         Button button4 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button4;
         button4.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1711,7 +1711,11 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
             public void onClick(View view) {
                 if (MainActivity8.this.blenoty.getText().toString().trim().contains(MainActivity8.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity8.this.checkPermissions();
+                    if (MainActivity8.bleDevice != null) {
+                        MainActivity8.this.connect(MainActivity8.bleDevice);
+                    } else {
+                        MainActivity8.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity8.this.blenoty.setText(MainActivity8.this.getResources().getString(R.string.disconnected));
@@ -2195,7 +2199,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivity8.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivity8.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivity8.this, MainActivity8.this.getResources().getString(R.string.alert), MainActivity8.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivity8.this.getSharedPreferences(MainActivity8.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivity8.FORBID_INFO, 1);
@@ -2741,7 +2745,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
                         ShowHelper.toastShort(MainActivity8.this, MainActivity8.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity8.this.nameStar = bleDevice3.getName().trim();
+                MainActivity8.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity8.this.blenoty.setText(MainActivity8.this.getResources().getString(R.string.connected));
                 MainActivity8.this.blenoty.setBackground(MainActivity8.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity8.this.signal_note.setText(MainActivity8.this.nameStar + MainActivity8.this.getResources().getString(R.string.connected));
@@ -3156,7 +3160,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
                     MainActivity8.this.writeBleData(new byte[]{-86, 102, 0, 0, 0, 0, 0, 0, 103, -91});
                 }
             }, 50L);
-            if (BasicData40.b3[i][4] == 0 || BasicData40.b3[i][4] == 50 || Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() >= 650101) {
+            if (BasicData40.b3[i][4] == 0 || BasicData40.b3[i][4] == 50 || com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) >= 650101) {
                 return;
             }
             int i2 = BasicData40.b3[i][4] - 50;
@@ -3340,7 +3344,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
             new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivity8.78
                 @Override // java.lang.Runnable
                 public void run() {
-                    if (Integer.valueOf(MainActivity8.bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 650101) {
+                    if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(MainActivity8.bleDevice) < 650101) {
                         MainActivity8.this.writeBleData(new byte[]{-86, 106, 6, 0, 0, 0, 0, 0, 111, -91});
                     } else {
                         MainActivity8.this.writeBleData(new byte[]{-86, 106, 8, 0, 0, 0, 0, 0, 111, -91});

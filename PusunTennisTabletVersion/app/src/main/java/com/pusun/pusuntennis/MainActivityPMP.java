@@ -743,7 +743,7 @@ public class MainActivityPMP extends AppCompatActivity implements View.OnClickLi
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivityPMP.7.1
                     @Override // java.lang.Runnable
                     public void run() {
-                        MainActivityPMP.this.writeBleData(new byte[]{-86, 115, 2, 0, 0, 0, 0, 0, 0, -91});
+                        MainActivityPMP.this.writeBleData(new byte[]{-86, 115, 1, 0, 0, 0, 0, 0, 0, -91});
                     }
                 }, 20L);
                 new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivityPMP.7.2
@@ -1127,7 +1127,15 @@ public class MainActivityPMP extends AppCompatActivity implements View.OnClickLi
             public void onClick(View view) {
                 if (MainActivityPMP.this.blenoty.getText().toString().trim().contains(MainActivityPMP.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityPMP.this.checkPermissions();
+                    if (MainActivityPMP.bleDevice != null) {
+                        MainActivityPMP.this.connect(MainActivityPMP.bleDevice);
+                    } else {
+                        if (MainActivityPMP.bleDevice != null) {
+                        MainActivityPMP.this.connect(MainActivityPMP.bleDevice);
+                    } else {
+                        MainActivityPMP.this.checkPermissions();
+                    }
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityPMP.this.blenoty.setText(MainActivityPMP.this.getResources().getString(R.string.disconnected));
@@ -1187,7 +1195,7 @@ public class MainActivityPMP extends AppCompatActivity implements View.OnClickLi
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivityPMP.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivityPMP.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivityPMP.this, MainActivityPMP.this.getResources().getString(R.string.alert), MainActivityPMP.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivityPMP.this.getSharedPreferences(MainActivityPMP.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivityPMP.FORBID_INFO, 1);
@@ -1641,7 +1649,7 @@ public class MainActivityPMP extends AppCompatActivity implements View.OnClickLi
                         ShowHelper.toastShort(MainActivityPMP.this, MainActivityPMP.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityPMP.this.nameStar = bleDevice3.getName().trim();
+                MainActivityPMP.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityPMP.this.blenoty.setText(MainActivityPMP.this.getResources().getString(R.string.connected));
                 MainActivityPMP.this.blenoty.setBackground(MainActivityPMP.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPMP.this.signal_note.setText(MainActivityPMP.this.nameStar + MainActivityPMP.this.getResources().getString(R.string.connected));

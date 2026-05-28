@@ -979,7 +979,7 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
         Button button3 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button3;
         button3.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1868,7 +1868,11 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivityXB.this.blenoty.getText().toString().trim().contains(MainActivityXB.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityXB.this.checkPermissions();
+                    if (MainActivityXB.bleDevice != null) {
+                        MainActivityXB.this.connect(MainActivityXB.bleDevice);
+                    } else {
+                        MainActivityXB.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.disconnected));
@@ -2697,7 +2701,7 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityXB.this, MainActivityXB.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityXB.this.nameStar = bleDevice3.getName().trim();
+                MainActivityXB.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.connected));
                 MainActivityXB.this.blenoty.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityXB.this.signal_note.setText(MainActivityXB.this.nameStar + MainActivityXB.this.getResources().getString(R.string.connected));

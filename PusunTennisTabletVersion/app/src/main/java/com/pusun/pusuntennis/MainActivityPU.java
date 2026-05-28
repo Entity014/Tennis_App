@@ -1465,7 +1465,11 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivityPU.this.blenoty.getText().toString().trim().contains(MainActivityPU.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityPU.this.checkPermissions();
+                    if (MainActivityPU.bleDevice != null) {
+                        MainActivityPU.this.connect(MainActivityPU.bleDevice);
+                    } else {
+                        MainActivityPU.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityPU.this.blenoty.setText(MainActivityPU.this.getResources().getString(R.string.disconnected));
@@ -2124,7 +2128,7 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityPU.this, MainActivityPU.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityPU.this.nameStar = bleDevice3.getName().trim();
+                MainActivityPU.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityPU.this.blenoty.setText(MainActivityPU.this.getResources().getString(R.string.connected));
                 MainActivityPU.this.blenoty.setBackground(MainActivityPU.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPU.this.signal_note.setText(MainActivityPU.this.nameStar + MainActivityPU.this.getResources().getString(R.string.connected));

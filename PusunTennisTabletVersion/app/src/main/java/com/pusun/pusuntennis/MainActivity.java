@@ -1126,7 +1126,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View view) {
                 if (MainActivity.this.blenoty.getText().toString().trim().contains(MainActivity.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity.this.checkPermissions();
+                    if (MainActivity.bleDevice != null) {
+                        MainActivity.this.connect(MainActivity.bleDevice);
+                    } else {
+                        MainActivity.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.disconnected));
@@ -1297,7 +1301,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivity.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivity.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivity.this, MainActivity.this.getResources().getString(R.string.alert), MainActivity.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivity.this.getSharedPreferences(MainActivity.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivity.FORBID_INFO, 1);
@@ -1743,7 +1747,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ShowHelper.toastShort(MainActivity.this, MainActivity.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity.this.nameStar = bleDevice3.getName().trim();
+                MainActivity.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.connected));
                 MainActivity.this.blenoty.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity.this.signal_note.setText(MainActivity.this.nameStar + MainActivity.this.getResources().getString(R.string.connected));

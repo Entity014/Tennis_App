@@ -921,7 +921,7 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
         Button button3 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button3;
         button3.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1705,7 +1705,11 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivity6L.this.blenoty.getText().toString().trim().contains(MainActivity6L.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivity6L.this.checkPermissions();
+                    if (MainActivity6L.bleDevice != null) {
+                        MainActivity6L.this.connect(MainActivity6L.bleDevice);
+                    } else {
+                        MainActivity6L.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivity6L.this.blenoty.setText(MainActivity6L.this.getResources().getString(R.string.disconnected));
@@ -2189,7 +2193,7 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
                                     int i = 0;
                                     while (true) {
                                         if (i < split.length) {
-                                            if (MainActivity6L.bleDevice.getName().toString().trim().equals(split[i].toString().trim())) {
+                                            if (com.pusun.pusuntennis.utils.Util.getDeviceName(MainActivity6L.bleDevice).equals(split[i].toString().trim())) {
                                                 ShowHelper.showAlertDialog(MainActivity6L.this, MainActivity6L.this.getResources().getString(R.string.alert), MainActivity6L.this.getResources().getString(R.string.forbid_alert));
                                                 SharedPreferences.Editor edit = MainActivity6L.this.getSharedPreferences(MainActivity6L.FORBID_INFO, 0).edit();
                                                 edit.putInt(MainActivity6L.FORBID_INFO, 1);
@@ -2735,7 +2739,7 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivity6L.this, MainActivity6L.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity6L.this.nameStar = bleDevice3.getName().trim();
+                MainActivity6L.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivity6L.this.blenoty.setText(MainActivity6L.this.getResources().getString(R.string.connected));
                 MainActivity6L.this.blenoty.setBackground(MainActivity6L.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity6L.this.signal_note.setText(MainActivity6L.this.nameStar + MainActivity6L.this.getResources().getString(R.string.connected));

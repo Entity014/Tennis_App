@@ -824,7 +824,7 @@ public class MainActivityA9 extends AppCompatActivity implements View.OnClickLis
         Button button2 = (Button) findViewById(R.id.stop_ball);
         this.stop_ball = button2;
         button2.setOnClickListener(this);
-        if (Integer.valueOf(bleDevice.getName().toString().trim().substring(3, 9)).intValue() < 230712) {
+        if (com.pusun.pusuntennis.utils.Util.getDeviceVersion(bleDevice) < 230712) {
             this.step.setVisibility(4);
             this.step.setClickable(false);
         }
@@ -1468,7 +1468,11 @@ public class MainActivityA9 extends AppCompatActivity implements View.OnClickLis
             public void onClick(View view) {
                 if (MainActivityA9.this.blenoty.getText().toString().trim().contains(MainActivityA9.this.getResources().getString(R.string.disconnected))) {
                     BleManager.getInstance().disconnectAllDevice();
-                    MainActivityA9.this.checkPermissions();
+                    if (MainActivityA9.bleDevice != null) {
+                        MainActivityA9.this.connect(MainActivityA9.bleDevice);
+                    } else {
+                        MainActivityA9.this.checkPermissions();
+                    }
                 } else {
                     BleManager.getInstance().disconnectAllDevice();
                     MainActivityA9.this.blenoty.setText(MainActivityA9.this.getResources().getString(R.string.disconnected));
@@ -2185,7 +2189,7 @@ public class MainActivityA9 extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityA9.this, MainActivityA9.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityA9.this.nameStar = bleDevice3.getName().trim();
+                MainActivityA9.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
                 MainActivityA9.this.blenoty.setText(MainActivityA9.this.getResources().getString(R.string.connected));
                 MainActivityA9.this.blenoty.setBackground(MainActivityA9.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityA9.this.signal_note.setText(MainActivityA9.this.nameStar + MainActivityA9.this.getResources().getString(R.string.connected));
