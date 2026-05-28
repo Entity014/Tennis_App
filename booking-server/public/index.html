@@ -45,6 +45,7 @@
       <nav class="nav-links">
         <a href="#home" class="nav-link active" data-target="home-view" data-i18n="nav-home">Home</a>
         <a href="#search" class="nav-link" data-target="search-view" data-i18n="nav-book">Book Court</a>
+        <a href="#location" class="nav-link" data-target="location-view" data-i18n="nav-location">Location & Contact</a>
         <a href="#dashboard" class="nav-link auth-required" data-target="dashboard-view" style="display: none;" data-i18n="nav-my-bookings">My Bookings</a>
         <a href="#admin" class="nav-link admin-required" data-target="admin-view" style="display: none;" data-i18n="nav-admin">Admin Panel</a>
       </nav>
@@ -261,6 +262,9 @@
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
                 <input type="password" id="login-password" class="form-control" placeholder="Enter password" data-i18n-placeholder="auth-password-placeholder" required autocomplete="current-password">
+                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility" onclick="togglePasswordVisibility('login-password', this)">
+                  <i class="fa-solid fa-eye-slash"></i>
+                </button>
               </div>
               <div id="login-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
               <div class="text-right mt-2">
@@ -315,6 +319,9 @@
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
                 <input type="password" id="register-password" class="form-control" placeholder="Choose a strong password" data-i18n-placeholder="auth-choose-password-placeholder" required autocomplete="new-password">
+                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility" onclick="togglePasswordVisibility('register-password', this)">
+                  <i class="fa-solid fa-eye-slash"></i>
+                </button>
               </div>
               <div id="register-password-requirements" class="auth-requirements mt-2" style="display: none;">
                 <ul class="requirements-list">
@@ -381,6 +388,9 @@
               <div class="input-icon-group">
                 <i class="fa-solid fa-lock input-icon"></i>
                 <input type="password" id="reset-password" class="form-control" placeholder="Choose a strong password" data-i18n-placeholder="auth-choose-password-placeholder" required autocomplete="new-password">
+                <button type="button" class="password-toggle-btn" aria-label="Toggle password visibility" onclick="togglePasswordVisibility('reset-password', this)">
+                  <i class="fa-solid fa-eye-slash"></i>
+                </button>
               </div>
               <div id="reset-password-error" class="form-error-message" style="display: none; color: #ef4444; font-size: 0.8rem; margin-top: 5px;"></div>
             </div>
@@ -937,6 +947,70 @@
                 <!-- Dynamically populated conflicts -->
               </tbody>
             </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. Contact & Location View -->
+    <section id="location-view" class="view">
+      <div class="container container-sm">
+        <div class="location-card glassmorphism">
+          <div class="view-header text-center mb-4">
+            <h2 class="view-title" data-i18n="location-title"><i class="fa-solid fa-map-location-dot text-neon mr-2"></i> Location & Contact</h2>
+            <p class="view-subtitle text-muted" data-i18n="location-subtitle">Find your way to our premium tennis courts and get in touch with us.</p>
+          </div>
+
+          <div class="location-content-grid mt-4">
+            <!-- Map Container -->
+            <div class="map-container-wrapper">
+              <div class="map-iframe-box" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border-color); height: 350px;">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.485123485764!2d100.53833333333333!3d13.733333333333334!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x30e29edf1f05a109%3A0x6b2b6c701f2f01f2!2z4Liq4LiZ4Liy4Lih4LmA4LiX4LiZ4Li04Liq!5e0!3m2!1sth!2sth!4v1700000000000!5m2!1sth!2sth" 
+                  width="100%" 
+                  height="100%" 
+                  style="border:0;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            </div>
+
+            <!-- Details Block -->
+            <div class="location-details-box">
+              <div class="location-info-row">
+                <div class="info-icon text-neon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="info-text">
+                  <h4 data-i18n="location-address-title">Address</h4>
+                  <p data-i18n="location-address">123 Tennis Road, Lumphini, Pathum Wan, Bangkok 10330</p>
+                </div>
+              </div>
+
+              <div class="location-info-row">
+                <div class="info-icon text-neon"><i class="fa-solid fa-phone"></i></div>
+                <div class="info-text">
+                  <h4>Phone</h4>
+                  <p>02-123-4567</p>
+                </div>
+              </div>
+
+              <div class="location-info-row">
+                <div class="info-icon text-neon"><i class="fa-solid fa-clock"></i></div>
+                <div class="info-text">
+                  <h4 data-i18n="location-hours-title">Opening Hours</h4>
+                  <p data-i18n="location-hours">Everyday: 06:00 AM - 10:00 PM</p>
+                </div>
+              </div>
+
+              <div class="location-info-row">
+                <div class="info-icon text-neon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="info-text">
+                  <h4>Email & Social Line</h4>
+                  <p>support@minitennis.com | Line: @minitennis</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

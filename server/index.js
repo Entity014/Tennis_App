@@ -39,7 +39,7 @@ require('./database');
 
 // Start background synchronization scheduler
 const { startSyncScheduler } = require('./sync');
-startSyncScheduler(15000);
+startSyncScheduler();
 
 // Fallback to Dashboard
 app.use((req, res) => {

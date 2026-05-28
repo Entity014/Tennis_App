@@ -3,17 +3,7 @@ import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 import { broadcastEvent } from '@/lib/sse';
 import { validateAndApplyPromo } from '@/lib/promo';
-
-async function cleanupExpiredBookings() {
-  try {
-    await prisma.$executeRaw`
-      DELETE FROM bookings
-      WHERE status = 'pending' AND created_at < NOW() - INTERVAL '5 minutes'
-    `;
-  } catch (err) {
-    console.error('Error cleaning up expired bookings:', err.message);
-  }
-}
+import { throttledCleanupExpiredBookings } from '@/lib/dbUtils';
 
 export async function POST(req) {
   try {
@@ -30,7 +20,7 @@ export async function POST(req) {
       return NextResponse.json({ message: 'Missing booking details' }, { status: 400 });
     }
 
-    await cleanupExpiredBookings();
+    await throttledCleanupExpiredBookings();
 
     // Prevent booking slots in the past (Thailand timezone offset +07:00)
     const slotDateTime = new Date(`${date}T${start_time}:00+07:00`);

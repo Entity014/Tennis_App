@@ -1,19 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
+import { throttledCleanupExpiredBookings } from '@/lib/dbUtils';
 
 export const dynamic = 'force-dynamic';
-
-async function cleanupExpiredBookings() {
-  try {
-    await prisma.$executeRaw`
-      DELETE FROM bookings
-      WHERE status = 'pending' AND created_at < NOW() - INTERVAL '5 minutes'
-    `;
-  } catch (err) {
-    console.error('Error cleaning up expired bookings:', err.message);
-  }
-}
 
 export async function GET(req) {
   try {
@@ -27,7 +17,7 @@ export async function GET(req) {
       });
     }
 
-    await cleanupExpiredBookings();
+    await throttledCleanupExpiredBookings();
 
     const bookings = await prisma.booking.findMany({
       where: {

@@ -538,6 +538,13 @@ const TRANSLATIONS = {
     'footer-privacy': 'นโยบายความเป็นส่วนตัว',
     'footer-terms': 'ข้อตกลงการให้บริการ',
     'footer-support': 'ช่วยเหลือและสนับสนุน',
+    'nav-location': 'ที่ตั้ง & ติดต่อ',
+    'location-title': 'ที่ตั้งสนาม & ข้อมูลติดต่อ',
+    'location-subtitle': 'เดินทางมายังสนามระดับพรีเมียมของเราและติดต่อสอบถามข้อมูลเพิ่มเติมได้ที่นี่',
+    'location-address-title': 'ที่อยู่สนาม',
+    'location-address': '123 ถนนเทนนิส แขวงลุมพินี เขตปทุมวัน กรุงเทพมหานคร 10330',
+    'location-hours-title': 'เวลาทำการ',
+    'location-hours': 'ทุกวัน: 06:00 น. - 22:00 น.',
     'dashboard-title': 'แผงควบคุมผู้เล่น',
     'dashboard-subtitle': 'จัดการการจอง รหัสเข้าสนาม และโปรไฟล์ของคุณ',
     'dashboard-new-booking': 'จองสนามใหม่',
@@ -607,6 +614,8 @@ function applyLanguage(lang) {
   currentLang = lang;
   localStorage.setItem('lang', lang);
   
+  document.documentElement.setAttribute('lang', lang);
+
   const label = document.getElementById('lang-label');
   if (label) {
     label.textContent = lang === 'en' ? 'EN' : 'TH';
@@ -3897,6 +3906,7 @@ function loadAdminDashboard() {
 }
 
 function loadAdminBookings() {
+  closeGlobalKebab();
   fetch('/api/admin/bookings', {
     headers: { 'Authorization': `Bearer ${STATE.token}` }
   })
@@ -3915,6 +3925,7 @@ function loadAdminBookings() {
 
     activeBookings.forEach(b => {
       const tr = document.createElement('tr');
+      tr.dataset.bookingId = b.id;
       let statusClass = 'status-pending';
       if (b.status === 'paid') statusClass = 'status-paid';
       else if (b.status === 'completed') statusClass = 'status-completed';
@@ -3953,6 +3964,7 @@ function loadAdminBookings() {
 }
 
 function loadAdminConflicts() {
+  closeGlobalKebab();
   fetch('/api/admin/bookings', {
     headers: { 'Authorization': `Bearer ${STATE.token}` }
   })
@@ -3971,6 +3983,7 @@ function loadAdminConflicts() {
 
     conflicts.forEach(b => {
       const tr = document.createElement('tr');
+      tr.dataset.bookingId = b.id;
       let statusClass = 'status-pending';
       if (b.status === 'paid') statusClass = 'status-paid';
       else if (b.status === 'refund_pending') statusClass = 'status-refund-pending';
@@ -4176,6 +4189,7 @@ function handleAdminReschedule(event) {
 }
 
 function loadAdminCourts() {
+  closeGlobalKebab();
   const todayStr = getDefaultDate();
   fetch(`/api/courts?date=${STATE.selectedDate || todayStr}`)
   .then(res => res.json())
@@ -4380,26 +4394,92 @@ function resetCourtForm() {
 }
 
 // ── Kebab Action Menu Toggle ──
+let activeKebabTrigger = null;
+
 function toggleKebab(event, triggerBtn) {
   event.stopPropagation();
+  
+  let globalDropdown = document.getElementById('global-kebab-dropdown');
+  if (!globalDropdown) {
+    globalDropdown = document.createElement('div');
+    globalDropdown.id = 'global-kebab-dropdown';
+    globalDropdown.className = 'kebab-dropdown';
+    document.body.appendChild(globalDropdown);
+  }
+  
   const menu = triggerBtn.closest('.kebab-menu');
-  // Close all other open menus first
-  document.querySelectorAll('.kebab-menu.open').forEach(m => {
-    if (m !== menu) m.classList.remove('open');
-  });
-  menu.classList.toggle('open');
+  const rowDropdown = menu.querySelector('.kebab-dropdown');
+  
+  if (activeKebabTrigger === triggerBtn) {
+    closeGlobalKebab();
+    return;
+  }
+  
+  activeKebabTrigger = triggerBtn;
+  globalDropdown.innerHTML = rowDropdown.innerHTML;
+  
+  const rect = triggerBtn.getBoundingClientRect();
+  
+  globalDropdown.style.display = 'flex';
+  globalDropdown.style.flexDirection = 'column';
+  
+  const dropdownWidth = globalDropdown.offsetWidth;
+  const dropdownHeight = globalDropdown.offsetHeight;
+  
+  let left = rect.right + window.scrollX - dropdownWidth;
+  let top = rect.bottom + window.scrollY + 6;
+  
+  if (left < 0) {
+    left = rect.left + window.scrollX;
+  }
+  
+  if (rect.bottom + dropdownHeight + 12 > window.innerHeight) {
+    top = rect.top + window.scrollY - dropdownHeight - 6;
+  }
+  
+  globalDropdown.style.left = `${left}px`;
+  globalDropdown.style.top = `${top}px`;
+  
+  document.querySelectorAll('.kebab-menu.open').forEach(m => m.classList.remove('open'));
+  menu.classList.add('open');
 }
 
-// Close all kebab menus when clicking outside
-document.addEventListener('click', () => {
+function closeGlobalKebab() {
+  const globalDropdown = document.getElementById('global-kebab-dropdown');
+  if (globalDropdown) {
+    globalDropdown.style.display = 'none';
+  }
   document.querySelectorAll('.kebab-menu.open').forEach(m => m.classList.remove('open'));
+  activeKebabTrigger = null;
+}
+
+document.addEventListener('click', (event) => {
+  const globalDropdown = document.getElementById('global-kebab-dropdown');
+  if (globalDropdown) {
+    if (!globalDropdown.contains(event.target)) {
+      closeGlobalKebab();
+    } else if (event.target.closest('.kebab-item')) {
+      setTimeout(closeGlobalKebab, 10);
+    }
+  } else {
+    document.querySelectorAll('.kebab-menu.open').forEach(m => m.classList.remove('open'));
+  }
 });
+
+window.addEventListener('scroll', () => {
+  if (activeKebabTrigger) {
+    closeGlobalKebab();
+  }
+}, { passive: true });
 
 function deleteAdminBooking(id, btn) {
   if (!confirm(translateConfirm('Are you sure you want to delete/cancel this booking?'))) return;
 
   // Optimistic UI: remove the row immediately
-  const row = btn ? btn.closest('tr') : null;
+  let row = btn ? btn.closest('tr') : null;
+  if (!row) {
+    row = document.querySelector(`tr[data-booking-id="${id}"]`);
+  }
   if (row) row.style.opacity = '0.4';
 
   fetch(`/api/admin/bookings/${id}`, {
@@ -4544,6 +4624,7 @@ function changeUserRole(userId, newRole, selectEl) {
 }
 
 function loadAdminPromoCodes() {
+  closeGlobalKebab();
   fetch('/api/admin/promo-codes', {
     headers: { 'Authorization': `Bearer ${STATE.token}` }
   })
@@ -4770,4 +4851,24 @@ function initRealtimeSync() {
     }
   };
 }
+
+function togglePasswordVisibility(inputId, buttonEl) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const icon = buttonEl.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    if (icon) {
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
+  } else {
+    input.type = 'password';
+    if (icon) {
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    }
+  }
+}
+window.togglePasswordVisibility = togglePasswordVisibility;
 

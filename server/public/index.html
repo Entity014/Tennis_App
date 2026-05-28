@@ -55,6 +55,10 @@
                 <p class="text-slate-400 text-sm mt-1">On-Site Local Gateway & Kiosk Controller</p>
             </div>
             <div class="flex items-center space-x-4">
+                <button onclick="triggerManualSync()" id="syncBtn" class="flex items-center space-x-2 bg-lime-500/10 border border-lime-500/30 hover:bg-lime-500/20 text-lime-400 px-4 py-2 rounded-full shadow-lg transition-all duration-300 font-semibold text-xs uppercase tracking-wider select-none">
+                    <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Manual Pull Sync
+                </button>
                 <div class="flex items-center space-x-2 bg-emerald-500/10 border border-emerald-500/20 px-4 py-2 rounded-full shadow-lg shadow-emerald-500/5">
                     <span class="relative flex h-2 w-2">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -595,6 +599,39 @@
             } catch (err) {
                 console.error(err);
                 alert('Error clearing devices');
+            }
+        }
+
+        async function triggerManualSync() {
+            const syncBtn = document.getElementById('syncBtn');
+            if (syncBtn) {
+                syncBtn.disabled = true;
+                syncBtn.innerHTML = `
+                    <svg class="w-3.5 h-3.5 mr-1 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    Syncing...
+                `;
+            }
+            try {
+                const res = await fetch('/api/admin/sync', { method: 'POST' });
+                const data = await res.json();
+                if (res.ok) {
+                    alert(data.message || 'Database synchronization completed.');
+                } else {
+                    alert('Sync failed: ' + (data.error || 'Unknown error'));
+                }
+                fetchDevices();
+                fetchSessions();
+            } catch (err) {
+                console.error(err);
+                alert('Connection error triggering manual sync');
+            } finally {
+                if (syncBtn) {
+                    syncBtn.disabled = false;
+                    syncBtn.innerHTML = `
+                        <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Manual Pull Sync
+                    `;
+                }
             }
         }
 

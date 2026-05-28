@@ -6,17 +6,7 @@ import prisma from '@/lib/prisma';
 import { verifyAuthToken } from '@/lib/auth';
 import { broadcastEvent } from '@/lib/sse';
 import { validateAndApplyPromo } from '@/lib/promo';
-
-async function cleanupExpiredBookings() {
-  try {
-    await prisma.$executeRaw`
-      DELETE FROM bookings
-      WHERE status = 'pending' AND created_at < NOW() - INTERVAL '5 minutes'
-    `;
-  } catch (err) {
-    console.error('Error cleaning up expired bookings:', err.message);
-  }
-}
+import { throttledCleanupExpiredBookings } from '@/lib/dbUtils';
 
 async function saveFailedSlip(imageHash, transRef, qrPayload, bookingId) {
   try {
@@ -64,7 +54,7 @@ export async function POST(req, { params }) {
       return NextResponse.json({ message: 'Only PromptPay QR payment is supported.' }, { status: 400 });
     }
 
-    await cleanupExpiredBookings();
+    await throttledCleanupExpiredBookings();
 
     const booking = await prisma.booking.findFirst({
       where: {

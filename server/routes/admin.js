@@ -157,4 +157,16 @@ router.post('/device/:id/force', (req, res) => {
   res.json({ message: `Command ${command} queued and status synchronized for device ${deviceId}.` });
 });
 
+// 5. Manual Pull Database Sync
+router.post('/sync', async (req, res) => {
+  try {
+    const { syncBookings } = require('../sync');
+    await syncBookings();
+    res.json({ message: 'Database synchronization completed successfully.' });
+  } catch (err) {
+    console.error('[Admin API] Error in manual sync:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

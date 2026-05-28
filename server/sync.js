@@ -119,12 +119,34 @@ async function syncBookings() {
   }
 }
 
-function startSyncScheduler(intervalMs = 15000) {
-  console.log(`[Sync] Starting sync scheduler (interval: ${intervalMs}ms)`);
-  // Run initial sync
+function startSyncScheduler() {
+  console.log('[Sync] Starting daily sync scheduler (Target: 22:00 / 10 PM everyday)');
+
+  function scheduleNextSync() {
+    const now = new Date();
+    const next22 = new Date(now);
+    next22.setHours(22, 0, 0, 0);
+
+    // If it's already past 22:00 today, schedule for tomorrow 22:00
+    if (now >= next22) {
+      next22.setDate(next22.getDate() + 1);
+    }
+
+    const delay = next22.getTime() - now.getTime();
+    const hours = Math.floor(delay / (3600 * 1000));
+    const mins = Math.floor((delay % (3600 * 1000)) / (60 * 1000));
+    console.log(`[Sync] Next scheduled sync in ${hours}h ${mins}m (at ${next22.toString()})`);
+
+    setTimeout(async () => {
+      console.log('[Sync] Triggering scheduled daily sync...');
+      await syncBookings();
+      scheduleNextSync(); // Schedule next day
+    }, delay);
+  }
+
+  // Run initial sync on startup
   syncBookings();
-  // Set interval
-  setInterval(syncBookings, intervalMs);
+  scheduleNextSync();
 }
 
 async function updateCloudBookingStatus(bookingId, status) {
