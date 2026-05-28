@@ -85,6 +85,8 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
     public static BleDevice bleDevice;
+    private String deviceMac;
+    private String deviceName;
     private Button aidrill;
     private TextView back_m_add;
     private TextView back_m_de;
@@ -450,6 +452,17 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         this.density = displayMetrics.scaledDensity;
         bleDevice = (BleDevice) getIntent().getParcelableExtra("device");
+        if (bleDevice != null && bleDevice.getMac() != null) {
+            deviceMac = bleDevice.getMac();
+        }
+        if (bleDevice != null && bleDevice.getName() != null) {
+            deviceName = bleDevice.getName().trim();
+        }
+        // Fallback: name passed explicitly before disconnect
+        String intentDeviceName = getIntent().getStringExtra("device_name");
+        if (intentDeviceName != null && !intentDeviceName.isEmpty()) {
+            deviceName = intentDeviceName;
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout), new OnApplyWindowInsetsListener() { // from class: com.pusun.pusuntennis.MainActivityXV$$ExternalSyntheticLambda0
             @Override // androidx.core.view.OnApplyWindowInsetsListener
             public final WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat) {
@@ -513,6 +526,7 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivityXV.this, (Class<?>) MainActivityPadX.class);
                         intent.putExtra("device", currentDevice);
+                        intent.putExtra("device_name", com.pusun.pusuntennis.utils.Util.getDeviceName(currentDevice));
                         MainActivityXV.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -2806,6 +2820,76 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
 
     /* JADX INFO: Access modifiers changed from: private */
     public void connect(BleDevice bleDevice2) {
+        // MAC-based connect fallback: if BleDevice parcelable lost its BluetoothDevice
+        // reference after a disconnect, reconstruct the device from the adapter via MAC.
+        String mac = (bleDevice2 != null) ? bleDevice2.getMac() : null;
+        if (mac == null && deviceMac != null) {
+            mac = deviceMac;
+        }
+        if (bleDevice2 == null || bleDevice2.getDevice() == null) {
+            if (mac != null) {
+                BleManager.getInstance().connect(mac, new BleGattCallback() {
+                    @Override
+                    public void onStartConnect() {
+                        MainActivityXV mainActivity = MainActivityXV.this;
+                        ShowHelper.showProgressDialog(mainActivity, mainActivity.getResources().getString(R.string.connecting_device));
+                    }
+                    @Override
+                    public void onConnectFail(BleDevice bleDevice3, BleException bleException) {
+                        MainActivityXV mainActivity = MainActivityXV.this;
+                        ShowHelper.toastLong(mainActivity, mainActivity.getResources().getString(R.string.connect_failure_check));
+                        ShowHelper.dismissProgressDialog();
+                        MainActivityXV.this.blenoty.setText(MainActivityXV.this.getResources().getString(R.string.disconnected));
+                        MainActivityXV.this.blenoty.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivityXV.this.signal.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivityXV.this.signal_note.setText(MainActivityXV.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivityXV.this.signal_note.setTextColor(MainActivityXV.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                    }
+                    @Override
+                    public void onConnectSuccess(BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        ShowHelper.setProgressDialogMessage(MainActivityXV.this.getResources().getString(R.string.initializing));
+                        MainActivityXV.this.connNum = 0;
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public synchronized void run() {
+                                ShowHelper.dismissProgressDialog();
+                                ShowHelper.toastShort(MainActivityXV.this, MainActivityXV.this.getResources().getString(R.string.please_use));
+                            }
+                        }, com.google.android.exoplayer2.C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
+                        String resolvedName = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                        if (resolvedName == null || resolvedName.isEmpty()) resolvedName = MainActivityXV.this.deviceName != null ? MainActivityXV.this.deviceName : "";
+                        MainActivityXV.this.nameStar = resolvedName;
+                        MainActivityXV.this.blenoty.setText(MainActivityXV.this.getResources().getString(R.string.connected));
+                        MainActivityXV.this.blenoty.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.button_selector));
+                        MainActivityXV.this.signal_note.setText(MainActivityXV.this.nameStar + MainActivityXV.this.getResources().getString(R.string.connected));
+                        MainActivityXV.this.signal_note.setTextColor(MainActivityXV.this.getResources().getColor(R.color.icon_green));
+                        MainActivityXV.this.signal.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.bicon_blue));
+                        MainActivityXV.this.isFaultOn = 0;
+                        MainActivityXV.this.gatt = bluetoothGatt;
+                        MainActivityXV.bleDevice = bleDevice3;
+                        if (bleDevice3.getMac() != null) MainActivityXV.this.deviceMac = bleDevice3.getMac();
+                        MainActivityXV.this.startNotify();
+                    }
+                    @Override
+                    public void onDisConnected(boolean z, final BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        MainActivityXV.this.blenoty.setText(MainActivityXV.this.getResources().getString(R.string.disconnected));
+                        MainActivityXV.this.blenoty.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivityXV.this.signal.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivityXV.this.signal_note.setText(MainActivityXV.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivityXV.this.signal_note.setTextColor(MainActivityXV.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                        MainActivityXV.this.isFaultOn = 0;
+                        if (z || MainActivityXV.this.connNum >= 3) { return; }
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public void run() { MainActivityXV.this.connect(bleDevice3); }
+                        }, 1000L);
+                    }
+                });
+            } else {
+                android.util.Log.e("MainActivityXV", "connect: bleDevice and mac are both null, cannot connect");
+            }
+            return;
+        }
         BleManager.getInstance().connect(bleDevice2, new BleGattCallback() { // from class: com.pusun.pusuntennis.MainActivityXV.55
             @Override // com.clj.fastble.callback.BleGattCallback
             public void onStartConnect() {
@@ -2838,7 +2922,9 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityXV.this, MainActivityXV.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityXV.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                String rawNameMainAc = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                if (rawNameMainAc == null || rawNameMainAc.isEmpty()) rawNameMainAc = MainActivityXV.this.deviceName != null ? MainActivityXV.this.deviceName : "";
+                MainActivityXV.this.nameStar = rawNameMainAc;
                 MainActivityXV.this.blenoty.setText(MainActivityXV.this.getResources().getString(R.string.connected));
                 MainActivityXV.this.blenoty.setBackground(MainActivityXV.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityXV.this.signal_note.setText(MainActivityXV.this.nameStar + MainActivityXV.this.getResources().getString(R.string.connected));

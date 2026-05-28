@@ -77,6 +77,8 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
     public static BleDevice bleDevice;
+    private String deviceMac;
+    private String deviceName;
     private TextView back_m_add;
     private TextView back_m_de;
     private TextView back_m_value;
@@ -433,6 +435,17 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         this.density = displayMetrics.scaledDensity;
         bleDevice = (BleDevice) getIntent().getParcelableExtra("device");
+        if (bleDevice != null && bleDevice.getMac() != null) {
+            deviceMac = bleDevice.getMac();
+        }
+        if (bleDevice != null && bleDevice.getName() != null) {
+            deviceName = bleDevice.getName().trim();
+        }
+        // Fallback: name passed explicitly before disconnect
+        String intentDeviceName = getIntent().getStringExtra("device_name");
+        if (intentDeviceName != null && !intentDeviceName.isEmpty()) {
+            deviceName = intentDeviceName;
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout), new OnApplyWindowInsetsListener() { // from class: com.pusun.pusuntennis.MainActivityXB$$ExternalSyntheticLambda0
             @Override // androidx.core.view.OnApplyWindowInsetsListener
             public final WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat) {
@@ -2670,6 +2683,76 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
 
     /* JADX INFO: Access modifiers changed from: private */
     public void connect(BleDevice bleDevice2) {
+        // MAC-based connect fallback: if BleDevice parcelable lost its BluetoothDevice
+        // reference after a disconnect, reconstruct the device from the adapter via MAC.
+        String mac = (bleDevice2 != null) ? bleDevice2.getMac() : null;
+        if (mac == null && deviceMac != null) {
+            mac = deviceMac;
+        }
+        if (bleDevice2 == null || bleDevice2.getDevice() == null) {
+            if (mac != null) {
+                BleManager.getInstance().connect(mac, new BleGattCallback() {
+                    @Override
+                    public void onStartConnect() {
+                        MainActivityXB mainActivity = MainActivityXB.this;
+                        ShowHelper.showProgressDialog(mainActivity, mainActivity.getResources().getString(R.string.connecting_device));
+                    }
+                    @Override
+                    public void onConnectFail(BleDevice bleDevice3, BleException bleException) {
+                        MainActivityXB mainActivity = MainActivityXB.this;
+                        ShowHelper.toastLong(mainActivity, mainActivity.getResources().getString(R.string.connect_failure_check));
+                        ShowHelper.dismissProgressDialog();
+                        MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.disconnected));
+                        MainActivityXB.this.blenoty.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivityXB.this.signal.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivityXB.this.signal_note.setText(MainActivityXB.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivityXB.this.signal_note.setTextColor(MainActivityXB.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                    }
+                    @Override
+                    public void onConnectSuccess(BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        ShowHelper.setProgressDialogMessage(MainActivityXB.this.getResources().getString(R.string.initializing));
+                        MainActivityXB.this.connNum = 0;
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public synchronized void run() {
+                                ShowHelper.dismissProgressDialog();
+                                ShowHelper.toastShort(MainActivityXB.this, MainActivityXB.this.getResources().getString(R.string.please_use));
+                            }
+                        }, com.google.android.exoplayer2.C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
+                        String resolvedName = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                        if (resolvedName == null || resolvedName.isEmpty()) resolvedName = MainActivityXB.this.deviceName != null ? MainActivityXB.this.deviceName : "";
+                        MainActivityXB.this.nameStar = resolvedName;
+                        MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.connected));
+                        MainActivityXB.this.blenoty.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.button_selector));
+                        MainActivityXB.this.signal_note.setText(MainActivityXB.this.nameStar + MainActivityXB.this.getResources().getString(R.string.connected));
+                        MainActivityXB.this.signal_note.setTextColor(MainActivityXB.this.getResources().getColor(R.color.icon_green));
+                        MainActivityXB.this.signal.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.bicon_blue));
+                        MainActivityXB.this.isFaultOn = 0;
+                        MainActivityXB.this.gatt = bluetoothGatt;
+                        MainActivityXB.bleDevice = bleDevice3;
+                        if (bleDevice3.getMac() != null) MainActivityXB.this.deviceMac = bleDevice3.getMac();
+                        MainActivityXB.this.startNotify();
+                    }
+                    @Override
+                    public void onDisConnected(boolean z, final BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.disconnected));
+                        MainActivityXB.this.blenoty.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivityXB.this.signal.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivityXB.this.signal_note.setText(MainActivityXB.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivityXB.this.signal_note.setTextColor(MainActivityXB.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                        MainActivityXB.this.isFaultOn = 0;
+                        if (z || MainActivityXB.this.connNum >= 3) { return; }
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public void run() { MainActivityXB.this.connect(bleDevice3); }
+                        }, 1000L);
+                    }
+                });
+            } else {
+                android.util.Log.e("MainActivityXB", "connect: bleDevice and mac are both null, cannot connect");
+            }
+            return;
+        }
         BleManager.getInstance().connect(bleDevice2, new BleGattCallback() { // from class: com.pusun.pusuntennis.MainActivityXB.51
             @Override // com.clj.fastble.callback.BleGattCallback
             public void onStartConnect() {
@@ -2701,7 +2784,9 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
                         ShowHelper.toastShort(MainActivityXB.this, MainActivityXB.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityXB.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                String rawNameMainAc = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                if (rawNameMainAc == null || rawNameMainAc.isEmpty()) rawNameMainAc = MainActivityXB.this.deviceName != null ? MainActivityXB.this.deviceName : "";
+                MainActivityXB.this.nameStar = rawNameMainAc;
                 MainActivityXB.this.blenoty.setText(MainActivityXB.this.getResources().getString(R.string.connected));
                 MainActivityXB.this.blenoty.setBackground(MainActivityXB.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityXB.this.signal_note.setText(MainActivityXB.this.nameStar + MainActivityXB.this.getResources().getString(R.string.connected));

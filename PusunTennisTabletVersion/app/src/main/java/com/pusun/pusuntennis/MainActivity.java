@@ -80,6 +80,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int REQUEST_CODE_OPEN_GPS = 1;
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
     public static BleDevice bleDevice;
+    private String deviceMac;
+    private String deviceName;
     private View bg_four;
     private View bg_input;
     private View bg_input_big;
@@ -347,6 +349,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         this.density = displayMetrics.scaledDensity;
         bleDevice = (BleDevice) getIntent().getParcelableExtra("device");
+        if (bleDevice != null && bleDevice.getMac() != null) {
+            deviceMac = bleDevice.getMac();
+        }
+        if (bleDevice != null && bleDevice.getName() != null) {
+            deviceName = bleDevice.getName().trim();
+        }
+        // Fallback: name passed explicitly before disconnect
+        String intentDeviceName = getIntent().getStringExtra("device_name");
+        if (intentDeviceName != null && !intentDeviceName.isEmpty()) {
+            deviceName = intentDeviceName;
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout), new OnApplyWindowInsetsListener() { // from class: com.pusun.pusuntennis.MainActivity$$ExternalSyntheticLambda0
             @Override // androidx.core.view.OnApplyWindowInsetsListener
             public final WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat) {
@@ -1716,6 +1729,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /* JADX INFO: Access modifiers changed from: private */
     public void connect(BleDevice bleDevice2) {
+        // MAC-based connect fallback: if BleDevice parcelable lost its BluetoothDevice
+        // reference after a disconnect, reconstruct the device from the adapter via MAC.
+        String mac = (bleDevice2 != null) ? bleDevice2.getMac() : null;
+        if (mac == null && deviceMac != null) {
+            mac = deviceMac;
+        }
+        if (bleDevice2 == null || bleDevice2.getDevice() == null) {
+            if (mac != null) {
+                BleManager.getInstance().connect(mac, new BleGattCallback() {
+                    @Override
+                    public void onStartConnect() {
+                        MainActivity mainActivity = MainActivity.this;
+                        ShowHelper.showProgressDialog(mainActivity, mainActivity.getResources().getString(R.string.connecting_device));
+                    }
+                    @Override
+                    public void onConnectFail(BleDevice bleDevice3, BleException bleException) {
+                        MainActivity mainActivity = MainActivity.this;
+                        ShowHelper.toastLong(mainActivity, mainActivity.getResources().getString(R.string.connect_failure_check));
+                        ShowHelper.dismissProgressDialog();
+                        MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.disconnected));
+                        MainActivity.this.blenoty.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivity.this.signal.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivity.this.signal_note.setText(MainActivity.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivity.this.signal_note.setTextColor(MainActivity.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                    }
+                    @Override
+                    public void onConnectSuccess(BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        ShowHelper.setProgressDialogMessage(MainActivity.this.getResources().getString(R.string.initializing));
+                        MainActivity.this.connNum = 0;
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public synchronized void run() {
+                                ShowHelper.dismissProgressDialog();
+                                ShowHelper.toastShort(MainActivity.this, MainActivity.this.getResources().getString(R.string.please_use));
+                            }
+                        }, com.google.android.exoplayer2.C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
+                        String resolvedName = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                        if (resolvedName == null || resolvedName.isEmpty()) resolvedName = MainActivity.this.deviceName != null ? MainActivity.this.deviceName : "";
+                        MainActivity.this.nameStar = resolvedName;
+                        MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.connected));
+                        MainActivity.this.blenoty.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.button_selector));
+                        MainActivity.this.signal_note.setText(MainActivity.this.nameStar + MainActivity.this.getResources().getString(R.string.connected));
+                        MainActivity.this.signal_note.setTextColor(MainActivity.this.getResources().getColor(R.color.icon_green));
+                        MainActivity.this.signal.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.bicon_blue));
+                        MainActivity.this.isFaultOn = 0;
+                        MainActivity.this.gatt = bluetoothGatt;
+                        MainActivity.bleDevice = bleDevice3;
+                        if (bleDevice3.getMac() != null) MainActivity.this.deviceMac = bleDevice3.getMac();
+                        MainActivity.this.startNotify();
+                    }
+                    @Override
+                    public void onDisConnected(boolean z, final BleDevice bleDevice3, android.bluetooth.BluetoothGatt bluetoothGatt, int i) {
+                        MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.disconnected));
+                        MainActivity.this.blenoty.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.button_stop_selector));
+                        MainActivity.this.signal.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.bicon_gray));
+                        MainActivity.this.signal_note.setText(MainActivity.this.getResources().getString(R.string.device_is_disconnect));
+                        MainActivity.this.signal_note.setTextColor(MainActivity.this.getResources().getColor(R.color.icon_gray));
+                        BleManager.getInstance().disconnectAllDevice();
+                        MainActivity.this.isFaultOn = 0;
+                        if (z || MainActivity.this.connNum >= 3) { return; }
+                        new android.os.Handler().postDelayed(new Runnable() {
+                            @Override public void run() { MainActivity.this.connect(bleDevice3); }
+                        }, 1000L);
+                    }
+                });
+            } else {
+                android.util.Log.e("MainActivity", "connect: bleDevice and mac are both null, cannot connect");
+            }
+            return;
+        }
         BleManager.getInstance().connect(bleDevice2, new BleGattCallback() { // from class: com.pusun.pusuntennis.MainActivity.28
             @Override // com.clj.fastble.callback.BleGattCallback
             public void onStartConnect() {
@@ -1747,7 +1830,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         ShowHelper.toastShort(MainActivity.this, MainActivity.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivity.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                String rawNameMainAc = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                if (rawNameMainAc == null || rawNameMainAc.isEmpty()) rawNameMainAc = MainActivity.this.deviceName != null ? MainActivity.this.deviceName : "";
+                MainActivity.this.nameStar = rawNameMainAc;
                 MainActivity.this.blenoty.setText(MainActivity.this.getResources().getString(R.string.connected));
                 MainActivity.this.blenoty.setBackground(MainActivity.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivity.this.signal_note.setText(MainActivity.this.nameStar + MainActivity.this.getResources().getString(R.string.connected));

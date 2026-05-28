@@ -86,8 +86,8 @@ const TRANSLATIONS = {
     'nav-logout': 'Logout',
     
     // Hero
-    'hero-title': 'Serve, Volley & <span class="text-neon">Book Instantly</span>',
-    'hero-subtitle': 'Experience championship-grade tennis courts equipped with automated smart-lock access systems. Select your timeslot and get on the court in seconds.',
+    'hero-title': 'Indoor Tennis Practice Court & <span class="text-neon"> Demonstration Racket </span>',
+    'hero-subtitle': 'Come enjoy our Indoor tennis practice court, fully equipped with an automatic ball machine. We\'ve even got a great selection of rackets you can borrow to help you find your perfect match!',
     'btn-book-now': 'Book A Court Now',
     'btn-explore': 'Explore Courts',
     
@@ -294,8 +294,8 @@ const TRANSLATIONS = {
     'nav-logout': 'ออกจากระบบ',
     
     // Hero
-    'hero-title': 'เสิร์ฟ หวด & <span class="text-neon">จองสนามได้ทันที</span>',
-    'hero-subtitle': 'สัมผัสสนามเทนนิสระดับแชมป์เปี้ยนชิพ พร้อมระบบล็อกประตูอัจฉริยะแบบอัตโนมัติ เลือกเวลาของคุณและลงสนามได้ในไม่กี่วินาที',
+    'hero-title': 'สนามเทนนิสในร่ม & <span class="text-neon"> สนุกกับการทดลองไม้ใหม่ๆ </span>',
+    'hero-subtitle': 'เราให้บริการสนามเทนนิสเพื่อฝึกฝน มาพร้อมกับเครื่องยิงอัตโนมัติ และ เรายังมีไม้เทนนิสให้ยืมหลากหลายรูปแบบ',
     'btn-book-now': 'จองสนามเลย',
     'btn-explore': 'สำรวจสนาม',
     

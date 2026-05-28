@@ -80,6 +80,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
     private static final int REQUEST_CODE_PERMISSION_LOCATION = 2;
     public static BleDevice bleDevice;
     private String deviceMac;
+    private String deviceName;
     private TextView back_m_add;
     private TextView back_m_de;
     private TextView back_m_value;
@@ -449,6 +450,14 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
         if (bleDevice != null && bleDevice.getMac() != null) {
             deviceMac = bleDevice.getMac();
         }
+        if (bleDevice != null && bleDevice.getName() != null) {
+            deviceName = bleDevice.getName().trim();
+        }
+        // Fallback: name passed explicitly before disconnect
+        String intentDeviceName = getIntent().getStringExtra("device_name");
+        if (intentDeviceName != null && !intentDeviceName.isEmpty()) {
+            deviceName = intentDeviceName;
+        }
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root_layout), new OnApplyWindowInsetsListener() { // from class: com.pusun.pusuntennis.MainActivityPadX$$ExternalSyntheticLambda0
             @Override // androidx.core.view.OnApplyWindowInsetsListener
             public final WindowInsetsCompat onApplyWindowInsets(View view, WindowInsetsCompat windowInsetsCompat) {
@@ -513,6 +522,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         ShowHelper.dismissProgressDialog();
                         Intent intent = new Intent(MainActivityPadX.this, (Class<?>) MainActivityXV.class);
                         intent.putExtra("device", currentDevice);
+                        intent.putExtra("device_name", com.pusun.pusuntennis.utils.Util.getDeviceName(currentDevice));
                         MainActivityPadX.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -2798,7 +2808,9 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                                 ShowHelper.toastShort(MainActivityPadX.this, MainActivityPadX.this.getResources().getString(R.string.please_use));
                             }
                         }, com.google.android.exoplayer2.C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                        MainActivityPadX.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                        String resolvedName = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                        if (resolvedName == null || resolvedName.isEmpty()) resolvedName = MainActivityPadX.this.deviceName != null ? MainActivityPadX.this.deviceName : "";
+                        MainActivityPadX.this.nameStar = resolvedName;
                         MainActivityPadX.this.blenoty.setText(MainActivityPadX.this.getResources().getString(R.string.connected));
                         MainActivityPadX.this.blenoty.setBackground(MainActivityPadX.this.getResources().getDrawable(R.drawable.button_selector));
                         MainActivityPadX.this.signal_note.setText(MainActivityPadX.this.nameStar + MainActivityPadX.this.getResources().getString(R.string.connected));
@@ -2881,7 +2893,9 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         ShowHelper.toastShort(MainActivityPadX.this, MainActivityPadX.this.getResources().getString(R.string.please_use));
                     }
                 }, C.DEFAULT_MAX_SEEK_TO_PREVIOUS_POSITION_MS);
-                MainActivityPadX.this.nameStar = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                String rawNameMainAc = com.pusun.pusuntennis.utils.Util.getDeviceName(bleDevice3);
+                if (rawNameMainAc == null || rawNameMainAc.isEmpty()) rawNameMainAc = MainActivityPadX.this.deviceName != null ? MainActivityPadX.this.deviceName : "";
+                MainActivityPadX.this.nameStar = rawNameMainAc;
                 MainActivityPadX.this.blenoty.setText(MainActivityPadX.this.getResources().getString(R.string.connected));
                 MainActivityPadX.this.blenoty.setBackground(MainActivityPadX.this.getResources().getDrawable(R.drawable.button_selector));
                 MainActivityPadX.this.signal_note.setText(MainActivityPadX.this.nameStar + MainActivityPadX.this.getResources().getString(R.string.connected));
