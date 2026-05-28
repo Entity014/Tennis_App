@@ -2111,7 +2111,7 @@ function showPolicy(type) {
           <h5 class="text-white mt-3 mb-2" style="font-size: 1.05rem;"><i class="fa-solid fa-circle-info mr-1 text-neon"></i> 1. ข้อมูลที่เราจัดเก็บ</h5>
           <ul style="padding-left: 20px;" class="mb-3">
             <li><strong>ข้อมูลลงทะเบียน:</strong> ชื่อ-นามสกุล, อีเมล, เบอร์โทรศัพท์ และรหัสผ่านที่ผ่านการเข้ารหัส</li>
-            <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และสลิปที่ใช้ชำระเงิน</li>
+            <li><strong>ข้อมูลการทำรายการ:</strong> ประวัติการจองคอร์ท, วันเวลาจอง, ยอดค่าบริการ, และสลิปที่ใช้ชำระ</li>
             <li><strong>Social Login:</strong> รูปโปรไฟล์ และอีเมลที่ได้รับจากระบบ Google OAuth</li>
           </ul>
           
