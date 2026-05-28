@@ -511,6 +511,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
             public void onClick(View view) {
                 java.util.List<com.clj.fastble.data.BleDevice> connected = com.clj.fastble.BleManager.getInstance().getAllConnectedDevice();
                 final com.clj.fastble.data.BleDevice currentDevice = (connected != null && !connected.isEmpty()) ? connected.get(0) : bleDevice;
+                final String devName = com.pusun.pusuntennis.utils.Util.getDeviceName(currentDevice);
                 com.clj.fastble.BleManager.getInstance().disconnectAllDevice();
                 MainActivityPad2 mainActivityPad2 = MainActivityPad2.this;
                 ShowHelper.showProgressDialog(mainActivityPad2, mainActivityPad2.getResources().getString(R.string.changing));
@@ -518,9 +519,23 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
                     @Override // java.lang.Runnable
                     public void run() {
                         ShowHelper.dismissProgressDialog();
-                        Intent intent = new Intent(MainActivityPad2.this, (Class<?>) MainActivity7New.class);
+                        // Route back to the correct Tennis Activity based on the device prefix
+                        Class<?> targetActivity;
+                        if (devName != null && (devName.startsWith("PT7") || devName.startsWith("PT8"))) {
+                            targetActivity = MainActivity7New.class;
+                        } else if (devName != null && devName.startsWith("PT6")) {
+                            targetActivity = MainActivity6New.class;
+                        } else if (devName != null && devName.startsWith("PT4")) {
+                            targetActivity = MainActivityPad1.class;
+                        } else if (devName != null && devName.startsWith("PP3")) {
+                            targetActivity = MainActivity7NewP.class;
+                        } else {
+                            // Default fallback — same as DeviceRvAdapter's catch-all
+                            targetActivity = MainActivity7New.class;
+                        }
+                        Intent intent = new Intent(MainActivityPad2.this, targetActivity);
                         intent.putExtra("device", currentDevice);
-                        intent.putExtra("device_name", com.pusun.pusuntennis.utils.Util.getDeviceName(currentDevice));
+                        intent.putExtra("device_name", devName);
                         MainActivityPad2.this.startActivity(intent);
                     }
                 }, 1500L);
@@ -2647,7 +2662,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
         }
         String str2 = this.nameStar;
         if (str2 != null) {
-            if (str2.startsWith("PT2") || this.nameStar.startsWith("PT8")) {
+            if (str2.startsWith("PT7") || this.nameStar.startsWith("PT2") || this.nameStar.startsWith("PT8")) {
                 BleManager.getInstance().write(bleDevice, BLEServiceParameters.BLE_WRITE_SERVICE_UUID, BLEServiceParameters.BLE_WRITE_SERVICE_CHARACTER_UUID, bArr, new BleWriteCallback() { // from class: com.pusun.pusuntennis.MainActivityPad2.50
                     @Override // com.clj.fastble.callback.BleWriteCallback
                     public void onWriteFailure(BleException bleException) {
@@ -3181,7 +3196,7 @@ public class MainActivityPad2 extends AppCompatActivity implements View.OnClickL
             });
         }
         String str2 = this.nameStar;
-        if (str2 != null && (str2.startsWith("PT2") || this.nameStar.startsWith("PT8"))) {
+        if (str2 != null && (str2.startsWith("PT7") || this.nameStar.startsWith("PT2") || this.nameStar.startsWith("PT8"))) {
             BleManager.getInstance().notify(bleDevice, BLEServiceParameters.BLE_NOTIFY_SERVICE_UUID, BLEServiceParameters.BLE_NOTIFY_SERVICE_CHARACTERISTIC_UUID, new BleNotifyCallback() { // from class: com.pusun.pusuntennis.MainActivityPad2.61
                 @Override // com.clj.fastble.callback.BleNotifyCallback
                 public void onNotifyFailure(BleException bleException) {
