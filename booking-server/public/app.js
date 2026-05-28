@@ -282,7 +282,18 @@ const TRANSLATIONS = {
     'admin-tab-conflicts': 'Conflicts / Refunds',
     'admin-hdr-conflicts': 'Conflict & Refund Management',
     'admin-no-conflicts': 'No active conflicts or refunds pending.',
-    'admin-court-maintenance': 'Under Maintenance'
+    'admin-court-maintenance': 'Under Maintenance',
+    'nav-location': 'Location & Contact',
+    'location-title': 'Location & Contact',
+    'location-subtitle': 'Find your way to our premium tennis courts and get in touch with us.',
+    'location-address-title': 'Address',
+    'location-address': '123 Tennis Road, Lumphini, Pathum Wan, Bangkok 10330',
+    'location-phone-title': 'Phone',
+    'location-phone': '(+66) 84-271-7997',
+    'location-hours-title': 'Opening Hours',
+    'location-hours': 'Everyday: 06:00 AM - 10:00 PM',
+    'location-contact-title': 'Email & Social Line',
+    'location-contact': 'changphueak4.minitennis@gmail.com | Line: @MiniTennis'
   },
   th: {
     // Navbar
@@ -545,6 +556,10 @@ const TRANSLATIONS = {
     'location-address': '123 ถนนเทนนิส แขวงลุมพินี เขตปทุมวัน กรุงเทพมหานคร 10330',
     'location-hours-title': 'เวลาทำการ',
     'location-hours': 'ทุกวัน: 06:00 น. - 22:00 น.',
+    'location-phone-title': 'เบอร์โทรศัพท์',
+    'location-phone': '(+66) 84-271-7997',
+    'location-contact-title': 'อีเมล & ไลน์ติดต่อ',
+    'location-contact': 'changphueak4.minitennis@gmail.com | Line: @MiniTennis',
     'dashboard-title': 'แผงควบคุมผู้เล่น',
     'dashboard-subtitle': 'จัดการการจอง รหัสเข้าสนาม และโปรไฟล์ของคุณ',
     'dashboard-new-booking': 'จองสนามใหม่',
@@ -3511,15 +3526,15 @@ function renderETicket(booking) {
       document.querySelector('.pin-instruction').innerHTML = currentLang === 'th'
         ? `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> สนามปิดปรับปรุงชั่วคราวในช่วงเวลานี้ เพื่อขอรับเงินคืนผ่าน PromptPay กรุณาติดต่อเจ้าหน้าที่ที่:<br>
            <div class="mt-2" style="padding-left: 20px; text-align: left; display: inline-block;">
-             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>เบอร์โทร:</strong> 02-123-4567<br>
-             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>อีเมล:</strong> support@minitennis.com<br>
+             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>เบอร์โทร:</strong> (+66) 84-271-7997<br>
+             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>อีเมล:</strong> changphueak4.minitennis@gmail.com<br>
              <i class="fa-brands fa-line mr-1 mt-1 text-neon"></i> <strong>Line:</strong> @MiniTennis
            </div><br>
            <span style="display: block;" class="mt-2 text-muted">พร้อมแจ้งรหัสอ้างอิงการจอง (REF) ด้านล่าง</span>`
         : `<i class="fa-solid fa-triangle-exclamation mr-1" style="color: #ef4444;"></i> Court is under maintenance. To claim your PromptPay refund, please contact staff at:<br>
            <div class="mt-2" style="padding-left: 20px; text-align: left; display: inline-block;">
-             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>Hotline:</strong> 02-123-4567<br>
-             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>Email:</strong> support@minitennis.com<br>
+             <i class="fa-solid fa-phone mr-1 mt-1 text-neon"></i> <strong>Hotline:</strong> (+66) 84-271-7997<br>
+             <i class="fa-solid fa-envelope mr-1 mt-1 text-neon"></i> <strong>Email:</strong> changphueak4.minitennis@gmail.com<br>
              <i class="fa-brands fa-line mr-1 mt-1 text-neon"></i> <strong>Line:</strong> @MiniTennis
            </div><br>
            <span style="display: block;" class="mt-2 text-muted">along with your Booking Reference (REF) below.</span>`;

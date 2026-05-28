@@ -4,6 +4,8 @@
   font-weight: normal;
   font-style: normal;
   font-display: swap;
+  unicode-range: U+0E00-0E7F;
+  size-adjust: 115%;
 }
 
 html[lang="th"] {
@@ -224,10 +226,7 @@ body.light-theme .logo {
 
 .nav-links {
   display: flex;
-  gap: 25px;
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  gap: 20px;
 }
 
 
@@ -1509,7 +1508,6 @@ body.light-theme .flatpickr-day.selected {
   cursor: pointer;
   z-index: 10;
   padding: 5px;
-  margin: -5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2457,6 +2455,32 @@ body.light-theme .notification {
 }
 
 @media (max-width: 768px) {
+  .logo-text {
+    white-space: nowrap;
+    font-size: 18px !important;
+  }
+  .logo-text .text-neon {
+    font-size: 11px !important;
+    letter-spacing: 1px !important;
+  }
+  .logo-icon-img {
+    height: 28px !important;
+    width: 28px !important;
+  }
+  .auth-buttons {
+    gap: 8px !important;
+  }
+  .btn-lang-toggle,
+  .btn-theme-toggle,
+  .app-header .btn-outline {
+    height: 32px !important;
+    padding: 0 10px !important;
+    font-size: 0.8rem !important;
+  }
+  .container.navbar {
+    padding: 0 10px !important;
+  }
+
   .hero-title {
     font-size: 2.5rem;
   }
@@ -3689,10 +3713,6 @@ body.light-theme .kebab-dropdown {
   box-shadow: 0 12px 32px rgba(15, 23, 42, 0.1);
 }
 
-.kebab-menu.open .kebab-dropdown {
-  display: flex;
-  flex-direction: column;
-}
 
 #global-kebab-dropdown {
   position: absolute;
