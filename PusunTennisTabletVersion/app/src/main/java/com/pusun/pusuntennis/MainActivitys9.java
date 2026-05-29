@@ -341,7 +341,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
     private int forbid = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {60, 55, 45, 35, 30, 26, 23, 20, 18, 15};
-    private int[] veloNums = {52, 60, 70, 81, 93, 97, 101, 105, 110, 118, 128, 140, 155};
+    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;

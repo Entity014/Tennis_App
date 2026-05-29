@@ -325,7 +325,7 @@ public class MainActivityXB extends AppCompatActivity implements View.OnClickLis
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {83, 73, 63, 53, 43, 33, 28, 23, 18, 13};
-    private int[] veloNums = {54, 56, 58, 60, 62, 64, 66, 68, 72, 78, 85, 92, 100};
+    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;

@@ -277,7 +277,7 @@ public class MainActivity5 extends AppCompatActivity implements View.OnClickList
     private int modeNum = 1;
     private int modeCate = 0;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {80, 85, 90, 95, 105, 115, 125, TsExtractor.TS_STREAM_TYPE_E_AC3, 145, 155, 160, 170, 180};
+    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;

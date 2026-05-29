@@ -342,7 +342,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {65, 55, 46, 38, 30, 25, 21, 18, 16, 14};
-    private int[] veloNums = {46, 52, 73, 85, 95, 102, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140, 155, 175, 190};
+    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;
