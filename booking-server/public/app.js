@@ -768,6 +768,13 @@ function translateCourtDesc(court) {
   return court.description;
 }
 
+function getCourtImageStyle(court) {
+  if (court && court.image_name && court.image_name.startsWith('/uploads/')) {
+    return `background-image: url('${court.image_name}'); background-size: cover; background-position: center;`;
+  }
+  return '';
+}
+
 function translateConfirm(message) {
   return t(message, message);
 }
@@ -847,6 +854,7 @@ function initializeApp() {
   initTimeslotHandlers();
   initPromoHandlers();
   initPaymentHandlers();
+  initAdminImageUploadHandlers();
   checkLoggedInState();
   if (STATE.token) {
     fetchUserInfo();
@@ -2306,10 +2314,14 @@ function renderFeaturedCourts(courts) {
       : (currentLang === 'en' ? 'Book Now' : 'จองตอนนี้');
     const btnClass = isMaintenance ? 'btn btn-outline btn-sm btn-disabled' : 'btn btn-primary btn-sm btn-book';
     
+    const imgStyle = getCourtImageStyle(court);
+    const hasCustomImg = court.image_name && court.image_name.startsWith('/uploads/');
     card.innerHTML = `
-      <div class="court-img-container">
-        <i class="fa-solid fa-baseball court-img-svg"></i>
-        <div class="court-img-bg-shape"></div>
+      <div class="court-img-container" style="${imgStyle}">
+        ${hasCustomImg ? '' : `
+          <i class="fa-solid fa-baseball court-img-svg"></i>
+          <div class="court-img-bg-shape"></div>
+        `}
         ${isMaintenance ? `
           <div class="court-maintenance-overlay" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
             <i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}
@@ -2391,10 +2403,14 @@ function renderModalCourts(courts, grid) {
       : (currentLang === 'en' ? 'Book Now' : 'จองตอนนี้');
     const btnClass = isMaintenance ? 'btn btn-outline btn-sm btn-disabled' : 'btn btn-primary btn-sm btn-book';
 
+    const imgStyle = getCourtImageStyle(court);
+    const hasCustomImg = court.image_name && court.image_name.startsWith('/uploads/');
     card.innerHTML = `
-      <div class="court-img-container">
-        <i class="fa-solid fa-baseball court-img-svg"></i>
-        <div class="court-img-bg-shape"></div>
+      <div class="court-img-container" style="${imgStyle}">
+        ${hasCustomImg ? '' : `
+          <i class="fa-solid fa-baseball court-img-svg"></i>
+          <div class="court-img-bg-shape"></div>
+        `}
         ${isMaintenance ? `
           <div class="court-maintenance-overlay" style="position: absolute; top: 12px; right: 12px; background: rgba(239, 68, 68, 0.9); color: #fff; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: bold; z-index: 2;">
             <i class="fa-solid fa-screwdriver-wrench mr-1"></i> ${currentLang === 'en' ? 'Maintenance' : 'ปิดปรับปรุง'}
@@ -2615,6 +2631,22 @@ function loadCourtsAvailability() {
       let desc = translateCourtDesc(activeCourt);
       document.getElementById('detail-court-desc').textContent = desc;
       document.getElementById('detail-court-price').textContent = `฿${activeCourt.price_per_hour}`;
+      
+      const sidebarImgEl = document.getElementById('detail-court-img');
+      if (sidebarImgEl) {
+        if (activeCourt.image_name && activeCourt.image_name.startsWith('/uploads/')) {
+          sidebarImgEl.style.backgroundImage = `url('${activeCourt.image_name}')`;
+          sidebarImgEl.style.backgroundSize = 'cover';
+          sidebarImgEl.style.backgroundPosition = 'center';
+          sidebarImgEl.innerHTML = '';
+        } else {
+          sidebarImgEl.style.backgroundImage = '';
+          sidebarImgEl.innerHTML = `
+            <i class="fa-solid fa-baseball court-detail-img-svg" style="font-size: 3.5rem; color: rgba(255, 255, 255, 0.1);"></i>
+            <div class="court-img-bg-shape" style="position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; border-radius: 50%; background: var(--neon-green-alpha); filter: blur(10px);"></div>
+          `;
+        }
+      }
     }
 
     // Render Timeslot Grid
@@ -3314,6 +3346,106 @@ function initPaymentHandlers() {
   // Submit payment action
   document.getElementById('pay-submit-btn').addEventListener('click', () => {
     submitBookingToDatabase();
+  });
+}
+
+function initAdminImageUploadHandlers() {
+  const courtFileInput = document.getElementById('court-file-input');
+  const courtUploadLabel = document.getElementById('court-upload-label');
+  const courtPreviewContainer = document.getElementById('court-preview-container');
+  const courtPreviewImg = document.getElementById('court-preview-img');
+  const removeCourtImageBtn = document.getElementById('remove-court-image-btn');
+  const courtImageInput = document.getElementById('court-image-input');
+
+  if (!courtFileInput || !courtUploadLabel) return;
+
+  function processAndUploadCourtImage(file) {
+    if (!file.type.startsWith('image/')) {
+      showNotification('Please select an image file.', 'error');
+      courtFileInput.value = '';
+      return;
+    }
+    
+    // Validate file size client-side (Max 2MB)
+    const MAX_SIZE = 2 * 1024 * 1024;
+    if (file.size > MAX_SIZE) {
+      showNotification('Image size exceeds the 2MB limit.', 'error');
+      courtFileInput.value = '';
+      return;
+    }
+    
+    showNotification('Uploading image...', 'info');
+    
+    // Use FormData to upload the file to our new API endpoint
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    fetch('/api/admin/courts/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${STATE.token}`
+      },
+      body: formData
+    })
+    .then(async res => {
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'Failed to upload image');
+      return data;
+    })
+    .then(data => {
+      // Success! Update hidden input, preview container
+      courtImageInput.value = data.url;
+      courtPreviewImg.src = data.url;
+      courtUploadLabel.style.display = 'none';
+      courtPreviewContainer.style.display = 'flex';
+      showNotification('Image uploaded successfully.', 'success');
+    })
+    .catch(err => {
+      showNotification(err.message, 'error');
+      courtFileInput.value = '';
+    });
+  }
+
+  courtFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      processAndUploadCourtImage(file);
+    }
+  });
+
+  removeCourtImageBtn.addEventListener('click', () => {
+    courtFileInput.value = '';
+    courtImageInput.value = 'court_indoor_a'; // reset to default
+    courtPreviewImg.src = '';
+    courtPreviewContainer.style.display = 'none';
+    courtUploadLabel.style.display = 'flex';
+  });
+
+  // Drag & drop file upload support
+  ['dragenter', 'dragover'].forEach(eventName => {
+    courtUploadLabel.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      courtUploadLabel.style.borderColor = 'var(--neon-green)';
+      courtUploadLabel.style.background = 'var(--neon-green-alpha)';
+    }, false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    courtUploadLabel.addEventListener(eventName, (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      courtUploadLabel.style.borderColor = '';
+      courtUploadLabel.style.background = '';
+    }, false);
+  });
+
+  courtUploadLabel.addEventListener('drop', (e) => {
+    const dt = e.dataTransfer;
+    const file = dt.files[0];
+    if (file) {
+      processAndUploadCourtImage(file);
+    }
   });
 }
 
@@ -4309,10 +4441,14 @@ function handleAdminAddCourt(event) {
         courts.forEach(court => {
           const card = document.createElement('div');
           card.className = 'court-card';
+          const imgStyle = getCourtImageStyle(court);
+          const hasCustomImg = court.image_name && court.image_name.startsWith('/uploads/');
           card.innerHTML = `
-            <div class="court-img-container">
-              <i class="fa-solid fa-baseball court-img-svg"></i>
-              <div class="court-img-bg-shape"></div>
+            <div class="court-img-container" style="${imgStyle}">
+              ${hasCustomImg ? '' : `
+                <i class="fa-solid fa-baseball court-img-svg"></i>
+                <div class="court-img-bg-shape"></div>
+              `}
             </div>
             <div class="court-card-body">
               <h3 class="court-card-title">${court.name}</h3>
@@ -4358,6 +4494,22 @@ function startEditCourt(id, name, nameTh, price, desc, descTh, img, isMaintenanc
   document.getElementById('court-image-input').value = img || 'court_indoor_a';
   document.getElementById('court-is-maintenance').checked = !!isMaintenance;
   
+  const courtUploadLabel = document.getElementById('court-upload-label');
+  const courtPreviewContainer = document.getElementById('court-preview-container');
+  const courtPreviewImg = document.getElementById('court-preview-img');
+  
+  if (courtUploadLabel && courtPreviewContainer && courtPreviewImg) {
+    if (img && img.startsWith('/uploads/')) {
+      courtPreviewImg.src = img;
+      courtUploadLabel.style.display = 'none';
+      courtPreviewContainer.style.display = 'flex';
+    } else {
+      courtPreviewImg.src = '';
+      courtUploadLabel.style.display = 'flex';
+      courtPreviewContainer.style.display = 'none';
+    }
+  }
+  
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {
     formHeader.textContent = `${t('admin-action-edit', 'Edit')} ${t('admin-tbl-court', 'Court')}: ${name}`;
@@ -4389,6 +4541,16 @@ function resetCourtForm() {
   STATE.editingCourtId = null;
   document.getElementById('admin-add-court-form').reset();
   document.getElementById('court-is-maintenance').checked = false;
+  
+  const courtUploadLabel = document.getElementById('court-upload-label');
+  const courtPreviewContainer = document.getElementById('court-preview-container');
+  const courtPreviewImg = document.getElementById('court-preview-img');
+  
+  if (courtUploadLabel && courtPreviewContainer && courtPreviewImg) {
+    courtPreviewImg.src = '';
+    courtUploadLabel.style.display = 'flex';
+    courtPreviewContainer.style.display = 'none';
+  }
   
   const formHeader = document.querySelector('.add-court-section h3');
   if (formHeader) {
