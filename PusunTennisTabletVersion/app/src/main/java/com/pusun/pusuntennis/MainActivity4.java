@@ -263,7 +263,7 @@ public class MainActivity4 extends AppCompatActivity implements View.OnClickList
     private int modeCate = 0;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 20};
     private int[] veloNums = {80, 83, 86, 89, 92, 96, 100, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140, 150, 160};
-    private int[] veloTins = {20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140};
+    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;

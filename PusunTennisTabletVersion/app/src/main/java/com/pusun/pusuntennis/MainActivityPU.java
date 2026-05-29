@@ -265,7 +265,7 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
     private int modeCate = 0;
     private int[] frequentNums = {65, 55, 46, 38, 30, 25, 21, 18, 15, 13};
     private int[] veloNums = {46, 61, 71, 83, 95, 105, 115, 125, TsExtractor.TS_STREAM_TYPE_E_AC3, 145, 155, 175, 200};
-    private int[] veloTins = {20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140};
+    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;

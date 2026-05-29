@@ -308,7 +308,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
     private int modeCate = 0;
     private int[] frequentNums = {60, 55, 45, 35, 30, 26, 23, 20, 18, 16};
     private int[] veloNums = {45, 50, 62, 76, 90, 100, 108, 116, 125, TsExtractor.TS_STREAM_TYPE_E_AC3, 145, 155, 160};
-    private int[] veloTins = {20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140};
+    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -714,9 +714,9 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData8.b3[MainActivity8.this.vari_point_num + 19];
-                sArr[2] = (short) (sArr[2] - 5);
-                if (BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] < 40) {
-                    BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] = 40;
+                sArr[2] = (short) (sArr[2] - 1);
+                if (BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] < 0) {
+                    BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] = 0;
                 }
                 MainActivity8 mainActivity8 = MainActivity8.this;
                 mainActivity8.showSelectPoint(mainActivity8.vari_point_num);
@@ -734,9 +734,9 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData8.b3[MainActivity8.this.vari_point_num + 19];
-                sArr[2] = (short) (sArr[2] + 5);
-                if (BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] > 140) {
-                    BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] = 140;
+                sArr[2] = (short) (sArr[2] + 1);
+                if (BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] > 20) {
+                    BasicData8.b3[MainActivity8.this.vari_point_num + 19][2] = 20;
                 }
                 MainActivity8 mainActivity8 = MainActivity8.this;
                 mainActivity8.showSelectPoint(mainActivity8.vari_point_num);
@@ -2179,7 +2179,7 @@ public class MainActivity8 extends AppCompatActivity implements View.OnClickList
         this.backvalue2.setText("" + (64 - (BasicData8.b3[i2][1] / 30)));
         TextView textView2 = this.front_m_value;
         StringBuilder sb2 = new StringBuilder("");
-        sb2.append(BasicData8.b3[i2][2] - 30);
+        sb2.append(BasicData8.b3[i2][2]);
         textView2.setText(sb2.toString());
         TextView textView3 = this.back_m_value;
         StringBuilder sb3 = new StringBuilder("");

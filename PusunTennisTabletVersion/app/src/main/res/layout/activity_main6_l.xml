@@ -1906,7 +1906,7 @@
                         android:layout_width="60dp"
                         android:layout_height="30dp"
                         android:layout_marginLeft="20dp"
-                        android:text="20"/>
+                        android:text="0"/>
                     <TextView
                         android:textSize="14sp"
                         android:textColor="@color/bottom_gray"
@@ -1914,7 +1914,7 @@
                         android:layout_width="60dp"
                         android:layout_height="30dp"
                         android:layout_marginRight="20dp"
-                        android:text="140"
+                        android:text="20"
                         android:layout_alignParentRight="true"/>
                     <com.warkiz.widget.IndicatorSeekBar
                         android:id="@+id/velobar"

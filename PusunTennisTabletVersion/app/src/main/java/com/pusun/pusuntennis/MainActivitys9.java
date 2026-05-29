@@ -342,7 +342,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
     private int vari_point_num = 1;
     private int[] frequentNums = {60, 55, 45, 35, 30, 26, 23, 20, 18, 15};
     private int[] veloNums = {52, 60, 70, 81, 93, 97, 101, 105, 110, 118, 128, 140, 155};
-    private int[] veloTins = {20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, TsExtractor.TS_STREAM_TYPE_HDMV_DTS, 140};
+    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -729,7 +729,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData26.b3[MainActivitys9.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 5);
+                sArr[2] = (short) (sArr[2] - 1);
                 if (BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] < 50) {
                     BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] = 50;
                 }
@@ -749,7 +749,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData26.b3[MainActivitys9.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 5);
+                sArr[2] = (short) (sArr[2] + 1);
                 if (BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] > 130) {
                     BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] = 130;
                 }
@@ -2286,7 +2286,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
         this.backvalue2.setText("" + (BasicData26.b3[i2][1] / 100));
         TextView textView2 = this.front_m_value;
         StringBuilder sb2 = new StringBuilder("");
-        sb2.append(BasicData26.b3[i2][2] - 30);
+        sb2.append(BasicData26.b3[i2][2]);
         textView2.setText(sb2.toString());
         TextView textView3 = this.back_m_value;
         StringBuilder sb3 = new StringBuilder("");

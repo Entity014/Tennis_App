@@ -39,7 +39,7 @@ public class VariSpinPTSmartRvAdapter extends RecyclerView.Adapter<VariSpinPTSma
         viewHolder.ud_value.setText("" + (64 - (BasicData33.b3[i2][1] / 30)));
         TextView textView2 = viewHolder.sp_value;
         StringBuilder sb2 = new StringBuilder("");
-        sb2.append(BasicData33.b3[i2][2] - 30);
+        sb2.append(BasicData33.b3[i2][2]);
         textView2.setText(sb2.toString());
         TextView textView3 = viewHolder.fre_value;
         StringBuilder sb3 = new StringBuilder("");
@@ -119,13 +119,13 @@ public class VariSpinPTSmartRvAdapter extends RecyclerView.Adapter<VariSpinPTSma
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData33.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] + 5);
-                if (BasicData33.b3[intValue - 1][2] > 140) {
-                    BasicData33.b3[intValue - 1][2] = 140;
+                sArr[2] = (short) (sArr[2] + 1);
+                if (BasicData33.b3[intValue - 1][2] > 20) {
+                    BasicData33.b3[intValue - 1][2] = 20;
                 }
                 TextView textView4 = viewHolder.sp_value;
                 StringBuilder sb4 = new StringBuilder("");
-                sb4.append(BasicData33.b3[intValue - 1][2] - 30);
+                sb4.append(BasicData33.b3[intValue - 1][2]);
                 textView4.setText(sb4.toString());
                 VarispinMsg varispinMsg = new VarispinMsg();
                 varispinMsg.num = BasicData33.b3[intValue - 1][5] - 1;
@@ -139,13 +139,13 @@ public class VariSpinPTSmartRvAdapter extends RecyclerView.Adapter<VariSpinPTSma
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData33.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] - 5);
+                sArr[2] = (short) (sArr[2] - 1);
                 if (BasicData33.b3[intValue - 1][2] < 45) {
                     BasicData33.b3[intValue - 1][2] = 45;
                 }
                 TextView textView4 = viewHolder.sp_value;
                 StringBuilder sb4 = new StringBuilder("");
-                sb4.append(BasicData33.b3[intValue - 1][2] - 30);
+                sb4.append(BasicData33.b3[intValue - 1][2]);
                 textView4.setText(sb4.toString());
                 VarispinMsg varispinMsg = new VarispinMsg();
                 varispinMsg.num = BasicData33.b3[intValue - 1][5] - 1;
