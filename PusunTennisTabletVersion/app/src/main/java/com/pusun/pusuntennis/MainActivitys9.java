@@ -341,8 +341,8 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
     private int forbid = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {60, 55, 45, 35, 30, 26, 23, 20, 18, 15};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -729,7 +729,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData26.b3[MainActivitys9.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 1);
+                sArr[2] = (short) (sArr[2] - 5);
                 if (BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] < 50) {
                     BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] = 50;
                 }
@@ -749,7 +749,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData26.b3[MainActivitys9.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 1);
+                sArr[2] = (short) (sArr[2] + 5);
                 if (BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] > 130) {
                     BasicData26.b3[MainActivitys9.this.vari_point_num + 34][2] = 130;
                 }
@@ -1268,7 +1268,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
                         MainActivitys9.this.ud = 4000;
                     }
                     if (MainActivitys9.this.modeCate == 0 && MainActivitys9.this.modeNum == 5 && MainActivitys9.this.ud < 2000) {
-                        MainActivitys9.this.ud = 2000;
+                        MainActivitys9.this.ud = 4500;
                     }
                     short s = (short) MainActivitys9.this.lr;
                     if (MainActivitys9.this.modeNum == 2) {
@@ -6089,7 +6089,7 @@ public class MainActivitys9 extends AppCompatActivity implements View.OnClickLis
                     MainActivitys9.this.ud = 4500;
                 }
                 if (MainActivitys9.this.modeCate == 0 && MainActivitys9.this.modeNum == 5 && MainActivitys9.this.ud < 2000) {
-                    MainActivitys9.this.ud = 2000;
+                    MainActivitys9.this.ud = 4500;
                 }
                 short s = (short) MainActivitys9.this.lr;
                 if (MainActivitys9.this.modeNum == 2) {

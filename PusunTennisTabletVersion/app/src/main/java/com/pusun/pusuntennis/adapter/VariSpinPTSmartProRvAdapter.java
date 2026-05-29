@@ -119,7 +119,7 @@ public class VariSpinPTSmartProRvAdapter extends RecyclerView.Adapter<VariSpinPT
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData31.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] + 1);
+                sArr[2] = (short) (sArr[2] + 5);
                 if (BasicData31.b3[intValue - 1][2] > 160) {
                     BasicData31.b3[intValue - 1][2] = 160;
                 }
@@ -139,7 +139,7 @@ public class VariSpinPTSmartProRvAdapter extends RecyclerView.Adapter<VariSpinPT
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData31.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] - 1);
+                sArr[2] = (short) (sArr[2] - 5);
                 if (BasicData31.b3[intValue - 1][2] < 50) {
                     BasicData31.b3[intValue - 1][2] = 50;
                 }

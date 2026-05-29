@@ -342,8 +342,8 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -771,9 +771,9 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData16.b5[MainActivityXV.this.vari_point_num - 1];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] < 0) {
-                    BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] < 20) {
+                    BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] = 80;
                 }
                 MainActivityXV mainActivityXV = MainActivityXV.this;
                 mainActivityXV.showSelectPoint(mainActivityXV.vari_point_num);
@@ -791,9 +791,9 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData16.b5[MainActivityXV.this.vari_point_num - 1];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] > 20) {
-                    BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] > 80) {
+                    BasicData16.b5[MainActivityXV.this.vari_point_num - 1][2] = 80;
                 }
                 MainActivityXV mainActivityXV = MainActivityXV.this;
                 mainActivityXV.showSelectPoint(mainActivityXV.vari_point_num);
@@ -1262,8 +1262,8 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                     if (MainActivityXV.this.ud > 4500) {
                         MainActivityXV.this.ud = 4500;
                     }
-                    if (MainActivityXV.this.modeCate == 0 && ((MainActivityXV.this.modeNum == 1 || MainActivityXV.this.modeNum == 2) && MainActivityXV.this.ud > 2000)) {
-                        MainActivityXV.this.ud = 2000;
+                    if (MainActivityXV.this.modeCate == 0 && ((MainActivityXV.this.modeNum == 1 || MainActivityXV.this.modeNum == 2) && MainActivityXV.this.ud > 4500)) {
+                        MainActivityXV.this.ud = 4500;
                     }
                     short s = (short) MainActivityXV.this.lr;
                     if (MainActivityXV.this.modeNum == 2) {
@@ -1325,7 +1325,7 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                         MainActivityXV.this.ud = 4500;
                     }
                     if (MainActivityXV.this.modeCate == 0 && MainActivityXV.this.modeNum == 5 && MainActivityXV.this.ud < 2000) {
-                        MainActivityXV.this.ud = 2000;
+                        MainActivityXV.this.ud = 4500;
                     }
                     short s = (short) MainActivityXV.this.lr;
                     if (MainActivityXV.this.modeNum == 2) {
@@ -5199,7 +5199,7 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                 if (this.modeNum != 11) {
                     this.isNumDing = 0;
                     this.lr = 1200;
-                    this.ud = 2000;
+                    this.ud = 4500;
                     short s13 = (short) 1200;
                     short s14 = (short) 2000;
                     writeBleData(new byte[]{-86, 108, (byte) (s13 >> 8), (byte) s13, (byte) (s14 >> 8), (byte) s14, 0, 0, 1, -91});
@@ -6376,11 +6376,11 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                 if (MainActivityXV.this.ud < 300) {
                     MainActivityXV.this.ud = 300;
                 }
-                if (MainActivityXV.this.ud > 4300) {
-                    MainActivityXV.this.ud = 4300;
+                if (MainActivityXV.this.ud > 4500) {
+                    MainActivityXV.this.ud = 4500;
                 }
-                if (MainActivityXV.this.modeCate == 0 && ((MainActivityXV.this.modeNum == 1 || MainActivityXV.this.modeNum == 2) && MainActivityXV.this.ud > 2000)) {
-                    MainActivityXV.this.ud = 2000;
+                if (MainActivityXV.this.modeCate == 0 && ((MainActivityXV.this.modeNum == 1 || MainActivityXV.this.modeNum == 2) && MainActivityXV.this.ud > 4500)) {
+                    MainActivityXV.this.ud = 4500;
                 }
                 short s = (short) MainActivityXV.this.lr;
                 if (MainActivityXV.this.modeNum == 2) {
@@ -6421,11 +6421,11 @@ public class MainActivityXV extends AppCompatActivity implements View.OnClickLis
                 if (MainActivityXV.this.ud < 300) {
                     MainActivityXV.this.ud = 300;
                 }
-                if (MainActivityXV.this.ud > 4300) {
-                    MainActivityXV.this.ud = 4300;
+                if (MainActivityXV.this.ud > 4500) {
+                    MainActivityXV.this.ud = 4500;
                 }
                 if (MainActivityXV.this.modeCate == 0 && MainActivityXV.this.modeNum == 5 && MainActivityXV.this.ud < 2000) {
-                    MainActivityXV.this.ud = 2000;
+                    MainActivityXV.this.ud = 4500;
                 }
                 short s = (short) MainActivityXV.this.lr;
                 if (MainActivityXV.this.modeNum == 2) {

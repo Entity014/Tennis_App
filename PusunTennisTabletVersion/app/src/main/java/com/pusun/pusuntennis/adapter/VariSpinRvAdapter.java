@@ -119,9 +119,9 @@ public class VariSpinRvAdapter extends RecyclerView.Adapter<VariSpinRvAdapter.Vi
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData30.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData30.b3[intValue - 1][2] > 20) {
-                    BasicData30.b3[intValue - 1][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData30.b3[intValue - 1][2] > 80) {
+                    BasicData30.b3[intValue - 1][2] = 80;
                 }
                 TextView textView4 = viewHolder.sp_value;
                 StringBuilder sb4 = new StringBuilder("");
@@ -139,7 +139,7 @@ public class VariSpinRvAdapter extends RecyclerView.Adapter<VariSpinRvAdapter.Vi
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData30.b3[intValue - 1];
-                sArr[2] = (short) (sArr[2] - 1);
+                sArr[2] = (short) (sArr[2] - 5);
                 if (BasicData30.b3[intValue - 1][2] < 50) {
                     BasicData30.b3[intValue - 1][2] = 50;
                 }

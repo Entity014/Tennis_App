@@ -327,8 +327,8 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -740,9 +740,9 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData16.b3[MainActivityX.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] < 0) {
-                    BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] < 20) {
+                    BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityX mainActivityX = MainActivityX.this;
                 mainActivityX.showSelectPoint(mainActivityX.vari_point_num);
@@ -760,9 +760,9 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData16.b3[MainActivityX.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] > 20) {
-                    BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] > 80) {
+                    BasicData16.b3[MainActivityX.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityX mainActivityX = MainActivityX.this;
                 mainActivityX.showSelectPoint(mainActivityX.vari_point_num);
@@ -1190,8 +1190,8 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
                     if (MainActivityX.this.ud > 4500) {
                         MainActivityX.this.ud = 4500;
                     }
-                    if (MainActivityX.this.modeCate == 0 && ((MainActivityX.this.modeNum == 1 || MainActivityX.this.modeNum == 2) && MainActivityX.this.ud > 2000)) {
-                        MainActivityX.this.ud = 2000;
+                    if (MainActivityX.this.modeCate == 0 && ((MainActivityX.this.modeNum == 1 || MainActivityX.this.modeNum == 2) && MainActivityX.this.ud > 4500)) {
+                        MainActivityX.this.ud = 4500;
                     }
                     short s = (short) MainActivityX.this.lr;
                     if (MainActivityX.this.modeNum == 2) {
@@ -1253,7 +1253,7 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
                         MainActivityX.this.ud = 4500;
                     }
                     if (MainActivityX.this.modeCate == 0 && MainActivityX.this.modeNum == 5 && MainActivityX.this.ud < 2000) {
-                        MainActivityX.this.ud = 2000;
+                        MainActivityX.this.ud = 4500;
                     }
                     short s = (short) MainActivityX.this.lr;
                     if (MainActivityX.this.modeNum == 2) {
@@ -4023,11 +4023,11 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
                 if (MainActivityX.this.ud < 300) {
                     MainActivityX.this.ud = 300;
                 }
-                if (MainActivityX.this.ud > 4300) {
-                    MainActivityX.this.ud = 4300;
+                if (MainActivityX.this.ud > 4500) {
+                    MainActivityX.this.ud = 4500;
                 }
-                if (MainActivityX.this.modeCate == 0 && ((MainActivityX.this.modeNum == 1 || MainActivityX.this.modeNum == 2) && MainActivityX.this.ud > 2000)) {
-                    MainActivityX.this.ud = 2000;
+                if (MainActivityX.this.modeCate == 0 && ((MainActivityX.this.modeNum == 1 || MainActivityX.this.modeNum == 2) && MainActivityX.this.ud > 4500)) {
+                    MainActivityX.this.ud = 4500;
                 }
                 short s = (short) MainActivityX.this.lr;
                 if (MainActivityX.this.modeNum == 2) {
@@ -4068,11 +4068,11 @@ public class MainActivityX extends AppCompatActivity implements View.OnClickList
                 if (MainActivityX.this.ud < 300) {
                     MainActivityX.this.ud = 300;
                 }
-                if (MainActivityX.this.ud > 4300) {
-                    MainActivityX.this.ud = 4300;
+                if (MainActivityX.this.ud > 4500) {
+                    MainActivityX.this.ud = 4500;
                 }
                 if (MainActivityX.this.modeCate == 0 && MainActivityX.this.modeNum == 5 && MainActivityX.this.ud < 2000) {
-                    MainActivityX.this.ud = 2000;
+                    MainActivityX.this.ud = 4500;
                 }
                 short s = (short) MainActivityX.this.lr;
                 if (MainActivityX.this.modeNum == 2) {

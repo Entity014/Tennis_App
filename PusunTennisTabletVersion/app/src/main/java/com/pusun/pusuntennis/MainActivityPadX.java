@@ -337,8 +337,8 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -774,9 +774,9 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData22.b3[MainActivityPadX.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] < 0) {
-                    BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] < 20) {
+                    BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityPadX mainActivityPadX = MainActivityPadX.this;
                 mainActivityPadX.showSelectPoint(mainActivityPadX.vari_point_num);
@@ -794,9 +794,9 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData22.b3[MainActivityPadX.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] > 20) {
-                    BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] > 80) {
+                    BasicData22.b3[MainActivityPadX.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityPadX mainActivityPadX = MainActivityPadX.this;
                 mainActivityPadX.showSelectPoint(mainActivityPadX.vari_point_num);
@@ -1221,8 +1221,8 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                     if (MainActivityPadX.this.ud > 4600) {
                         MainActivityPadX.this.ud = 4600;
                     }
-                    if (MainActivityPadX.this.modeCate == 0 && ((MainActivityPadX.this.modeNum == 1 || MainActivityPadX.this.modeNum == 2) && MainActivityPadX.this.ud > 2000)) {
-                        MainActivityPadX.this.ud = 2000;
+                    if (MainActivityPadX.this.modeCate == 0 && ((MainActivityPadX.this.modeNum == 1 || MainActivityPadX.this.modeNum == 2) && MainActivityPadX.this.ud > 4500)) {
+                        MainActivityPadX.this.ud = 4500;
                     }
                     short s = (short) MainActivityPadX.this.lr;
                     if (MainActivityPadX.this.modeNum == 2) {
@@ -1284,7 +1284,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         MainActivityPadX.this.ud = PlaybackException.ERROR_CODE_DRM_UNSPECIFIED;
                     }
                     if (MainActivityPadX.this.modeCate == 0 && MainActivityPadX.this.modeNum == 5 && MainActivityPadX.this.ud < 2000) {
-                        MainActivityPadX.this.ud = 2000;
+                        MainActivityPadX.this.ud = 4500;
                     }
                     short s = (short) MainActivityPadX.this.lr;
                     if (MainActivityPadX.this.modeNum == 2) {
@@ -4232,7 +4232,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         showLR();
                         short s5 = BasicData22.m11[0];
                         this.lr = s5;
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s6 = s5;
                         short s7 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s6 >> 8), (byte) s6, (byte) (s7 >> 8), (byte) s7, 0, 0, 1, -91});
@@ -4680,7 +4680,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         hideLR();
                         short s12 = BasicData22.m11[0];
                         this.lr = s12;
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s13 = s12;
                         short s14 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s13 >> 8), (byte) s13, (byte) (s14 >> 8), (byte) s14, 0, 0, 1, -91});
@@ -5025,7 +5025,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         if (i16 == 3) {
                             this.lr = 2130;
                         }
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s19 = (short) this.lr;
                         short s20 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s19 >> 8), (byte) s19, (byte) (s20 >> 8), (byte) s20, 0, 0, 1, -91});
@@ -5102,7 +5102,7 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                         if (this.modeNum != 17) {
                             this.isNumDing = 0;
                             this.lr = 1200;
-                            this.ud = 2000;
+                            this.ud = 4500;
                             short s21 = (short) 1200;
                             short s22 = (short) 2000;
                             writeBleData(new byte[]{-86, 108, (byte) (s21 >> 8), (byte) s21, (byte) (s22 >> 8), (byte) s22, 0, 0, 1, -91});
@@ -6070,11 +6070,11 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                 if (MainActivityPadX.this.ud < 300) {
                     MainActivityPadX.this.ud = 300;
                 }
-                if (MainActivityPadX.this.ud > 4300) {
-                    MainActivityPadX.this.ud = 4300;
+                if (MainActivityPadX.this.ud > 4500) {
+                    MainActivityPadX.this.ud = 4500;
                 }
-                if (MainActivityPadX.this.modeCate == 0 && ((MainActivityPadX.this.modeNum == 1 || MainActivityPadX.this.modeNum == 2) && MainActivityPadX.this.ud > 2000)) {
-                    MainActivityPadX.this.ud = 2000;
+                if (MainActivityPadX.this.modeCate == 0 && ((MainActivityPadX.this.modeNum == 1 || MainActivityPadX.this.modeNum == 2) && MainActivityPadX.this.ud > 4500)) {
+                    MainActivityPadX.this.ud = 4500;
                 }
                 short s = (short) MainActivityPadX.this.lr;
                 if (MainActivityPadX.this.modeNum == 2) {
@@ -6115,11 +6115,11 @@ public class MainActivityPadX extends AppCompatActivity implements View.OnClickL
                 if (MainActivityPadX.this.ud < 300) {
                     MainActivityPadX.this.ud = 300;
                 }
-                if (MainActivityPadX.this.ud > 4300) {
-                    MainActivityPadX.this.ud = 4300;
+                if (MainActivityPadX.this.ud > 4500) {
+                    MainActivityPadX.this.ud = 4500;
                 }
                 if (MainActivityPadX.this.modeCate == 0 && MainActivityPadX.this.modeNum == 5 && MainActivityPadX.this.ud < 2000) {
-                    MainActivityPadX.this.ud = 2000;
+                    MainActivityPadX.this.ud = 4500;
                 }
                 short s = (short) MainActivityPadX.this.lr;
                 if (MainActivityPadX.this.modeNum == 2) {

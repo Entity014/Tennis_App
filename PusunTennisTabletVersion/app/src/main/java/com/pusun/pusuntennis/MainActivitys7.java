@@ -327,8 +327,8 @@ public class MainActivitys7 extends AppCompatActivity implements View.OnClickLis
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -734,9 +734,9 @@ public class MainActivitys7 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData23.b3[MainActivitys7.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] < 0) {
-                    BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] < 20) {
+                    BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivitys7 mainActivitys7 = MainActivitys7.this;
                 mainActivitys7.showSelectPoint(mainActivitys7.vari_point_num);
@@ -754,9 +754,9 @@ public class MainActivitys7 extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData23.b3[MainActivitys7.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] > 20) {
-                    BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] > 80) {
+                    BasicData23.b3[MainActivitys7.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivitys7 mainActivitys7 = MainActivitys7.this;
                 mainActivitys7.showSelectPoint(mainActivitys7.vari_point_num);
@@ -1264,7 +1264,7 @@ public class MainActivitys7 extends AppCompatActivity implements View.OnClickLis
                         MainActivitys7.this.ud = 4500;
                     }
                     if (MainActivitys7.this.modeCate == 0 && MainActivitys7.this.modeNum == 5 && MainActivitys7.this.ud < 2000) {
-                        MainActivitys7.this.ud = 2000;
+                        MainActivitys7.this.ud = 4500;
                     }
                     short s = (short) MainActivitys7.this.lr;
                     if (MainActivitys7.this.modeNum == 2) {
@@ -4080,7 +4080,7 @@ public class MainActivitys7 extends AppCompatActivity implements View.OnClickLis
                     MainActivitys7.this.ud = 4500;
                 }
                 if (MainActivitys7.this.modeCate == 0 && MainActivitys7.this.modeNum == 5 && MainActivitys7.this.ud < 2000) {
-                    MainActivitys7.this.ud = 2000;
+                    MainActivitys7.this.ud = 4500;
                 }
                 short s = (short) MainActivitys7.this.lr;
                 if (MainActivitys7.this.modeNum == 2) {

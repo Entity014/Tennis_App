@@ -342,8 +342,8 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {65, 55, 46, 38, 30, 25, 21, 18, 16, 14};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -768,7 +768,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1];
-                sArr[2] = (short) (sArr[2] - 1);
+                sArr[2] = (short) (sArr[2] - 5);
                 if (BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1][2] < 50) {
                     BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1][2] = 50;
                 }
@@ -788,7 +788,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1];
-                sArr[2] = (short) (sArr[2] + 1);
+                sArr[2] = (short) (sArr[2] + 5);
                 if (BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1][2] > 120) {
                     BasicData36.b5[MainActivity7NewP.this.vari_point_num - 1][2] = 120;
                 }
@@ -1256,10 +1256,10 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                     if (MainActivity7NewP.this.ud < 300) {
                         MainActivity7NewP.this.ud = 300;
                     }
-                    if (MainActivity7NewP.this.ud > 4300) {
-                        MainActivity7NewP.this.ud = 4300;
+                    if (MainActivity7NewP.this.ud > 4500) {
+                        MainActivity7NewP.this.ud = 4500;
                     }
-                    if (MainActivity7NewP.this.modeCate == 0 && ((MainActivity7NewP.this.modeNum == 1 || MainActivity7NewP.this.modeNum == 2) && MainActivity7NewP.this.ud > 2000 && MainActivity7NewP.this.velobar.getProgress() > 5)) {
+                    if (MainActivity7NewP.this.modeCate == 0 && ((MainActivity7NewP.this.modeNum == 1 || MainActivity7NewP.this.modeNum == 2) && MainActivity7NewP.this.ud > 4500 && MainActivity7NewP.this.velobar.getProgress() > 5)) {
                         MainActivity7NewP.this.velobar.setProgress(5.0f);
                         new Handler().postDelayed(new Runnable() { // from class: com.pusun.pusuntennis.MainActivity7NewP.18.1
                             @Override // java.lang.Runnable
@@ -1325,11 +1325,11 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                     if (MainActivity7NewP.this.ud < 300) {
                         MainActivity7NewP.this.ud = 300;
                     }
-                    if (MainActivity7NewP.this.ud > 4300) {
-                        MainActivity7NewP.this.ud = 4300;
+                    if (MainActivity7NewP.this.ud > 4500) {
+                        MainActivity7NewP.this.ud = 4500;
                     }
                     if (MainActivity7NewP.this.modeCate == 0 && MainActivity7NewP.this.modeNum == 5 && MainActivity7NewP.this.ud < 2000) {
-                        MainActivity7NewP.this.ud = 2000;
+                        MainActivity7NewP.this.ud = 4500;
                     }
                     short s = (short) MainActivity7NewP.this.lr;
                     if (MainActivity7NewP.this.modeNum == 2) {
@@ -5211,7 +5211,7 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                 if (this.modeNum != 11) {
                     this.isNumDing = 0;
                     this.lr = 1200;
-                    this.ud = 2000;
+                    this.ud = 4500;
                     short s11 = (short) 1200;
                     short s12 = (short) 2000;
                     writeBleData(new byte[]{-86, 108, (byte) (s11 >> 8), (byte) s11, (byte) (s12 >> 8), (byte) s12, 0, 0, 1, -91});
@@ -6388,11 +6388,11 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                 if (MainActivity7NewP.this.ud < 300) {
                     MainActivity7NewP.this.ud = 300;
                 }
-                if (MainActivity7NewP.this.ud > 4300) {
-                    MainActivity7NewP.this.ud = 4300;
+                if (MainActivity7NewP.this.ud > 4500) {
+                    MainActivity7NewP.this.ud = 4500;
                 }
-                if (MainActivity7NewP.this.modeCate == 0 && ((MainActivity7NewP.this.modeNum == 1 || MainActivity7NewP.this.modeNum == 2) && MainActivity7NewP.this.ud > 2000)) {
-                    MainActivity7NewP.this.ud = 2000;
+                if (MainActivity7NewP.this.modeCate == 0 && ((MainActivity7NewP.this.modeNum == 1 || MainActivity7NewP.this.modeNum == 2) && MainActivity7NewP.this.ud > 4500)) {
+                    MainActivity7NewP.this.ud = 4500;
                 }
                 short s = (short) MainActivity7NewP.this.lr;
                 if (MainActivity7NewP.this.modeNum == 2) {
@@ -6433,11 +6433,11 @@ public class MainActivity7NewP extends AppCompatActivity implements View.OnClick
                 if (MainActivity7NewP.this.ud < 300) {
                     MainActivity7NewP.this.ud = 300;
                 }
-                if (MainActivity7NewP.this.ud > 4300) {
-                    MainActivity7NewP.this.ud = 4300;
+                if (MainActivity7NewP.this.ud > 4500) {
+                    MainActivity7NewP.this.ud = 4500;
                 }
                 if (MainActivity7NewP.this.modeCate == 0 && MainActivity7NewP.this.modeNum == 5 && MainActivity7NewP.this.ud < 2000) {
-                    MainActivity7NewP.this.ud = 2000;
+                    MainActivity7NewP.this.ud = 4500;
                 }
                 short s = (short) MainActivity7NewP.this.lr;
                 if (MainActivity7NewP.this.modeNum == 2) {

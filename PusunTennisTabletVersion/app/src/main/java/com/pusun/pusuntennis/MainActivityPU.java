@@ -264,8 +264,8 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
     private int modeNum = 1;
     private int modeCate = 0;
     private int[] frequentNums = {65, 55, 46, 38, 30, 25, 21, 18, 15, 13};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -787,11 +787,11 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
                     if (MainActivityPU.this.ud < 300) {
                         MainActivityPU.this.ud = 300;
                     }
-                    if (MainActivityPU.this.ud > 4300) {
-                        MainActivityPU.this.ud = 4300;
+                    if (MainActivityPU.this.ud > 4500) {
+                        MainActivityPU.this.ud = 4500;
                     }
-                    if (MainActivityPU.this.modeCate == 0 && ((MainActivityPU.this.modeNum == 1 || MainActivityPU.this.modeNum == 2) && MainActivityPU.this.ud > 3000)) {
-                        MainActivityPU.this.ud = PathInterpolatorCompat.MAX_NUM_POINTS;
+                    if (MainActivityPU.this.modeCate == 0 && ((MainActivityPU.this.modeNum == 1 || MainActivityPU.this.modeNum == 2) && MainActivityPU.this.ud > 4500)) {
+                        MainActivityPU.this.ud = 4500;
                     }
                     short s = (short) MainActivityPU.this.lr;
                     if (MainActivityPU.this.modeNum == 2) {
@@ -849,11 +849,11 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
                     if (MainActivityPU.this.ud < 300) {
                         MainActivityPU.this.ud = 300;
                     }
-                    if (MainActivityPU.this.ud > 4300) {
-                        MainActivityPU.this.ud = 4300;
+                    if (MainActivityPU.this.ud > 4500) {
+                        MainActivityPU.this.ud = 4500;
                     }
                     if (MainActivityPU.this.modeCate == 0 && MainActivityPU.this.modeNum == 5 && MainActivityPU.this.ud < 2000) {
-                        MainActivityPU.this.ud = 2000;
+                        MainActivityPU.this.ud = 4500;
                     }
                     short s = (short) MainActivityPU.this.lr;
                     if (MainActivityPU.this.modeNum == 2) {
@@ -4734,11 +4734,11 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
                 if (MainActivityPU.this.ud < 300) {
                     MainActivityPU.this.ud = 300;
                 }
-                if (MainActivityPU.this.ud > 4300) {
-                    MainActivityPU.this.ud = 4300;
+                if (MainActivityPU.this.ud > 4500) {
+                    MainActivityPU.this.ud = 4500;
                 }
-                if (MainActivityPU.this.modeCate == 0 && ((MainActivityPU.this.modeNum == 1 || MainActivityPU.this.modeNum == 2) && MainActivityPU.this.ud > 2000)) {
-                    MainActivityPU.this.ud = 2000;
+                if (MainActivityPU.this.modeCate == 0 && ((MainActivityPU.this.modeNum == 1 || MainActivityPU.this.modeNum == 2) && MainActivityPU.this.ud > 4500)) {
+                    MainActivityPU.this.ud = 4500;
                 }
                 short s = (short) MainActivityPU.this.lr;
                 if (MainActivityPU.this.modeNum == 2) {
@@ -4779,11 +4779,11 @@ public class MainActivityPU extends AppCompatActivity implements View.OnClickLis
                 if (MainActivityPU.this.ud < 300) {
                     MainActivityPU.this.ud = 300;
                 }
-                if (MainActivityPU.this.ud > 4300) {
-                    MainActivityPU.this.ud = 4300;
+                if (MainActivityPU.this.ud > 4500) {
+                    MainActivityPU.this.ud = 4500;
                 }
                 if (MainActivityPU.this.modeCate == 0 && MainActivityPU.this.modeNum == 5 && MainActivityPU.this.ud < 2000) {
-                    MainActivityPU.this.ud = 2000;
+                    MainActivityPU.this.ud = 4500;
                 }
                 short s = (short) MainActivityPU.this.lr;
                 if (MainActivityPU.this.modeNum == 2) {

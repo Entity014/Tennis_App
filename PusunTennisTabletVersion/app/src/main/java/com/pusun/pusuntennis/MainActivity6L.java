@@ -301,8 +301,8 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
     private int modeNum = 1;
     private int modeCate = 0;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -705,9 +705,9 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData5.b3[MainActivity6L.this.vari_point_num + 19];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] < 0) {
-                    BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] < 20) {
+                    BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] = 80;
                 }
                 MainActivity6L mainActivity6L = MainActivity6L.this;
                 mainActivity6L.showSelectPoint(mainActivity6L.vari_point_num);
@@ -725,9 +725,9 @@ public class MainActivity6L extends AppCompatActivity implements View.OnClickLis
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData5.b3[MainActivity6L.this.vari_point_num + 19];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] > 20) {
-                    BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] > 80) {
+                    BasicData5.b3[MainActivity6L.this.vari_point_num + 19][2] = 80;
                 }
                 MainActivity6L mainActivity6L = MainActivity6L.this;
                 mainActivity6L.showSelectPoint(mainActivity6L.vari_point_num);

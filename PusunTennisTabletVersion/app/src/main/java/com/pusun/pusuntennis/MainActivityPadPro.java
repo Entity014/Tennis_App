@@ -336,8 +336,8 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
     private int modeCate = 0;
     private int vari_point_num = 1;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -773,9 +773,9 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] - 1);
-                if (BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] < 0) {
-                    BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] = 0;
+                sArr[2] = (short) (sArr[2] - 5);
+                if (BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] < 20) {
+                    BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityPadPro mainActivityPadPro = MainActivityPadPro.this;
                 mainActivityPadPro.showSelectPoint(mainActivityPadPro.vari_point_num);
@@ -793,9 +793,9 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
             @Override // android.view.View.OnClickListener
             public void onClick(View view) {
                 short[] sArr = BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34];
-                sArr[2] = (short) (sArr[2] + 1);
-                if (BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] > 20) {
-                    BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] = 20;
+                sArr[2] = (short) (sArr[2] + 5);
+                if (BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] > 80) {
+                    BasicData32.b3[MainActivityPadPro.this.vari_point_num + 34][2] = 80;
                 }
                 MainActivityPadPro mainActivityPadPro = MainActivityPadPro.this;
                 mainActivityPadPro.showSelectPoint(mainActivityPadPro.vari_point_num);
@@ -1220,8 +1220,8 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                     if (MainActivityPadPro.this.ud > 4500) {
                         MainActivityPadPro.this.ud = 4500;
                     }
-                    if (MainActivityPadPro.this.modeCate == 0 && ((MainActivityPadPro.this.modeNum == 1 || MainActivityPadPro.this.modeNum == 2) && MainActivityPadPro.this.ud > 2000)) {
-                        MainActivityPadPro.this.ud = 2000;
+                    if (MainActivityPadPro.this.modeCate == 0 && ((MainActivityPadPro.this.modeNum == 1 || MainActivityPadPro.this.modeNum == 2) && MainActivityPadPro.this.ud > 4500)) {
+                        MainActivityPadPro.this.ud = 4500;
                     }
                     short s = (short) MainActivityPadPro.this.lr;
                     if (MainActivityPadPro.this.modeNum == 2) {
@@ -1283,7 +1283,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         MainActivityPadPro.this.ud = 4500;
                     }
                     if (MainActivityPadPro.this.modeCate == 0 && MainActivityPadPro.this.modeNum == 5 && MainActivityPadPro.this.ud < 2000) {
-                        MainActivityPadPro.this.ud = 2000;
+                        MainActivityPadPro.this.ud = 4500;
                     }
                     short s = (short) MainActivityPadPro.this.lr;
                     if (MainActivityPadPro.this.modeNum == 2) {
@@ -4203,7 +4203,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         showLR();
                         short s5 = BasicData32.m11[0];
                         this.lr = s5;
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s6 = s5;
                         short s7 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s6 >> 8), (byte) s6, (byte) (s7 >> 8), (byte) s7, 0, 0, 1, -91});
@@ -4644,7 +4644,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         hideLR();
                         short s12 = BasicData32.m11[0];
                         this.lr = s12;
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s13 = s12;
                         short s14 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s13 >> 8), (byte) s13, (byte) (s14 >> 8), (byte) s14, 0, 0, 1, -91});
@@ -4985,7 +4985,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         if (i13 == 3) {
                             this.lr = 2250;
                         }
-                        this.ud = 2000;
+                        this.ud = 4500;
                         short s19 = (short) this.lr;
                         short s20 = (short) 2000;
                         writeBleData(new byte[]{-86, 108, (byte) (s19 >> 8), (byte) s19, (byte) (s20 >> 8), (byte) s20, 0, 0, 1, -91});
@@ -5062,7 +5062,7 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                         if (this.modeNum != 17) {
                             this.isNumDing = 0;
                             this.lr = 1320;
-                            this.ud = 2000;
+                            this.ud = 4500;
                             short s21 = (short) 1320;
                             short s22 = (short) 2000;
                             writeBleData(new byte[]{-86, 108, (byte) (s21 >> 8), (byte) s21, (byte) (s22 >> 8), (byte) s22, 0, 0, 1, -91});
@@ -6030,11 +6030,11 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                 if (MainActivityPadPro.this.ud < 300) {
                     MainActivityPadPro.this.ud = 300;
                 }
-                if (MainActivityPadPro.this.ud > 4300) {
-                    MainActivityPadPro.this.ud = 4300;
+                if (MainActivityPadPro.this.ud > 4500) {
+                    MainActivityPadPro.this.ud = 4500;
                 }
-                if (MainActivityPadPro.this.modeCate == 0 && ((MainActivityPadPro.this.modeNum == 1 || MainActivityPadPro.this.modeNum == 2) && MainActivityPadPro.this.ud > 2000)) {
-                    MainActivityPadPro.this.ud = 2000;
+                if (MainActivityPadPro.this.modeCate == 0 && ((MainActivityPadPro.this.modeNum == 1 || MainActivityPadPro.this.modeNum == 2) && MainActivityPadPro.this.ud > 4500)) {
+                    MainActivityPadPro.this.ud = 4500;
                 }
                 short s = (short) MainActivityPadPro.this.lr;
                 if (MainActivityPadPro.this.modeNum == 2) {
@@ -6075,11 +6075,11 @@ public class MainActivityPadPro extends AppCompatActivity implements View.OnClic
                 if (MainActivityPadPro.this.ud < 300) {
                     MainActivityPadPro.this.ud = 300;
                 }
-                if (MainActivityPadPro.this.ud > 4300) {
-                    MainActivityPadPro.this.ud = 4300;
+                if (MainActivityPadPro.this.ud > 4500) {
+                    MainActivityPadPro.this.ud = 4500;
                 }
                 if (MainActivityPadPro.this.modeCate == 0 && MainActivityPadPro.this.modeNum == 5 && MainActivityPadPro.this.ud < 2000) {
-                    MainActivityPadPro.this.ud = 2000;
+                    MainActivityPadPro.this.ud = 4500;
                 }
                 short s = (short) MainActivityPadPro.this.lr;
                 if (MainActivityPadPro.this.modeNum == 2) {

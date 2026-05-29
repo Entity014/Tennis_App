@@ -256,8 +256,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int modeNum = 1;
     private int modeCate = 0;
     private int[] frequentNums = {88, 78, 68, 58, 48, 38, 33, 28, 23, 18};
-    private int[] veloNums = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
-    private int[] veloTins = {0, 2, 4, 5, 6, 7, 8, 10, 12, 14, 16, 18, 20};
+    private int[] veloNums = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
+    private int[] veloTins = {30, 32, 35, 37, 40, 42, 45, 47, 50, 52, 55, 57, 60};
     private boolean isTouch = false;
     private int stopMode = 1;
     private int isFaultOn = 0;
@@ -660,11 +660,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (MainActivity.this.ud < 300) {
                         MainActivity.this.ud = 300;
                     }
-                    if (MainActivity.this.ud > 4300) {
-                        MainActivity.this.ud = 4300;
+                    if (MainActivity.this.ud > 4500) {
+                        MainActivity.this.ud = 4500;
                     }
-                    if (MainActivity.this.modeCate == 0 && ((MainActivity.this.modeNum == 1 || MainActivity.this.modeNum == 2) && MainActivity.this.ud > 2000)) {
-                        MainActivity.this.ud = 2000;
+                    if (MainActivity.this.modeCate == 0 && ((MainActivity.this.modeNum == 1 || MainActivity.this.modeNum == 2) && MainActivity.this.ud > 4500)) {
+                        MainActivity.this.ud = 4500;
                     }
                     short s = (short) MainActivity.this.lr;
                     if (MainActivity.this.modeNum == 2) {
@@ -721,11 +721,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (MainActivity.this.ud < 300) {
                         MainActivity.this.ud = 300;
                     }
-                    if (MainActivity.this.ud > 4300) {
-                        MainActivity.this.ud = 4300;
+                    if (MainActivity.this.ud > 4500) {
+                        MainActivity.this.ud = 4500;
                     }
                     if (MainActivity.this.modeCate == 0 && MainActivity.this.modeNum == 5 && MainActivity.this.ud < 2000) {
-                        MainActivity.this.ud = 2000;
+                        MainActivity.this.ud = 4500;
                     }
                     short s = (short) MainActivity.this.lr;
                     if (MainActivity.this.modeNum == 2) {
@@ -3698,11 +3698,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (MainActivity.this.ud < 300) {
                     MainActivity.this.ud = 300;
                 }
-                if (MainActivity.this.ud > 4300) {
-                    MainActivity.this.ud = 4300;
+                if (MainActivity.this.ud > 4500) {
+                    MainActivity.this.ud = 4500;
                 }
-                if (MainActivity.this.modeCate == 0 && ((MainActivity.this.modeNum == 1 || MainActivity.this.modeNum == 2) && MainActivity.this.ud > 2000)) {
-                    MainActivity.this.ud = 2000;
+                if (MainActivity.this.modeCate == 0 && ((MainActivity.this.modeNum == 1 || MainActivity.this.modeNum == 2) && MainActivity.this.ud > 4500)) {
+                    MainActivity.this.ud = 4500;
                 }
                 short s = (short) MainActivity.this.lr;
                 if (MainActivity.this.modeNum == 2) {
@@ -3743,11 +3743,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (MainActivity.this.ud < 300) {
                     MainActivity.this.ud = 300;
                 }
-                if (MainActivity.this.ud > 4300) {
-                    MainActivity.this.ud = 4300;
+                if (MainActivity.this.ud > 4500) {
+                    MainActivity.this.ud = 4500;
                 }
                 if (MainActivity.this.modeCate == 0 && MainActivity.this.modeNum == 5 && MainActivity.this.ud < 2000) {
-                    MainActivity.this.ud = 2000;
+                    MainActivity.this.ud = 4500;
                 }
                 short s = (short) MainActivity.this.lr;
                 if (MainActivity.this.modeNum == 2) {
